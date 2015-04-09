@@ -1,10 +1,13 @@
 #include <iostream>
 
+#include "engine/Game.hpp" // Include all engine components
+
 int main(int argc, char* argv[])
 {
-	std::cout << "Two Souls Tale" << std::endl;
-
-	std::cin.get();
+	Engine::Game game;
+	game.Initialize();
+	game.Start();
+	game.Terminate();
 
 	return 0;
 }
