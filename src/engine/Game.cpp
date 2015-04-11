@@ -7,6 +7,11 @@
 void Engine::Game::Initialize()
 {
 	m_FrameDurationMicros = 1000000 / 60;
+
+	LoggingManager::Create();
+	LoggingManager::GetInstance().Initialize();
+	GraphicsManager::Create();
+	GraphicsManager::GetInstance().Initialize();
 }
 
 // Starts the game loop
@@ -25,7 +30,10 @@ void Engine::Game::Stop()
 // Terminates all engine components in the correct order
 void Engine::Game::Terminate()
 {
-
+	GraphicsManager::GetInstance().Terminate();
+	GraphicsManager::Destroy();
+	LoggingManager::GetInstance().Terminate();
+	LoggingManager::Destroy();
 }
 
 // Executes the game loop
@@ -38,14 +46,13 @@ void Engine::Game::Run()
 	std::chrono::time_point<std::chrono::high_resolution_clock> nextUpdate;
 	nextUpdate = std::chrono::high_resolution_clock::now();
 
-	while (m_Running){
-
+	while (m_Running)
+	{
 		Update();
 		Draw();
 
 		nextUpdate += frameDuration;
 		std::this_thread::sleep_until(nextUpdate);
-
 	}
 }
 
@@ -58,5 +65,8 @@ void Engine::Game::Update()
 // Draws the game world
 void Engine::Game::Draw()
 {
-	
+	GraphicsManager& mngrGraphics = GraphicsManager::GetInstance();
+
+	// Repaint the screen by swapping the buffers of the main window
+	mngrGraphics.SwapWindowBuffers();
 }
