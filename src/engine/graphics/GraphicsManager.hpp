@@ -8,8 +8,6 @@
 
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
 
-class LoggingManager;
-
 namespace Engine{
 	class GraphicsManager : public Singleton<GraphicsManager>{
 

@@ -82,6 +82,16 @@ set(SRC_ENGINE_GRAPHICS
 )
 source_group(Engine\\Graphics FILES ${SRC_ENGINE_GRAPHICS})
 
+# Input Components
+set(SRC_ENGINE_INPUT 
+	"src/engine/input/InputManager.hpp"
+	"src/engine/input/InputManager.cpp"
+	"src/engine/input/KeyboardListener.hpp"
+	"src/engine/input/MouseListener.hpp"
+	"src/engine/input/GamepadListener.hpp"
+)
+source_group(Engine\\Input FILES ${SRC_ENGINE_INPUT})
+
 # Common Components
 set(SRC_ENGINE_COMMON_PATTERNS 
 	"src/engine/common/patterns/Singleton.hpp"
@@ -95,6 +105,7 @@ set(SRC_ENGINE_ALL
 	${SRC_ENGINE_GAME}
 	${SRC_ENGINE_DEBUGGING}
 	${SRC_ENGINE_GRAPHICS}
+	${SRC_ENGINE_INPUT}
 	${SRC_ENGINE_COMMON}
 )
 
