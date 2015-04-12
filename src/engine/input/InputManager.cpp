@@ -16,6 +16,53 @@ void Engine::InputManager::Terminate()
 
 }
 
+// Updates the InputManager to retrieve input from active polling-only devices (such as Gamepads)
+void Engine::InputManager::Update()
+{
+	LoggingManager& mngrLogging = LoggingManager::GetInstance();
+
+	int axisCount; // Used to store the number of results obtained from querying a gamepad's axis states
+	int buttonCount; // Used to store the number of results obtained from querying a gamepad's button states
+	
+	for (int i = 0; i < m_NumGamepads; i++)
+	{
+		const float* axes = glfwGetJoystickAxes(i, &axisCount);
+		const unsigned char* buttons = glfwGetJoystickButtons(i, &buttonCount);
+
+		axisCount = (axisCount > 16) ? 16 : axisCount;
+		for (int j = 0; j < axisCount; j++)
+		{
+			// Launch an event if the axis has changed
+			if (axes[j] != m_GamepadStates[i].axis[j])
+			{
+				GamepadAxisCallback(i, j, axes[j]);
+			}
+
+			// Store the new axis state
+			m_GamepadStates[i].axis[j] = axes[j];
+		}
+
+		buttonCount = (buttonCount > 16) ? 16 : buttonCount;
+		for (int j = 0; j < buttonCount; j++)
+		{
+			// Launch an event if the axis has changed
+			if (buttons[j] != m_GamepadStates[i].button[j])
+			{
+				GamepadListener::GamepadButtonAction action = GamepadListener::GamepadButtonAction::PRESSED;
+				if (buttons[j] == GLFW_RELEASE)
+				{
+					action = GamepadListener::GamepadButtonAction::RELEASED;
+				}
+
+				GamepadButtonCallback(i, j, action);
+			}
+
+			// Store the new axis state
+			m_GamepadStates[i].button[j] = buttons[j];
+		}
+	}
+}
+
 // Polls all pending input events
 void Engine::InputManager::PollInputEvents()
 {
@@ -36,14 +83,48 @@ void Engine::InputManager::CheckGamepads()
 
 		if (isPresent)
 		{
+			// Notify of the detection of the gamepad
 			const char* name = glfwGetJoystickName(gamepadID);
 			mngrLogging.Log(LoggingManager::LogType::Status, "Detected gamepad [" + std::to_string(gamepadID) + "]: " + std::string(name));
+
+			// Detect the initial state of the gamepad and store it
+			GamepadState16x16 gamepadState;
+
+			int axisCount; // Used to store the number of results obtained from querying a gamepad's axis states
+			int buttonCount; // Used to store the number of results obtained from querying a gamepad's button states
+
+			const float* axes = glfwGetJoystickAxes(gamepadID, &axisCount);
+			const unsigned char* buttons = glfwGetJoystickButtons(gamepadID, &buttonCount);
+
+			if (axisCount > 16)
+			{
+				mngrLogging.Log(LoggingManager::LogType::Warning, "The detected gamepad has more than 16 axes! Only up to 16 can be stored, meaning some axes will be unresponsive.");
+				axisCount = 16;
+			}
+			for (int i = 0; i < axisCount; i++)
+			{
+				gamepadState.axis[i] = axes[i];
+			}
+
+			if (buttonCount > 16)
+			{
+				mngrLogging.Log(LoggingManager::LogType::Warning, "The detected gamepad has more than 16 buttons! Only up to 16 can be stored, meaning some buttons will be unresponsive.");
+				buttonCount = 16;
+			}
+			for (int i = 0; i < buttonCount; i++)
+			{
+				gamepadState.button[i] = buttons[i];
+			}
+
+			m_GamepadStates.push_back(gamepadState);
 		}
 
 		gamepadID++;
+
 	} while (isPresent);
 
-	mngrLogging.Log(LoggingManager::LogType::Status, "Number of gamepads: " + std::to_string(gamepadID - 1));
+	m_NumGamepads = gamepadID - 1;
+	mngrLogging.Log(LoggingManager::LogType::Status, "Number of gamepads: " + std::to_string(m_NumGamepads));
 }
 
 // Hooks up the GLFW input events to their respective callbacks
@@ -114,4 +195,22 @@ void Engine::InputManager::GLFWMouseButtonCallback(GLFWwindow* window, int butto
 void Engine::InputManager::GLFWMouseScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
 	LoggingManager::GetInstance().Log(LoggingManager::LogType::Status, "Mouse scrolled with offset: <" + std::to_string(xOffset) + " , " + std::to_string(yOffset) + "> ");
+}
+
+// Gamepad axis callback (not GLFW-generated)
+void Engine::InputManager::GamepadAxisCallback(unsigned char gamepad, int axis, float position)
+{
+	LoggingManager::GetInstance().Log(LoggingManager::LogType::Status, "Gamepad[" + std::to_string(gamepad) + "] axis[" + std::to_string(axis) + "] to: " + std::to_string(position));
+}
+
+// Gamepad button callback (not GLFW-generated)
+void Engine::InputManager::GamepadButtonCallback(unsigned char gamepad, int button, GamepadListener::GamepadButtonAction action)
+{
+	if (action == GamepadListener::GamepadButtonAction::PRESSED){
+		LoggingManager::GetInstance().Log(LoggingManager::LogType::Status, "Gamepad[" + std::to_string(gamepad) + "] button pressed: " + std::to_string(button));
+	}
+
+	if (action == GamepadListener::GamepadButtonAction::RELEASED){
+		LoggingManager::GetInstance().Log(LoggingManager::LogType::Status, "Gamepad[" + std::to_string(gamepad) + "] button released: " + std::to_string(button));
+	}
 }

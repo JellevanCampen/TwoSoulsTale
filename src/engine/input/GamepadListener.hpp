@@ -9,9 +9,16 @@ namespace Engine{
 
 	public:
 
+		// Describes the action performed for a gamepad button event
+		typedef enum GamepadButtonAction
+		{
+			PRESSED,
+			RELEASED
+		};
+
 		virtual ~GamepadListener() {}
 		virtual void ProcessGamepadAxisEvent(int axis, float axisState) = 0;
-		virtual void ProcessGamepadButtonEvent(int button, int action) = 0;
+		virtual void ProcessGamepadButtonEvent(int button, GamepadButtonAction action) = 0;
 
 	};
 }

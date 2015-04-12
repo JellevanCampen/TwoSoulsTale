@@ -9,8 +9,16 @@ namespace Engine{
 
 	public:
 
+		// Describes the action performed for a keyboard key event
+		typedef enum KeyboardKeyAction
+		{
+			PRESSED,
+			RELEASED,
+			REPEATED
+		};
+
 		virtual ~KeyboardListener() {}
-		virtual void ProcessKeyboardKeyEvent(int key, int action) = 0;
+		virtual void ProcessKeyboardKeyEvent(int key, KeyboardKeyAction action) = 0;
 		virtual void ProcessKeyboardCharacterEvent(unsigned int character) = 0;
 
 	};

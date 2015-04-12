@@ -52,8 +52,6 @@ void Engine::Game::Run()
 
 	while (m_Running)
 	{
-		InputManager::GetInstance().PollInputEvents();
-
 		Update();
 		Draw();
 
@@ -65,7 +63,9 @@ void Engine::Game::Run()
 // Updates the game world
 void Engine::Game::Update()
 {
-	
+	// Check for input 
+	InputManager::GetInstance().PollInputEvents(); // Launch event-based input callbacks
+	InputManager::GetInstance().Update(); // Launch polling-based input calbacks
 }
 
 // Draws the game world
