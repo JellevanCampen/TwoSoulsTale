@@ -4,6 +4,7 @@
 
 #include "debugging\LoggingManager.hpp" // [DEBUGGING] Logging Manager
 #include "graphics\GraphicsManager.hpp" // [GRAPHICS] Graphics Manager
+#include "input\InputManager.hpp" // [INPUT] Input Manager
 
 namespace Engine{
 	class Game{

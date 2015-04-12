@@ -10,7 +10,7 @@ namespace Engine{
 	public:
 
 		virtual ~MouseListener() {}
-		virtual void ProcessMousePositionEvent(int xPos, int yPos) = 0;
+		virtual void ProcessMousePositionEvent(double xPos, double yPos) = 0;
 		virtual void ProcessMouseEnterLeaveEvent(bool entered) = 0;
 		virtual void ProcessMouseButtonEvent(int button, int action) = 0;
 		virtual void ProcessMouseScrollEvent(int xOffset, int yOffset) = 0;

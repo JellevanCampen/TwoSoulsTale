@@ -6,6 +6,7 @@
 #include "glfw\glfw3.h"
 #include <string>
 
+#include "../input/InputManager.hpp" // InputManager to make the callback hookup a friend function
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
 
 namespace Engine{
@@ -46,6 +47,8 @@ namespace Engine{
 
 		// GLFW error callback
 		static void GLFWErrorCallback(int error, const char* description);
+
+		friend class InputManager;
 
 	};
 }

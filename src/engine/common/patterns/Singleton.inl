@@ -1,5 +1,5 @@
 template<class T>
-T* Singleton<T>::m_Instance = NULL;
+T* Singleton<T>::m_Instance = nullptr;
 
 template<typename T>
 const T*  const Singleton<T>::Create()
@@ -17,7 +17,7 @@ void Singleton<T>::Destroy()
 	if (m_Instance)
 	{
 		delete m_Instance;
-		m_Instance = NULL;
+		m_Instance = nullptr;
 	}
 }
 

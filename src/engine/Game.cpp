@@ -12,6 +12,8 @@ void Engine::Game::Initialize()
 	LoggingManager::GetInstance().Initialize();
 	GraphicsManager::Create();
 	GraphicsManager::GetInstance().Initialize();
+	InputManager::Create();
+	InputManager::GetInstance().Initialize();
 }
 
 // Starts the game loop
@@ -30,6 +32,8 @@ void Engine::Game::Stop()
 // Terminates all engine components in the correct order
 void Engine::Game::Terminate()
 {
+	InputManager::GetInstance().Terminate();
+	InputManager::Destroy();
 	GraphicsManager::GetInstance().Terminate();
 	GraphicsManager::Destroy();
 	LoggingManager::GetInstance().Terminate();
@@ -48,6 +52,8 @@ void Engine::Game::Run()
 
 	while (m_Running)
 	{
+		InputManager::GetInstance().PollInputEvents();
+
 		Update();
 		Draw();
 
