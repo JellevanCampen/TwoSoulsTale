@@ -1,59 +1,59 @@
-# Locate the glfw library
-# This module defines the following variables:
-# GLFW_LIBRARIES, the name of the library;
-# GLFW_INCLUDE_DIRS, where to find glfw include files.
-# GLFW_FOUND, true if both the GLFW_LIBRARIES and GLFW_INCLUDE_DIRS have been found.
+# FindGLFW
+# Copyright (c) 2015 Jelle van Campen
+# Redistribution and use allowed according to the terms of the MIT license. 
 #
-# To help locate the library and include file, you could define an environment variable called
-# GLFW_ROOT which points to the root of the glfw library installation. This is pretty useful
-# on a Windows platform.
+# Defines: 
+# -- GLFW_FOUND : true if both the includes and libraries are found
+# -- GLFW_INCLUDE_DIRS : location of the include files
+# -- GLFW_LIBRARIES : required library files
+# -- GLFW_DEFINITIONS : compiler switches required by the library
 #
+# Makes use of:
+# -- CMAKE_INCLUDE_PATH : project directory where include files are located
+# -- CMAKE_LIBRARY_PATH : project directory where lib files are located 
+# -- GLFW_ROOT_DIR : root directory of GLFW (specified as CMake variable)
+# -- ENV GLFW_ROOT : root directory of GLFW (specified as environment variable)
 #
-# Usage example to compile an "executable" target to the glfw library:
-#
-# FIND_PACKAGE (glfw REQUIRED)
-# INCLUDE_DIRECTORIES (${GLFW_INCLUDE_DIRS})
-# ADD_EXECUTABLE (executable ${EXECUTABLE_SRCS})
-# TARGET_LINK_LIBRARIES (executable ${GLFW_LIBRARIES})
-#
-# TODO:
-# Allow the user to select to link to a shared library or to a static library.
+# Usage: 
+# -- find_package(GLFW REQUIRED)
+# -- if (GLFW_FOUND)
+# --     include_directories(${GLFW_INCLUDE_DIRS})
+# --     target_link_libraries(<project> ${GLFW_LIBRARIES})
+# --     add_definitions${GLFW_DEFINITIONS})
+# -- endif (GLFW_FOUND)
 
-#Search for the include file...
-FIND_PATH(GLFW_INCLUDE_DIRS glfw/glfw3.h DOC "Path to GLFW3 include directory."
-HINTS
-$ENV{GLFW_ROOT}
-PATH_SUFFIX include #For finding the include file under the root of the glfw expanded archive, typically on Windows.
-PATHS
-/usr/include/
-/usr/local/include/
-# By default headers are under GL subfolder
-/usr/include/glfw
-/usr/local/include/glfw
-${CMAKE_INCLUDE_PATH}
-${CMAKE_INCLUDE_PATH}/glfw
+message(STATUS ">> Locating GLFW: ")
 
-)
+# Find on Windows
+IF (WIN32)
 
-IF (CMAKE_CL_64)
-	FIND_LIBRARY(GLFW_LIBRARIES DOC "Absolute path to GLFW library."
-	NAMES glfw GLFW3.lib glfw3 libglfw
-	HINTS
-	$ENV{GLFW_ROOT}
-	PATH_SUFFIXES lib/win32 #For finding the library file under the root of the glfw expanded archive, typically on Windows.
-	PATHS 
-	"${LIB_FOLDER}/glfw"
+	# ---- Include directories
+	FIND_PATH( GLFW_INCLUDE_DIRS 
+		NAMES 
+			glfw3.h
+		PATHS 
+			${CMAKE_INCLUDE_PATH}
+			${CMAKE_INCLUDE_PATH}/glfw
+			${GLFW_ROOT_DIR}/include/GLFW
+			$ENV{GLFW_ROOT}/include/GLFW
+		DOC 
+			"The include directory for GLFW"
 	)
-ELSE()
-	FIND_LIBRARY(GLFW_LIBRARIES DOC "Absolute path to GLFW library."
-	NAMES glfw GLFW3.lib glfw3 libglfw3.a
-	HINTS
-	$ENV{GLFW_ROOT}
-	PATH_SUFFIXES lib/win32 #For finding the library file under the root of the glfw expanded archive, typically on Windows.
-	PATHS 
-	"${LIB_FOLDER}/glfw"
+	
+	# ---- Libraries
+	FIND_LIBRARY( GLFW_LIBRARIES
+		NAMES 
+			glfw glfw3.lib glfw3 libglfw
+		PATHS
+			${CMAKE_LIBRARY_PATH}
+			${CMAKE_LIBRARY_PATH}/glfw
+			${GLFW_ROOT_DIR}/lib/win32
+			$ENV{GLFW_ROOT}/lib/win32
+		DOC 
+			"The libraries for GLFW"
 	)
-ENDIF()
+	
+ENDIF(WIN32)
 
 # Show a confirmation (or error) message, sets the FOUND flag, and handle the REQUIRED attribute
 include(FindPackageHandleStandardArgs)

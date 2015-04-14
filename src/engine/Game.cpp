@@ -1,5 +1,10 @@
 #include "Game.hpp"
 
+#include "debugging\LoggingManager.hpp" // [DEBUGGING] Logging Manager
+#include "graphics\GraphicsManager.hpp" // [GRAPHICS] Graphics Manager
+#include "input\InputManager.hpp" // [INPUT] Input Manager
+#include "audio\AudioManager.hpp" // [AUDIO] Audio Manager
+
 #include <chrono> // Chrono for measuring time between frames
 #include <thread> // Thread to synchronize the execution of the game loop to the desired framerate
 
@@ -10,6 +15,8 @@ void Engine::Game::Initialize()
 
 	LoggingManager::Create();
 	LoggingManager::GetInstance().Initialize();
+	AudioManager::Create();
+	AudioManager::GetInstance().Initialize();
 	GraphicsManager::Create();
 	GraphicsManager::GetInstance().Initialize();
 	InputManager::Create();
@@ -36,6 +43,8 @@ void Engine::Game::Terminate()
 	InputManager::Destroy();
 	GraphicsManager::GetInstance().Terminate();
 	GraphicsManager::Destroy();
+	AudioManager::GetInstance().Destroy();
+	AudioManager::Destroy();
 	LoggingManager::GetInstance().Terminate();
 	LoggingManager::Destroy();
 }

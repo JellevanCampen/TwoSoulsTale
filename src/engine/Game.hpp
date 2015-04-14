@@ -2,10 +2,6 @@
 #ifndef ENGINE_GAME_H
 #define ENGINE_GAME_H
 
-#include "debugging\LoggingManager.hpp" // [DEBUGGING] Logging Manager
-#include "graphics\GraphicsManager.hpp" // [GRAPHICS] Graphics Manager
-#include "input\InputManager.hpp" // [INPUT] Input Manager
-
 namespace Engine{
 	class Game{
 
