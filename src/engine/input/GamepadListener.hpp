@@ -16,9 +16,9 @@ namespace Engine{
 			RELEASED
 		};
 
-		virtual ~GamepadListener() {}
-		virtual void ProcessGamepadAxisEvent(int axis, float axisState) = 0;
-		virtual void ProcessGamepadButtonEvent(int button, GamepadButtonAction action) = 0;
+		virtual ~GamepadListener() { };
+		virtual void ProcessGamepadAxisEvent(int axis, float axisState) { };
+		virtual void ProcessGamepadButtonEvent(int button, GamepadButtonAction action) { };
 
 	};
 }

@@ -117,6 +117,14 @@ set(SRC_ENGINE_INPUT
 )
 source_group(Engine\\Input FILES ${SRC_ENGINE_INPUT})
 
+# World Components
+set(SRC_ENGINE_WORLD 
+	"src/engine/world/WorldManager.hpp"
+	"src/engine/world/WorldManager.cpp"
+	"src/engine/world/GameObject.hpp"
+)
+source_group(Engine\\World FILES ${SRC_ENGINE_WORLD})
+
 # Common Components
 set(SRC_ENGINE_COMMON_PATTERNS 
 	"src/engine/common/patterns/Singleton.hpp"
@@ -132,6 +140,7 @@ set(SRC_ENGINE_ALL
 	${SRC_ENGINE_AUDIO}
 	${SRC_ENGINE_GRAPHICS}
 	${SRC_ENGINE_INPUT}
+	${SRC_ENGINE_WORLD}
 	${SRC_ENGINE_COMMON}
 )
 

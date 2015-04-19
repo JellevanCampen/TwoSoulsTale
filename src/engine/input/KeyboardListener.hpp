@@ -17,9 +17,9 @@ namespace Engine{
 			REPEATED
 		};
 
-		virtual ~KeyboardListener() {}
-		virtual void ProcessKeyboardKeyEvent(int key, KeyboardKeyAction action) = 0;
-		virtual void ProcessKeyboardCharacterEvent(unsigned int character) = 0;
+		virtual ~KeyboardListener() { };
+		virtual void ProcessKeyboardKeyEvent(int key, KeyboardKeyAction action) { };
+		virtual void ProcessKeyboardCharacterEvent(unsigned int character) { };
 
 	};
 }

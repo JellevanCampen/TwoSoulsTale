@@ -16,11 +16,11 @@ namespace Engine{
 			RELEASED
 		};
 
-		virtual ~MouseListener() {}
-		virtual void ProcessMousePositionEvent(double xPos, double yPos) = 0;
-		virtual void ProcessMouseEnterLeaveEvent(bool entered) = 0;
-		virtual void ProcessMouseButtonEvent(int button, MouseButtonAction action) = 0;
-		virtual void ProcessMouseScrollEvent(int xOffset, int yOffset) = 0;
+		virtual ~MouseListener() { };
+		virtual void ProcessMousePositionEvent(double xPos, double yPos) { };
+		virtual void ProcessMouseEnterLeaveEvent(bool entered) { };
+		virtual void ProcessMouseButtonEvent(int button, MouseButtonAction action) { };
+		virtual void ProcessMouseScrollEvent(int xOffset, int yOffset) { };
 
 	};
 }
