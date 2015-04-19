@@ -95,6 +95,8 @@ source_group(Engine\\Debugging FILES ${SRC_ENGINE_DEBUGGING})
 set(SRC_ENGINE_AUDIO 
 	"src/engine/audio/AudioManager.hpp"
 	"src/engine/audio/AudioManager.cpp"
+	"src/engine/audio/AudioResource.hpp"
+	"src/engine/audio/AudioResource.cpp"
 )
 source_group(Engine\\Audio FILES ${SRC_ENGINE_AUDIO})
 

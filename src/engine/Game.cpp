@@ -26,6 +26,11 @@ void Engine::Game::Initialize()
 // Starts the game loop
 void Engine::Game::Start()
 {
+	// TESTING
+	AudioResource* mscChina = AudioManager::GetInstance().LoadAudioResource("music/china.flac");
+	AudioManager::GetInstance().Play(mscChina);
+	// TESTING
+
 	m_Running = true;
 	Run();
 }
