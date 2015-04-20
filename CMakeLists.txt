@@ -152,3 +152,17 @@ target_link_libraries(TwoSoulsTale Engine)
 ################################################################
 # Game library                                                 #
 ################################################################
+
+# Test Components
+set(SRC_GAME_TEST 
+	"src/game/test/TestObject.hpp"
+	"src/game/test/TestObject.cpp"
+)
+source_group(Game\\Test FILES ${SRC_GAME_TEST})
+
+set(SRC_GAME_ALL 
+	${SRC_GAME_TEST}
+)
+
+add_library(Game ${SRC_GAME_ALL})
+target_link_libraries(TwoSoulsTale Game)

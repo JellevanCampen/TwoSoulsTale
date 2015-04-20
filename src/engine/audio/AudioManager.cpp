@@ -3,7 +3,7 @@
 // Initializes irrKlang
 void Engine::AudioManager::Initialize()
 {
-	m_AudioResourcePath = "../../resources/audio/";
+	m_AudioResourcePath = "../resources/audio/";
 
 	// Initialize the irrKlang sound engine
 	m_SoundEngine = irrklang::createIrrKlangDevice();

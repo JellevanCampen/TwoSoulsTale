@@ -4,9 +4,14 @@
 #include "graphics\GraphicsManager.hpp" // [GRAPHICS] Graphics Manager
 #include "input\InputManager.hpp" // [INPUT] Input Manager
 #include "audio\AudioManager.hpp" // [AUDIO] Audio Manager
+#include "world\WorldManager.hpp" // [WORLD] World Manager
 
 #include <chrono> // Chrono for measuring time between frames
 #include <thread> // Thread to synchronize the execution of the game loop to the desired framerate
+
+// TESTING
+#include "..\game\test\TestObject.hpp" // Test Object
+// TESTING
 
 // Initializes all engine components in the correct order
 void Engine::Game::Initialize()
@@ -21,14 +26,18 @@ void Engine::Game::Initialize()
 	GraphicsManager::GetInstance().Initialize();
 	InputManager::Create();
 	InputManager::GetInstance().Initialize();
+	WorldManager::Create();
+	WorldManager::GetInstance().Initialize();
 }
 
 // Starts the game loop
 void Engine::Game::Start()
 {
 	// TESTING
-	AudioResource* mscChina = AudioManager::GetInstance().LoadAudioResource("music/china.flac");
+	AudioResource* mscChina = AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
 	AudioManager::GetInstance().Play(mscChina);
+
+	WorldManager::GetInstance().AddGameObject(new GameContent::TestObject());
 	// TESTING
 
 	m_Running = true;
@@ -44,6 +53,8 @@ void Engine::Game::Stop()
 // Terminates all engine components in the correct order
 void Engine::Game::Terminate()
 {
+	WorldManager::GetInstance().Terminate();
+	WorldManager::Destroy();
 	InputManager::GetInstance().Terminate();
 	InputManager::Destroy();
 	GraphicsManager::GetInstance().Terminate();
@@ -80,13 +91,17 @@ void Engine::Game::Update()
 	// Check for input 
 	InputManager::GetInstance().PollInputEvents(); // Launch event-based input callbacks
 	InputManager::GetInstance().Update(); // Launch polling-based input calbacks
+
+	// Update the game world
+	WorldManager::GetInstance().Update();
 }
 
 // Draws the game world
 void Engine::Game::Draw()
 {
-	GraphicsManager& mngrGraphics = GraphicsManager::GetInstance();
+	// Draw the game world
+	WorldManager::GetInstance().Update();
 
 	// Repaint the screen by swapping the buffers of the main window
-	mngrGraphics.SwapWindowBuffers();
+	GraphicsManager::GetInstance().SwapWindowBuffers();
 }
