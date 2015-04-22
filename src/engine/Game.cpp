@@ -34,9 +34,6 @@ void Engine::Game::Initialize()
 void Engine::Game::Start()
 {
 	// TESTING
-	AudioResource* mscChina = AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
-	AudioManager::GetInstance().Play(mscChina);
-
 	WorldManager::GetInstance().AddGameObject(new GameContent::TestObject());
 	// TESTING
 
