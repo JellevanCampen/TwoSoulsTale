@@ -43,6 +43,9 @@ namespace Engine{
 		// Updates all game objects in the game world
 		void Update();
 
+		// Draws all game objects in the game world
+		void Draw();
+
 		// Adds a game object to the world and returns the handle
 		GameObjectHandle AddGameObject(GameObject* gameObject);
 

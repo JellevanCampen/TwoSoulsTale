@@ -7,6 +7,7 @@
 #include <string>
 
 #include "../input/InputManager.hpp" // InputManager to make the callback hookup a friend function
+#include "../resources/ResourceManager.hpp" // Resourcemanager for managing graphics resources
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
 
 namespace Engine{
@@ -23,6 +24,13 @@ namespace Engine{
 		// Swaps the buffers of the main window
 		void SwapWindowBuffers();
 
+		/**************************************************************/
+		/* Sprite sheets                                              */
+		/**************************************************************/
+
+		// Draws a frame of the specified sprite sheet
+		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z);
+
 	private:
 
 		// Settings for the window
@@ -33,20 +41,38 @@ namespace Engine{
 		// The GLFW window object corresponding to the main window
 		GLFWwindow* m_Window;
 
+		// Shaders
+		GLuint m_ShaderSpriteSheet;
+
 		// Initializes GLFW
 		bool InitializeGLFW();
-
-		// Initializes GLEW
-		bool InitializeGLEW();
 
 		// Terminates GLFW
 		void TerminateGLFW();
 
+		// Initializes GLEW
+		bool InitializeGLEW();
+
 		// Terminates GLEW
 		void TerminateGLEW();
 
+		// Initializes standard shader programs
+		void InitializeShaderPrograms();
+
+		// Destroys standard shader programs
+		void TerminateShaderPrograms();
+
 		// GLFW error callback
 		static void GLFWErrorCallback(int error, const char* description);
+
+		// Loads and compiles a shader program
+		GLuint LoadShaderProgram(std::string vertexShader, std::string fragmentShader);
+
+		// Loads and compiles a single shader stage
+		GLuint LoadShaderStage(std::string filename, GLenum shaderStage);
+
+		// Path to the shaders
+		std::string m_ShaderPath;
 
 		friend class InputManager;
 

@@ -104,8 +104,20 @@ source_group(Engine\\Audio FILES ${SRC_ENGINE_AUDIO})
 set(SRC_ENGINE_GRAPHICS 
 	"src/engine/graphics/GraphicsManager.hpp"
 	"src/engine/graphics/GraphicsManager.cpp"
+	"src/engine/graphics/SpriteSheetResource.hpp"
+	"src/engine/graphics/SpriteSheetResource.cpp"
+	
 )
 source_group(Engine\\Graphics FILES ${SRC_ENGINE_GRAPHICS})
+
+# Resources Components
+set(SRC_ENGINE_RESOURCES
+	"src/engine/resources/Resource.hpp"
+	"src/engine/resources/Resource.cpp"
+	"src/engine/resources/ResourceManager.hpp"
+	"src/engine/resources/ResourceManager.cpp"
+)
+source_group(Engine\\Resources FILES ${SRC_ENGINE_RESOURCES})
 
 # Input Components
 set(SRC_ENGINE_INPUT 
@@ -139,6 +151,7 @@ set(SRC_ENGINE_ALL
 	${SRC_ENGINE_DEBUGGING}
 	${SRC_ENGINE_AUDIO}
 	${SRC_ENGINE_GRAPHICS}
+	${SRC_ENGINE_RESOURCES}
 	${SRC_ENGINE_INPUT}
 	${SRC_ENGINE_WORLD}
 	${SRC_ENGINE_COMMON}

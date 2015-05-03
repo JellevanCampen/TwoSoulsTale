@@ -9,6 +9,7 @@
 #include "..\src\engine\input\InputManager.hpp" // [INPUT] Input Manager
 #include "..\src\engine\audio\AudioManager.hpp" // [AUDIO] Audio Manager
 #include "..\src\engine\world\WorldManager.hpp" // [WORLD] World Manager
+#include "..\src\engine\resources\ResourceManager.hpp" // [RESOURCE] Resource Manager
 
 namespace GameContent{
 	class TestObject : public Engine::GameObject, public Engine::KeyboardListener, public Engine::MouseListener, public Engine::GamepadListener{
@@ -41,6 +42,12 @@ namespace GameContent{
 
 		virtual void ProcessGamepadAxisEvent(unsigned char gamepad, int axis, float axisState);
 		virtual void ProcessGamepadButtonEvent(unsigned char gamepad, int button, GamepadButtonAction action);
+
+	private:
+
+		// Sprite sheet
+		SpriteSheet m_SpriteSheet;
+
 	};
 }
 

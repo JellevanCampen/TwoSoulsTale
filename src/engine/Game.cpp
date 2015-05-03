@@ -28,6 +28,8 @@ void Engine::Game::Initialize()
 	InputManager::GetInstance().Initialize();
 	WorldManager::Create();
 	WorldManager::GetInstance().Initialize();
+	ResourceManager::Create();
+	ResourceManager::GetInstance().Initialize();
 }
 
 // Starts the game loop
@@ -50,6 +52,8 @@ void Engine::Game::Stop()
 // Terminates all engine components in the correct order
 void Engine::Game::Terminate()
 {
+	ResourceManager::GetInstance().Terminate();
+	ResourceManager::Destroy();
 	WorldManager::GetInstance().Terminate();
 	WorldManager::Destroy();
 	InputManager::GetInstance().Terminate();
@@ -97,7 +101,7 @@ void Engine::Game::Update()
 void Engine::Game::Draw()
 {
 	// Draw the game world
-	WorldManager::GetInstance().Update();
+	WorldManager::GetInstance().Draw();
 
 	// Repaint the screen by swapping the buffers of the main window
 	GraphicsManager::GetInstance().SwapWindowBuffers();

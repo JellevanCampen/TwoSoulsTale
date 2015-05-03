@@ -16,10 +16,18 @@ void Engine::WorldManager::Terminate()
 // Updates all game objects in the game world
 void Engine::WorldManager::Update()
 {
-	std::map<unsigned int, GameObject*>::iterator it;
-	for (it = m_GameObjects.begin(); it != m_GameObjects.end(); it++)
+	for (std::pair<unsigned int, GameObject*> gameObject : m_GameObjects)
 	{
-		(*it).second->Update();
+		gameObject.second->Update();
+	}
+}
+
+// Draws all game objects in the game world
+void Engine::WorldManager::Draw()
+{
+	for (std::pair<unsigned int, GameObject*> gameObject : m_GameObjects)
+	{
+		gameObject.second->Draw();
 	}
 }
 

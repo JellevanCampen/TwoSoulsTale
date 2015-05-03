@@ -1,12 +1,10 @@
 #include "TestObject.hpp"
 
-#include <iostream>
-
 // Creates the game object
 void GameContent::TestObject::Create()
 {
 	// Start playing music
-	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
+	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/china.flac");
 	Engine::AudioManager::GetInstance().Play(mscChina);
 
 	// Register for listening to input
@@ -18,11 +16,15 @@ void GameContent::TestObject::Create()
 	Engine::InputManager::GetInstance().RegisterMouseScrollListener(this);
 	Engine::InputManager::GetInstance().RegisterGamepadAxisListener(this);
 	Engine::InputManager::GetInstance().RegisterGamepadButtonListener(this);
+
+	// Reserve a sprite sheet
+	m_SpriteSheet = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/9CEvO.png");
 }
 
 // Destroys the game object
 void GameContent::TestObject::Destroy()
 {
+	// Deregister input listening
 	Engine::InputManager::GetInstance().DeregisterKeyboardKeyListener(this);
 	Engine::InputManager::GetInstance().DeregisterKeyboardCharacterListener(this);
 	Engine::InputManager::GetInstance().DeregisterMousePositionListener(this);
@@ -31,18 +33,22 @@ void GameContent::TestObject::Destroy()
 	Engine::InputManager::GetInstance().DeregisterMouseScrollListener(this);
 	Engine::InputManager::GetInstance().DeregisterGamepadAxisListener(this);
 	Engine::InputManager::GetInstance().DeregisterGamepadButtonListener(this);
+
+	// Free a sprite sheet
+	Engine::ResourceManager::GetInstance().FreeSpriteSheet(m_SpriteSheet);
 }
 
 // Updates the game object
 void GameContent::TestObject::Update()
 {
-	// std::cout << "Test Object Updated" << std::endl;
+	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Updating TestObject.");
 }
 
 // Draws the game object
 void GameContent::TestObject::Draw()
 {
-	std::cout << "Test Object Drawn" << std::endl;
+	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 0, 0, 0, 0);
 }
 
 /**************************************************************/
@@ -81,7 +87,7 @@ void GameContent::TestObject::ProcessMouseScrollEvent(int xOffset, int yOffset)
 
 void GameContent::TestObject::ProcessGamepadAxisEvent(unsigned char gamepad, int axis, float axisState)
 {
-	Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Gamepad axis event detected by TestObject.");
+	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Gamepad axis event detected by TestObject.");
 }
 
 void GameContent::TestObject::ProcessGamepadButtonEvent(unsigned char gamepad, int button, GamepadButtonAction action)
