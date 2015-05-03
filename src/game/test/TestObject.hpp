@@ -45,6 +45,9 @@ namespace GameContent{
 
 	private:
 
+		// Counter
+		unsigned int counter;
+
 		// Sprite sheet
 		SpriteSheet m_SpriteSheet;
 

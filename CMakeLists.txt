@@ -71,6 +71,14 @@ if (IRRKLANG_FOUND)
 	add_definitions(${IRRKLANG_DEFINITIONS})
 endif (IRRKLANG_FOUND)
 
+# FreeImage
+find_package(FreeImage REQUIRED)
+if (FREEIMAGE_FOUND)
+	include_directories(${FREEIMAGE_INCLUDE_DIRS})
+	target_link_libraries(TwoSoulsTale ${FREEIMAGE_LIBRARIES})
+	add_definitions(${FREEIMAGE_DEFINITIONS})
+endif (FREEIMAGE_FOUND)
+
 
 
 ################################################################
@@ -138,13 +146,19 @@ set(SRC_ENGINE_WORLD
 source_group(Engine\\World FILES ${SRC_ENGINE_WORLD})
 
 # Common Components
+set(SRC_ENGINE_COMMON_UTILITY 
+	"src/engine/common/utility/ImageReader.hpp"
+	"src/engine/common/utility/ImageReader.cpp"
+)
+source_group(Engine\\Common\\Utility FILES ${SRC_ENGINE_COMMON_UTILITY})
+
 set(SRC_ENGINE_COMMON_PATTERNS 
 	"src/engine/common/patterns/Singleton.hpp"
 	"src/engine/common/patterns/Singleton.inl"
 )
 source_group(Engine\\Common\\Patterns FILES ${SRC_ENGINE_COMMON_PATTERNS})
 
-set(SRC_ENGINE_COMMON ${SRC_ENGINE_COMMON_PATTERNS})
+set(SRC_ENGINE_COMMON ${SRC_ENGINE_COMMON_UTILITY} ${SRC_ENGINE_COMMON_PATTERNS})
 
 set(SRC_ENGINE_ALL 
 	${SRC_ENGINE_GAME}

@@ -3,6 +3,9 @@
 // Creates the game object
 void GameContent::TestObject::Create()
 {
+	// Initialize counter to 0
+	counter = 0;
+
 	// Start playing music
 	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/china.flac");
 	Engine::AudioManager::GetInstance().Play(mscChina);
@@ -42,13 +45,14 @@ void GameContent::TestObject::Destroy()
 void GameContent::TestObject::Update()
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Updating TestObject.");
+	counter++;
 }
 
 // Draws the game object
 void GameContent::TestObject::Draw()
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 0, 0, 0, 0);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter/10) % 5, 0, 0, 0);
 }
 
 /**************************************************************/

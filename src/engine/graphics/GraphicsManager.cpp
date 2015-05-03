@@ -56,6 +56,23 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	// Use the sprite sheet shader program
 	glUseProgram(m_ShaderSpriteSheet);
 
+	// Bind the sprite sheet texture
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(m_ShaderSpriteSheet, "spriteSampler"), 0);
+	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
+
+	// Calculate and pass the UVs of the sprite within the sprite sheet
+	float left = spriteSheetResource.m_SheetLeft + (frame % spriteSheetResource.m_SheetColumns) * (spriteSheetResource.m_SheetSeparationX + spriteSheetResource.m_SpriteWidth);
+	float right = left + spriteSheetResource.m_SpriteWidth;
+	float top = spriteSheetResource.m_SheetTop + (int)(frame / spriteSheetResource.m_SheetColumns) * (spriteSheetResource.m_SheetSeparationY + spriteSheetResource.m_SpriteHeight);
+	float bottom = top + spriteSheetResource.m_SpriteHeight;
+	left /= spriteSheetResource.m_SheetWidth;
+	right /= spriteSheetResource.m_SheetWidth;
+	top /= spriteSheetResource.m_SheetHeight;
+	bottom /= spriteSheetResource.m_SheetHeight;
+	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1"), left, top);
+	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2"), right, bottom);
+
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

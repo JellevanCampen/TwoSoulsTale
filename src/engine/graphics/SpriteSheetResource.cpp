@@ -1,5 +1,7 @@
 #include "SpriteSheetResource.hpp"
 
+#include "..\common\utility\ImageReader.hpp" // For generating OpenGL textures from image files
+
 // Constructor, stores the filename of the sprite sheet
 Engine::SpriteSheetResource::SpriteSheetResource(std::string filename)
 {
@@ -9,8 +11,9 @@ Engine::SpriteSheetResource::SpriteSheetResource(std::string filename)
 // Loads the resource
 bool Engine::SpriteSheetResource::Load()
 {
-	// TODO: implement sprite sheet loading
-
+	// Load the sprite sheet texture
+	InitializeTexture();
+	
 	// Initialize OpenGL buffers
 	InitializeBuffers();
 
@@ -20,10 +23,29 @@ bool Engine::SpriteSheetResource::Load()
 // Unloads the resource
 bool Engine::SpriteSheetResource::Unload()
 {
-	// TODO: implement sprite sheet unloading
+	// Unload the sprite sheet texture
+	DestroyTexture();
 
 	// Destroy OpenGL buffers
 	DestroyBuffers();
+
+	return true;
+}
+
+// Initializes and loads the sprite sheet texture
+bool Engine::SpriteSheetResource::InitializeTexture()
+{
+	// Generate and bind the texture
+	m_Texture = Engine::ImageReader::ReadPNG("../resources/spritesheets/02 - Super Mario Bros/9CEvO.png"); // TODO: make generic Read function that finds file format from extension
+
+	return true;
+}
+
+// Destroys the sprite sheet texture
+bool Engine::SpriteSheetResource::DestroyTexture()
+{
+	// Delete the texture
+	glDeleteTextures(1, &m_Texture);
 
 	return true;
 }
@@ -55,12 +77,12 @@ bool Engine::SpriteSheetResource::InitializeBuffers()
 		{ left, top },
 		{ right, bottom },
 
-		{ 0.0f, 1.0f },
-		{ 1.0f, 1.0f },
 		{ 0.0f, 0.0f },
 		{ 1.0f, 0.0f },
-		{ 0.0f, 0.0f },
-		{ 1.0f, 1.0f }
+		{ 0.0f, 1.0f },
+		{ 1.0f, 1.0f },
+		{ 0.0f, 1.0f },
+		{ 1.0f, 0.0f }
 	};
 	glBufferData(GL_ARRAY_BUFFER, 2 * 6 * 2 * 4, &vertexData[0][0], GL_STATIC_DRAW);
 

@@ -26,14 +26,14 @@ namespace Engine
 
 		// Sprite sheet specifications
 		// TODO: Remove initialization of values
-		unsigned int m_SpriteWidth = 24;
-		unsigned int m_SpriteHeight = 32;
-		int m_SpriteOriginX = 12;
+		unsigned int m_SpriteWidth = 34;
+		unsigned int m_SpriteHeight = 31;
+		int m_SpriteOriginX = 17;
 		int m_SpriteOriginY = 0;
-		unsigned int m_SheetWidth = 512;
-		unsigned int m_SheetHeight = 512;
-		unsigned int m_SheetColumns = 8;
-		unsigned int m_SheetRows = 64;
+		unsigned int m_SheetWidth = 238;
+		unsigned int m_SheetHeight = 198;
+		unsigned int m_SheetColumns = 6;
+		unsigned int m_SheetRows = 6;
 		int m_SheetSeparationX = 2;
 		int m_SheetSeparationY = 2;
 		int m_SheetLeft = 1;
@@ -45,6 +45,9 @@ namespace Engine
 		// Vertex buffer object for this sprite sheet
 		GLuint m_Vertices;
 
+		// Texture buffer for this sprite sheet
+		GLuint m_Texture;
+
 		// Filename of the sprite sheet resource
 		std::string m_Filename;
 
@@ -53,6 +56,12 @@ namespace Engine
 
 		// Unloads the resource
 		virtual bool Unload();
+
+		// Initializes and loads the sprite sheet texture
+		bool InitializeTexture();
+
+		// Destroys the sprite sheet texture
+		bool DestroyTexture();
 
 		// Initializes associated OpenGL attributes and buffers
 		bool InitializeBuffers();
