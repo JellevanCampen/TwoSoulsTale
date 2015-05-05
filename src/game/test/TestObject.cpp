@@ -3,12 +3,19 @@
 // Creates the game object
 void GameContent::TestObject::Create()
 {
+	// Initialize position to the center of the screen
+	m_PosX = 128;
+	m_PosY = 120;
+
+	m_SpeedX = 0;
+	m_SpeedY = 0;
+
 	// Initialize counter to 0
 	counter = 0;
 
 	// Start playing music
-	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/china.flac");
-	Engine::AudioManager::GetInstance().Play(mscChina);
+	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
+	// Engine::AudioManager::GetInstance().Play(mscChina);
 
 	// Register for listening to input
 	Engine::InputManager::GetInstance().RegisterKeyboardKeyListener(this);
@@ -44,6 +51,10 @@ void GameContent::TestObject::Destroy()
 // Updates the game object
 void GameContent::TestObject::Update()
 {
+	// Update the position
+	m_PosX += m_SpeedX;
+	m_PosY += m_SpeedY;
+
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Updating TestObject.");
 	counter++;
 }
@@ -52,7 +63,7 @@ void GameContent::TestObject::Update()
 void GameContent::TestObject::Draw()
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter/10) % 5, 0, 0, 0);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0);
 }
 
 /**************************************************************/
@@ -71,7 +82,7 @@ void GameContent::TestObject::ProcessKeyboardCharacterEvent(unsigned int charact
 
 void GameContent::TestObject::ProcessMousePositionEvent(double xPos, double yPos)
 {
-	Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Mouse position event detected by TestObject.");
+	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Mouse position event detected by TestObject.");
 }
 
 void GameContent::TestObject::ProcessMouseEnterLeaveEvent(bool entered)
@@ -92,6 +103,30 @@ void GameContent::TestObject::ProcessMouseScrollEvent(int xOffset, int yOffset)
 void GameContent::TestObject::ProcessGamepadAxisEvent(unsigned char gamepad, int axis, float axisState)
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Gamepad axis event detected by TestObject.");
+	
+	if (fabs(axisState) > 0.2f){
+		if (axis == 0)
+		{
+			m_SpeedX = axisState  * 2.0f;
+		}
+
+		if (axis == 1)
+		{
+			m_SpeedY = -axisState * 2.0f;
+		}
+	}
+	else
+	{
+		if (axis == 0)
+		{
+			m_SpeedX = 0.0f;
+		}
+
+		if (axis == 1)
+		{
+			m_SpeedY = 0.0f;
+		}
+	}
 }
 
 void GameContent::TestObject::ProcessGamepadButtonEvent(unsigned char gamepad, int button, GamepadButtonAction action)

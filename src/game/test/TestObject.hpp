@@ -45,6 +45,13 @@ namespace GameContent{
 
 	private:
 
+		// Position
+		double m_PosX;
+		double m_PosY; 
+
+		double m_SpeedX;
+		double m_SpeedY;
+
 		// Counter
 		unsigned int counter;
 

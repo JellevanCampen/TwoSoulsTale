@@ -79,6 +79,14 @@ if (FREEIMAGE_FOUND)
 	add_definitions(${FREEIMAGE_DEFINITIONS})
 endif (FREEIMAGE_FOUND)
 
+# GLM
+find_package(GLM REQUIRED)
+if (GLM_FOUND)
+	include_directories(${GLM_INCLUDE_DIRS})
+	target_link_libraries(TwoSoulsTale ${GLM_LIBRARIES})
+	add_definitions(${GLM_DEFINITIONS})
+endif (GLM_FOUND)
+
 
 
 ################################################################

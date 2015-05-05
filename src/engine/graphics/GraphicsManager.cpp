@@ -3,6 +3,10 @@
 #include "../debugging/LoggingManager.hpp" // Logging manager for reporting statuses
 #include "SpriteSheetResource.hpp" // Sprite sheet resources
 
+#include <glm.hpp> // For vector and matrix data types
+#include <glm\gtc\matrix_transform.hpp> // For matrix transforms
+#include <glm\gtc\type_ptr.hpp> // For retrieving a pointer to glm data
+
 #include <fstream> // For reading shaders from file
 #include <sstream> // String streams for parsing shader files
 
@@ -10,7 +14,7 @@
 void Engine::GraphicsManager::Initialize()
 {
 	// Specify the shader path
-	m_ShaderPath = "../resources/shaders/";
+	m_ShaderPath = "../shaders/";
 
 	// Initialize GLFW (for window creation and event handling) and GLEW (for crossplatform OpenGL compatibility)
 	InitializeGLFW();
@@ -73,6 +77,12 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1"), left, top);
 	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2"), right, bottom);
 
+	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
+	glUniformMatrix4fv(glGetUniformLocation(m_ShaderSpriteSheet, "matModel"), 1, GL_FALSE, glm::value_ptr(matModel));
+
+	glm::mat4x4 matView = glm::ortho(0.0f, 256.0f, 0.0f, 240.0f, -1000.0f, 1000.0f);
+	glUniformMatrix4fv(glGetUniformLocation(m_ShaderSpriteSheet, "matView"), 1, GL_FALSE, glm::value_ptr(matView));
+
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -94,7 +104,7 @@ bool Engine::GraphicsManager::InitializeGLFW()
 	glfwWindowHint(GLFW_DECORATED, GL_TRUE);
 	glfwWindowHint(GLFW_FOCUSED, GL_TRUE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE); // Prevent screen tearing
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Prevent the use of deprecated OpenGL functionality
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Prevent the use of non-core functionality
