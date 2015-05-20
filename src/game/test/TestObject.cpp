@@ -1,5 +1,7 @@
 #include "TestObject.hpp"
 
+#include "Box2D.h"
+
 // Creates the game object
 void GameContent::TestObject::Create()
 {
@@ -29,6 +31,10 @@ void GameContent::TestObject::Create()
 
 	// Reserve a sprite sheet
 	m_SpriteSheet = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/9CEvO.png");
+
+	// Generate a physics world
+	b2Vec2 gravity(0.0f, -10.0f);
+	b2World world(gravity);
 }
 
 // Destroys the game object
@@ -63,7 +69,8 @@ void GameContent::TestObject::Update()
 void GameContent::TestObject::Draw()
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0);
+	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0, (counter / 100.0f), 1.0f + 0.2f * sinf(counter / 25.0f), 1.0f + 0.2f*cosf(counter / 25.0f));
 }
 
 /**************************************************************/
@@ -72,12 +79,24 @@ void GameContent::TestObject::Draw()
 
 void GameContent::TestObject::ProcessKeyboardKeyEvent(int key, Engine::KeyboardListener::KeyboardKeyAction action)
 {
-	Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Keyboard key event detected by TestObject.");
+	if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::PRESSED) m_SpeedX -= 1;
+	if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::RELEASED) m_SpeedX += 1;
+
+	if (key == GLFW_KEY_RIGHT && action == KeyboardKeyAction::PRESSED) m_SpeedX += 1;
+	if (key == GLFW_KEY_RIGHT && action == KeyboardKeyAction::RELEASED) m_SpeedX -= 1;
+
+	if (key == GLFW_KEY_DOWN && action == KeyboardKeyAction::PRESSED) m_SpeedY -= 1;
+	if (key == GLFW_KEY_DOWN && action == KeyboardKeyAction::RELEASED) m_SpeedY += 1;
+
+	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::PRESSED) m_SpeedY += 1;
+	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::RELEASED) m_SpeedY -= 1;
+
+	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Keyboard key event detected by TestObject.");
 }
 
 void GameContent::TestObject::ProcessKeyboardCharacterEvent(unsigned int character)
 {
-	Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Keyboard character event detected by TestObject.");
+	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Keyboard character event detected by TestObject.");
 }
 
 void GameContent::TestObject::ProcessMousePositionEvent(double xPos, double yPos)

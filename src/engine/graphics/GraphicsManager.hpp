@@ -31,6 +31,9 @@ namespace Engine{
 		// Draws a frame of the specified sprite sheet
 		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z);
 
+		// Draws a frame of the specified sprite sheet using the specified transformation
+		void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z, double rotation, double scaleX, double scaleY);
+
 	private:
 
 		// Settings for the window

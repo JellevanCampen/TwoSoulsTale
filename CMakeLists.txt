@@ -87,6 +87,14 @@ if (GLM_FOUND)
 	add_definitions(${GLM_DEFINITIONS})
 endif (GLM_FOUND)
 
+# Box2D
+find_package(BOX2D REQUIRED)
+if (BOX2D_FOUND)
+	include_directories(${BOX2D_INCLUDE_DIRS})
+	target_link_libraries(TwoSoulsTale ${BOX2D_LIBRARIES})
+	add_definitions(${BOX2D_DEFINITIONS})
+endif (BOX2D_FOUND)
+
 
 
 ################################################################
