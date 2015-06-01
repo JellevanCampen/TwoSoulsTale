@@ -32,8 +32,11 @@ namespace Engine{
 		// Holds timing information, passed on update and draw calls
 		GameTime m_GameTime;
 
-		// Executes the game loop
-		void Run();
+		// Executes the game loop in fixed framerate mode
+		void RunFixedFramerate();
+
+		// Executes the game loop in variable framerate mode
+		void RunVariableFramerate();
 
 		// Updates the game world
 		void Update(const GameTime& gameTime);

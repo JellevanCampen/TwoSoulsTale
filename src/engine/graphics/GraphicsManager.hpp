@@ -46,6 +46,10 @@ namespace Engine{
 
 		// Shaders
 		GLuint m_ShaderSpriteSheet;
+		GLuint m_ShaderSpriteSheet_uSpriteUV1;
+		GLuint m_ShaderSpriteSheet_uSpriteUV2;
+		GLuint m_ShaderSpriteSheet_uMatModel;
+		GLuint m_ShaderSpriteSheet_uMatView;
 
 		// Initializes GLFW
 		bool InitializeGLFW();

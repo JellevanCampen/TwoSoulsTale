@@ -40,7 +40,8 @@ void Engine::Game::Start()
 	// TESTING
 
 	m_Running = true;
-	Run();
+	RunVariableFramerate();
+	// RunFixedFramerate();
 }
 
 // Stops the game loop
@@ -66,8 +67,8 @@ void Engine::Game::Terminate()
 	LoggingManager::Destroy();
 }
 
-// Executes the game loop
-void Engine::Game::Run()
+// Executes the game loop in fixed framerate mode
+void Engine::Game::RunFixedFramerate()
 {
 	// Holds the desired duration between two updates
 	std::chrono::microseconds frameDuration(m_FrameDurationMicros);
@@ -93,6 +94,30 @@ void Engine::Game::Run()
 		// Schedule the next update
 		nextUpdate += frameDuration;
 		std::this_thread::sleep_until(nextUpdate);
+	}
+}
+
+// Executes the game loop in variable framerate mode
+void Engine::Game::RunVariableFramerate()
+{
+	// Timer for measuring delta times (in microseconds)
+	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime(std::chrono::high_resolution_clock::now());
+
+	// Reset the timing information
+	m_GameTime.deltaTimeMicros = 0;
+	m_GameTime.frameCount = 0;
+	m_GameTime.totalTimeMicros = 0;
+
+	while (m_Running)
+	{
+		Update(m_GameTime);
+		Draw(m_GameTime);
+
+		// Update the timing information
+		m_GameTime.deltaTimeMicros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - previousTime).count();
+		m_GameTime.frameCount++;
+		m_GameTime.totalTimeMicros += m_GameTime.deltaTimeMicros;
+		previousTime = std::chrono::high_resolution_clock::now();
 	}
 }
 

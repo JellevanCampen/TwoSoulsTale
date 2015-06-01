@@ -12,9 +12,6 @@ void GameContent::TestObject::Create()
 	m_SpeedX = 0;
 	m_SpeedY = 0;
 
-	// Initialize counter to 0
-	counter = 0;
-
 	// Start playing music
 	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
 	// Engine::AudioManager::GetInstance().Play(mscChina);
@@ -58,24 +55,23 @@ void GameContent::TestObject::Destroy()
 void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 {
 	// Update the position
-	m_PosX += m_SpeedX;
-	m_PosY += m_SpeedY;
+	m_PosX += m_SpeedX * ((float)gameTime.deltaTimeMicros / 10000.f);
+	m_PosY += m_SpeedY * ((float)gameTime.deltaTimeMicros / 10000.f);;
 
 	
-	if ((gameTime.frameCount % 100) == 99)
+	if ((gameTime.frameCount % 500) == 499)
 	{
 		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(gameTime.frameCount * 1000000 / (gameTime.totalTimeMicros)));
+		// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(1000000.f / gameTime.deltaTimeMicros));
 	}
-
-	counter++;
 }
 
 // Draws the game object
 void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
-	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0);
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0, (counter / 100.0f), 1.0f + 0.2f * sinf(counter / 25.0f), 1.0f + 0.2f*cosf(counter / 25.0f));
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
+	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0, (gameTime.totalTimeMicros / 10000 / 100.0f), 1.0f + 0.2f * sinf(gameTime.totalTimeMicros / 100000 / 25.0f), 1.0f + 0.2f*cosf(gameTime.totalTimeMicros / 100000 / 25.0f));
 }
 
 /**************************************************************/

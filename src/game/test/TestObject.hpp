@@ -52,9 +52,6 @@ namespace GameContent{
 		double m_SpeedX;
 		double m_SpeedY;
 
-		// Counter
-		unsigned int counter;
-
 		// Sprite sheet
 		SpriteSheet m_SpriteSheet;
 

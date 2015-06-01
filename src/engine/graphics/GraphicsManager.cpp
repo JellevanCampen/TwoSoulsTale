@@ -74,14 +74,14 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	right /= spriteSheetResource.m_SheetWidth;
 	top /= spriteSheetResource.m_SheetHeight;
 	bottom /= spriteSheetResource.m_SheetHeight;
-	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1"), left, top);
-	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2"), right, bottom);
+	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
+	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderSpriteSheet, "matModel"), 1, GL_FALSE, glm::value_ptr(matModel));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
 
 	glm::mat4x4 matView = glm::ortho(0.0f, 256.0f, 0.0f, 240.0f, -1000.0f, 1000.0f);
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderSpriteSheet, "matView"), 1, GL_FALSE, glm::value_ptr(matView));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, glm::value_ptr(matView));
 
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
@@ -112,16 +112,16 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	right /= spriteSheetResource.m_SheetWidth;
 	top /= spriteSheetResource.m_SheetHeight;
 	bottom /= spriteSheetResource.m_SheetHeight;
-	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1"), left, top);
-	glUniform2f(glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2"), right, bottom);
+	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
+	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
 	matModel = glm::rotate(matModel, (float)rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 	matModel = glm::scale(matModel, glm::vec3(scaleX, scaleY, 1.0f));
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderSpriteSheet, "matModel"), 1, GL_FALSE, glm::value_ptr(matModel));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
 
 	glm::mat4x4 matView = glm::ortho(0.0f, 256.0f, 0.0f, 240.0f, -1000.0f, 1000.0f);
-	glUniformMatrix4fv(glGetUniformLocation(m_ShaderSpriteSheet, "matView"), 1, GL_FALSE, glm::value_ptr(matView));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, glm::value_ptr(matView));
 
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
@@ -197,7 +197,12 @@ void Engine::GraphicsManager::GLFWErrorCallback(int error, const char* descripti
 // Initializes standard shader programs
 void Engine::GraphicsManager::InitializeShaderPrograms()
 {
+	// Sprite Sheet Shader
 	m_ShaderSpriteSheet = LoadShaderProgram("spritesheet", "spritesheet"); // Sprite sheet shader
+	m_ShaderSpriteSheet_uSpriteUV1 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1");
+	m_ShaderSpriteSheet_uSpriteUV2 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2");
+	m_ShaderSpriteSheet_uMatModel = glGetUniformLocation(m_ShaderSpriteSheet, "matModel");
+	m_ShaderSpriteSheet_uMatView = glGetUniformLocation(m_ShaderSpriteSheet, "matView");
 }
 
 // Destroys standard shader programs
