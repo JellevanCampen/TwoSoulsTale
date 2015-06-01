@@ -55,18 +55,23 @@ void GameContent::TestObject::Destroy()
 }
 
 // Updates the game object
-void GameContent::TestObject::Update()
+void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 {
 	// Update the position
 	m_PosX += m_SpeedX;
 	m_PosY += m_SpeedY;
 
-	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Updating TestObject.");
+	
+	if ((gameTime.frameCount % 100) == 99)
+	{
+		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(gameTime.frameCount * 1000000 / (gameTime.totalTimeMicros)));
+	}
+
 	counter++;
 }
 
 // Draws the game object
-void GameContent::TestObject::Draw()
+void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (counter / 10) % 5, m_PosX, m_PosY, 0);

@@ -2,6 +2,8 @@
 #ifndef ENGINE_WORLD_GAMEOBJECT_H
 #define ENGINE_WORLD_GAMEOBJECT_H
 
+#include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
+
 namespace Engine{
 	class GameObject{
 
@@ -14,10 +16,10 @@ namespace Engine{
 		virtual void Destroy() { };
 
 		// Updates the game object
-		virtual void Update() { };
+		virtual void Update(const GameTime& gameTime) { };
 
 		// Draws the game object
-		virtual void Draw() { };
+		virtual void Draw(const GameTime& gameTime) { };
 
 	};
 }

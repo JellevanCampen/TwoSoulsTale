@@ -2,6 +2,8 @@
 #ifndef ENGINE_GAME_H
 #define ENGINE_GAME_H
 
+#include "common\utility\GameTime.hpp" // For representing timing information of the game loop
+
 namespace Engine{
 	class Game{
 
@@ -27,14 +29,17 @@ namespace Engine{
 		// Desired duration between updates
 		long m_FrameDurationMicros;
 
+		// Holds timing information, passed on update and draw calls
+		GameTime m_GameTime;
+
 		// Executes the game loop
 		void Run();
 
 		// Updates the game world
-		void Update();
+		void Update(const GameTime& gameTime);
 
 		// Draws the game world
-		void Draw();
+		void Draw(const GameTime& gameTime);
 
 	};
 }

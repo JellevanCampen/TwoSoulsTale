@@ -6,6 +6,7 @@
 #include "KeyboardListener.hpp" // Interface for keyboard listeners
 #include "MouseListener.hpp" // Interface for mouse listeners
 #include "GamepadListener.hpp" // Interface for gamepad listeners
+#include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 
 #include <vector> // Vector for storing the states of all gamepads
 #include <list> // List for storing al listeners to specific input events
@@ -31,7 +32,7 @@ namespace Engine{
 		void Terminate();
 
 		// Updates the InputManager to retrieve input from active polling-only devices (such as Gamepads)
-		void Update();
+		void Update(const GameTime& gameTime);
 
 		// Polls all pending input events
 		void PollInputEvents();

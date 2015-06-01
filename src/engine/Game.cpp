@@ -76,32 +76,42 @@ void Engine::Game::Run()
 	std::chrono::time_point<std::chrono::high_resolution_clock> nextUpdate;
 	nextUpdate = std::chrono::high_resolution_clock::now();
 
+	// Reset the timing information
+	m_GameTime.deltaTimeMicros = m_FrameDurationMicros;
+	m_GameTime.frameCount = 0;
+	m_GameTime.totalTimeMicros = 0;
+
 	while (m_Running)
 	{
-		Update();
-		Draw();
+		Update(m_GameTime);
+		Draw(m_GameTime);
 
+		// Update the timing information
+		m_GameTime.frameCount++;
+		m_GameTime.totalTimeMicros += m_FrameDurationMicros;
+
+		// Schedule the next update
 		nextUpdate += frameDuration;
 		std::this_thread::sleep_until(nextUpdate);
 	}
 }
 
 // Updates the game world
-void Engine::Game::Update()
+void Engine::Game::Update(const GameTime& gameTime)
 {
 	// Check for input 
 	InputManager::GetInstance().PollInputEvents(); // Launch event-based input callbacks
-	InputManager::GetInstance().Update(); // Launch polling-based input calbacks
+	InputManager::GetInstance().Update(gameTime); // Launch polling-based input calbacks
 
 	// Update the game world
-	WorldManager::GetInstance().Update();
+	WorldManager::GetInstance().Update(gameTime);
 }
 
 // Draws the game world
-void Engine::Game::Draw()
+void Engine::Game::Draw(const GameTime& gameTime)
 {
 	// Draw the game world
-	WorldManager::GetInstance().Draw();
+	WorldManager::GetInstance().Draw(gameTime);
 
 	// Repaint the screen by swapping the buffers of the main window
 	GraphicsManager::GetInstance().SwapWindowBuffers();

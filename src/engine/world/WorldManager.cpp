@@ -14,20 +14,20 @@ void Engine::WorldManager::Terminate()
 }
 
 // Updates all game objects in the game world
-void Engine::WorldManager::Update()
+void Engine::WorldManager::Update(const GameTime& gameTime)
 {
 	for (std::pair<unsigned int, GameObject*> gameObject : m_GameObjects)
 	{
-		gameObject.second->Update();
+		gameObject.second->Update(gameTime);
 	}
 }
 
 // Draws all game objects in the game world
-void Engine::WorldManager::Draw()
+void Engine::WorldManager::Draw(const GameTime& gameTime)
 {
 	for (std::pair<unsigned int, GameObject*> gameObject : m_GameObjects)
 	{
-		gameObject.second->Draw();
+		gameObject.second->Draw(gameTime);
 	}
 }
 

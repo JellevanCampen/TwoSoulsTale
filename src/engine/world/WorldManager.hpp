@@ -4,6 +4,8 @@
 
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
 #include "GameObject.hpp" // For representing game objects
+#include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
+
 #include <map> // For holding the game objects in the game world
 
 namespace Engine{
@@ -41,10 +43,10 @@ namespace Engine{
 		void Terminate();
 
 		// Updates all game objects in the game world
-		void Update();
+		void Update(const GameTime& gameTime);
 
 		// Draws all game objects in the game world
-		void Draw();
+		void Draw(const GameTime& gameTime);
 
 		// Adds a game object to the world and returns the handle
 		GameObjectHandle AddGameObject(GameObject* gameObject);

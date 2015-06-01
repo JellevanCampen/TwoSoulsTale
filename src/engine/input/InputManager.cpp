@@ -19,7 +19,7 @@ void Engine::InputManager::Terminate()
 }
 
 // Updates the InputManager to retrieve input from active polling-only devices (such as Gamepads)
-void Engine::InputManager::Update()
+void Engine::InputManager::Update(const GameTime& gameTime)
 {
 	LoggingManager& mngrLogging = LoggingManager::GetInstance();
 

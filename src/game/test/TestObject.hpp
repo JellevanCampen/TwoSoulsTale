@@ -23,10 +23,10 @@ namespace GameContent{
 		void Destroy();
 
 		// Updates the game object
-		void Update();
+		void Update(const Engine::GameTime& gameTime);
 
 		// Draws the game object
-		void Draw();
+		void Draw(const Engine::GameTime& gameTime);
 
 		/**************************************************************/
 		/* Input events                                               */
