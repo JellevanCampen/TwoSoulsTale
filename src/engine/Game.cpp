@@ -35,10 +35,6 @@ void Engine::Game::Initialize()
 // Starts the game loop
 void Engine::Game::Start()
 {
-	// TESTING
-	WorldManager::GetInstance().AddGameObject(new GameContent::TestObject());
-	// TESTING
-
 	m_Running = true;
 	RunVariableFramerate();
 	// RunFixedFramerate();
