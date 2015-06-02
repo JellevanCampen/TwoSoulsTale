@@ -36,8 +36,8 @@ void Engine::Game::Initialize()
 void Engine::Game::Start()
 {
 	m_Running = true;
-	RunVariableFramerate();
-	// RunFixedFramerate();
+	// RunVariableFramerate();
+	RunFixedFramerate();
 }
 
 // Stops the game loop

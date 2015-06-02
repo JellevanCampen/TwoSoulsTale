@@ -1,7 +1,5 @@
 #include "TestObject.hpp"
 
-#include "Box2D.h"
-
 // Creates the game object
 void GameContent::TestObject::Create()
 {
@@ -29,9 +27,53 @@ void GameContent::TestObject::Create()
 	// Reserve a sprite sheet
 	m_SpriteSheet = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/9CEvO.png");
 
+	// TESTING
 	// Generate a physics world
-	b2Vec2 gravity(0.0f, -10.0f);
-	b2World world(gravity);
+
+	b2BodyDef groundBodyDef;
+	groundBodyDef.position.Set(128.f / scale, -10.0f / scale);
+	b2Body* groundBody = world.CreateBody(&groundBodyDef);
+	b2PolygonShape groundBox;
+	groundBox.SetAsBox(128.0f / scale, 10.0f / scale);
+	groundBody->CreateFixture(&groundBox, 0.0f);
+
+	b2BodyDef leftWallDef;
+	leftWallDef.position.Set(-10.0f / scale, 120.0f / scale);
+	b2Body* leftWallBody = world.CreateBody(&leftWallDef);
+	b2PolygonShape leftWallBox;
+	leftWallBox.SetAsBox(10.0f / scale, 120.0f / scale);
+	leftWallBody->CreateFixture(&leftWallBox, 0.0f);
+
+	b2BodyDef rightWallDef;
+	rightWallDef.position.Set((256.0f + 10.0f) / scale, 120.0f / scale);
+	b2Body* rightWallBody = world.CreateBody(&rightWallDef);
+	b2PolygonShape rightWallBox;
+	rightWallBox.SetAsBox(10.0f / scale, 120.0f / scale);
+	rightWallBody->CreateFixture(&rightWallBox, 0.0f);
+
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(128.0f / scale, 240.0f / scale);
+	body = world.CreateBody(&bodyDef);
+	b2PolygonShape dynamicBox;
+
+	b2Vec2 points[4];
+	points[0].x = -26.0f / 2.0f / scale;
+	points[0].y = 0.0f / 2.0f / scale;
+	points[1].x = -26.0f / 2.0f / scale;
+	points[1].y = 27.0f / scale;
+	points[2].x = 26.0f / 2.0f / scale;
+	points[2].y = 27.0f / scale;
+	points[3].x = 26.0f / 2.0f / scale;
+	points[3].y = 0.0f / 2.0f / scale;
+	dynamicBox.Set(points, 4);
+	// dynamicBox.SetAsBox((34.0f / 2.0f) / scale, (31.0f / 2.0f) / scale);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	body->CreateFixture(&fixtureDef);
+	// TESTING
 }
 
 // Destroys the game object
@@ -56,8 +98,11 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 {
 	// Update the position
 	m_PosX += m_SpeedX * ((float)gameTime.deltaTimeMicros / 10000.f);
-	m_PosY += m_SpeedY * ((float)gameTime.deltaTimeMicros / 10000.f);;
+	m_PosY += m_SpeedY * ((float)gameTime.deltaTimeMicros / 10000.f);
 
+	// TESTING
+	world.Step(timestep, velocityIterations, positionIterations);
+	// TESTING
 	
 	if ((gameTime.frameCount % 500) == 499)
 	{
@@ -70,8 +115,8 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
-	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0, (gameTime.totalTimeMicros / 10000 / 100.0f), 1.0f + 0.2f * sinf(gameTime.totalTimeMicros / 100000 / 25.0f), 1.0f + 0.2f*cosf(gameTime.totalTimeMicros / 100000 / 25.0f));
+	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
 }
 
 /**************************************************************/
@@ -91,6 +136,10 @@ void GameContent::TestObject::ProcessKeyboardKeyEvent(int key, Engine::KeyboardL
 
 	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::PRESSED) m_SpeedY += 1;
 	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::RELEASED) m_SpeedY -= 1;
+
+	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::PRESSED)	body->ApplyLinearImpulse(b2Vec2(0.0f, 5.0f), body->GetPosition() + b2Vec2(0.0f / scale, 0.0f / scale), true);
+	if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::PRESSED) body->ApplyLinearImpulse(b2Vec2(-2.0f, 2.0f), body->GetPosition() + b2Vec2(16.0f / scale, 0.25f / scale), true);
+	if (key == GLFW_KEY_RIGHT && action == KeyboardKeyAction::PRESSED) body->ApplyLinearImpulse(b2Vec2(2.0f, 2.0f), body->GetPosition() + b2Vec2(-16.0f / scale, 0.25f / scale), true);
 
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Keyboard key event detected by TestObject.");
 }

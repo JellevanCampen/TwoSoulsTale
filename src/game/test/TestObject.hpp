@@ -11,6 +11,8 @@
 #include "..\src\engine\world\WorldManager.hpp" // [WORLD] World Manager
 #include "..\src\engine\resources\ResourceManager.hpp" // [RESOURCE] Resource Manager
 
+#include "Box2D.h"
+
 namespace GameContent{
 	class TestObject : public Engine::GameObject, public Engine::KeyboardListener, public Engine::MouseListener, public Engine::GamepadListener{
 
@@ -47,13 +49,22 @@ namespace GameContent{
 
 		// Position
 		double m_PosX;
-		double m_PosY; 
+		double m_PosY;
 
 		double m_SpeedX;
 		double m_SpeedY;
 
 		// Sprite sheet
 		SpriteSheet m_SpriteSheet;
+
+		// TESTING
+		b2World world = b2World(b2Vec2(0.0f, -10.0f));
+		b2Body* body;
+		float32 timestep = 1.0f / 60.0f;
+		int32 velocityIterations = 6;
+		int32 positionIterations = 2;
+		float scale = 32.0f;
+		// TESTING
 
 	};
 }
