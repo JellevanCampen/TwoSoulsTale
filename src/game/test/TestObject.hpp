@@ -60,6 +60,7 @@ namespace GameContent{
 		// TESTING
 		b2World world = b2World(b2Vec2(0.0f, -10.0f));
 		b2Body* body;
+		b2Body* bodyDistance;
 		float32 timestep = 1.0f / 60.0f;
 		int32 velocityIterations = 6;
 		int32 positionIterations = 2;

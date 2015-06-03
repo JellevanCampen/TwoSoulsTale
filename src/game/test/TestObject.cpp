@@ -30,12 +30,20 @@ void GameContent::TestObject::Create()
 	// TESTING
 	// Generate a physics world
 
+	// ---- Terrain
 	b2BodyDef groundBodyDef;
 	groundBodyDef.position.Set(128.f / scale, -10.0f / scale);
 	b2Body* groundBody = world.CreateBody(&groundBodyDef);
 	b2PolygonShape groundBox;
 	groundBox.SetAsBox(128.0f / scale, 10.0f / scale);
 	groundBody->CreateFixture(&groundBox, 0.0f);
+
+	b2BodyDef ceilingBodyDef;
+	ceilingBodyDef.position.Set(128.f / scale, 250.0f / scale);
+	b2Body* ceilingBody = world.CreateBody(&ceilingBodyDef);
+	b2PolygonShape ceilingBox;
+	ceilingBox.SetAsBox(128.0f / scale, 10.0f / scale);
+	ceilingBody->CreateFixture(&ceilingBox, 0.0f);
 
 	b2BodyDef leftWallDef;
 	leftWallDef.position.Set(-10.0f / scale, 120.0f / scale);
@@ -51,12 +59,8 @@ void GameContent::TestObject::Create()
 	rightWallBox.SetAsBox(10.0f / scale, 120.0f / scale);
 	rightWallBody->CreateFixture(&rightWallBox, 0.0f);
 
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(128.0f / scale, 240.0f / scale);
-	body = world.CreateBody(&bodyDef);
+	// ---- Dynamic Objects
 	b2PolygonShape dynamicBox;
-
 	b2Vec2 points[4];
 	points[0].x = -26.0f / 2.0f / scale;
 	points[0].y = 0.0f / 2.0f / scale;
@@ -67,12 +71,34 @@ void GameContent::TestObject::Create()
 	points[3].x = 26.0f / 2.0f / scale;
 	points[3].y = 0.0f / 2.0f / scale;
 	dynamicBox.Set(points, 4);
-	// dynamicBox.SetAsBox((34.0f / 2.0f) / scale, (31.0f / 2.0f) / scale);
+
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
 	fixtureDef.density = 1.0f;
 	fixtureDef.friction = 0.3f;
+	fixtureDef.restitution = 0.5f;
+	
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(128.0f / scale, 200.0f / scale);
+	body = world.CreateBody(&bodyDef);
 	body->CreateFixture(&fixtureDef);
+
+	b2BodyDef bodyDistanceDef;
+	bodyDistanceDef.type = b2_dynamicBody;
+	bodyDistanceDef.position.Set(128.0f / scale, 120.0f / scale);
+	bodyDistanceDef.linearDamping = 0.1f;
+	bodyDistanceDef.angularDamping = 0.1f;
+	bodyDistance = world.CreateBody(&bodyDistanceDef);
+	bodyDistance->CreateFixture(&fixtureDef);
+
+	b2DistanceJointDef distanceJointDef;
+	distanceJointDef.Initialize(ceilingBody, bodyDistance, ceilingBody->GetPosition(), bodyDistance->GetPosition());
+	distanceJointDef.collideConnected = true;
+	distanceJointDef.frequencyHz = 4.0f;
+	distanceJointDef.dampingRatio = 1.0f;
+	b2DistanceJoint* distanceJoint = (b2DistanceJoint*)world.CreateJoint(&distanceJointDef);
+	
 	// TESTING
 }
 
@@ -102,6 +128,7 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 
 	// TESTING
 	world.Step(timestep, velocityIterations, positionIterations);
+	world.ClearForces(); // Needed to reset forces if they were applied during the previous update
 	// TESTING
 	
 	if ((gameTime.frameCount % 500) == 499)
@@ -117,6 +144,7 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
 	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
 }
 
 /**************************************************************/
