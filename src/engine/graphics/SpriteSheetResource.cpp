@@ -110,3 +110,15 @@ bool Engine::SpriteSheetResource::DestroyBuffers()
 
 	return true;
 }
+
+// Writes the sprite sheet metadata to a file
+void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
+{
+	
+}
+
+// Reads the sprite sheet metadata from a file
+void Engine::SpriteSheetResource::ReadMetadataFromFile(std::string filename)
+{
+
+}

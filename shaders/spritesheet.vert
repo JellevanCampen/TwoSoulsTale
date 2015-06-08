@@ -10,10 +10,11 @@ uniform vec2 spriteUV2;
 
 uniform mat4 matModel;
 uniform mat4 matView;
+uniform mat4 matProjection;
 
 void main()
 {
-	gl_Position = matView * matModel * vec4(vPosition.x, vPosition.y, 0.0f, 1.0f);
+	gl_Position = matProjection * matView * matModel * vec4(vPosition.x, vPosition.y, 0.0f, 1.0f);
 	vec2 vUV_flipped = vec2(vUV.x, 1.0f - vUV.y);
 	fUV = (spriteUV1 + (vUV_flipped) * (spriteUV2 - spriteUV1));
 	fUV.y = -fUV.y;

@@ -165,7 +165,11 @@ source_group(Engine\\World FILES ${SRC_ENGINE_WORLD})
 set(SRC_ENGINE_COMMON_UTILITY 
 	"src/engine/common/utility/ImageReader.hpp"
 	"src/engine/common/utility/ImageReader.cpp"
+	"src/engine/common/utility/BinaryFileIO.hpp"
+	"src/engine/common/utility/BinaryFileIO.cpp"
 	"src/engine/common/utility/GameTime.hpp"
+	"src/engine/common/utility/VectorTypes.hpp"
+	"src/engine/common/utility/MatrixTypes.hpp"
 )
 source_group(Engine\\Common\\Utility FILES ${SRC_ENGINE_COMMON_UTILITY})
 

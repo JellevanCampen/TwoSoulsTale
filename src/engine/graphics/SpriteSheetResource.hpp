@@ -71,6 +71,12 @@ namespace Engine
 
 	public:
 
+		// Writes the sprite sheet metadata to a file
+		void WriteMetadataToFile(std::string filename);
+
+		// Reads the sprite sheet metadata from a file
+		void ReadMetadataFromFile(std::string filename);
+
 		friend class ResourceManager;
 		friend class GraphicsManager;
 
