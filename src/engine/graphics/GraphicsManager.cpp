@@ -28,6 +28,12 @@ void Engine::GraphicsManager::Initialize()
 
 	// Initialize OpenGL settings
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// Initialize camera settings
+	m_CameraPosition = f2(m_WindowWidth / 2.0f, m_WindowHeight / 2.0f);
+	m_CameraZoom = 1.0f;
+	m_CameraViewMatrixDirty = true;
+	m_CameraProjectionMatrixDirty = true;
 }
 
 // Destroys the window for rendering and GLEW and GLFW
@@ -47,9 +53,9 @@ void Engine::GraphicsManager::SwapWindowBuffers()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-/**************************************************************/
-/* Sprite sheets                                              */
-/**************************************************************/
+////////////////////////////////////////////////////////////////
+// Sprite sheets                                              //
+////////////////////////////////////////////////////////////////
 
 // Draws a frame of the specified sprite sheet
 void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z)
@@ -80,8 +86,9 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
 
-	glm::mat4x4 matView = glm::ortho(0.0f, 256.0f, 0.0f, 240.0f, -1000.0f, 1000.0f);
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, glm::value_ptr(matView));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()[0]));
+
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()[0]));
 
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
@@ -120,8 +127,9 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	matModel = glm::scale(matModel, glm::vec3(scaleX, scaleY, 1.0f));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
 
-	glm::mat4x4 matView = glm::ortho(0.0f, 256.0f, 0.0f, 240.0f, -1000.0f, 1000.0f);
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, glm::value_ptr(matView));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()[0]));
+
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()[0]));
 
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
@@ -203,6 +211,7 @@ void Engine::GraphicsManager::InitializeShaderPrograms()
 	m_ShaderSpriteSheet_uSpriteUV2 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2");
 	m_ShaderSpriteSheet_uMatModel = glGetUniformLocation(m_ShaderSpriteSheet, "matModel");
 	m_ShaderSpriteSheet_uMatView = glGetUniformLocation(m_ShaderSpriteSheet, "matView");
+	m_ShaderSpriteSheet_uMatProjection = glGetUniformLocation(m_ShaderSpriteSheet, "matProjection");
 }
 
 // Destroys standard shader programs
@@ -290,4 +299,69 @@ GLuint Engine::GraphicsManager::LoadShaderStage(std::string filename, GLenum sha
 	}
 
 	return shader;
+}
+
+////////////////////////////////////////////////////////////////
+// Camera													  //
+////////////////////////////////////////////////////////////////
+
+// Sets the camera position
+void Engine::GraphicsManager::SetCameraPosition(f2 position)
+{
+	m_CameraPosition = position;
+	m_CameraViewMatrixDirty = true;
+}
+
+// Gets the camera position
+Engine::f2 Engine::GraphicsManager::GetCameraPosition()
+{
+	return m_CameraPosition;
+}
+
+// Sets the camera zoom
+void Engine::GraphicsManager::SetCameraZoom(float zoom)
+{
+	m_CameraZoom = zoom;
+	m_CameraViewMatrixDirty = true;
+}
+
+// Gets the camera zoom
+float Engine::GraphicsManager::GetCameraZoom()
+{
+	return m_CameraZoom;
+}
+
+// Gets the camera's view matrix
+const Engine::mat4f& Engine::GraphicsManager::GetCameraViewMatrix()
+{
+	if (!m_CameraViewMatrixDirty)
+	{
+		return m_CameraViewMatrix;
+	}
+
+	// Calculate the view matrix if needed
+	m_CameraViewMatrix = glm::ortho(
+		m_CameraPosition.x - ((m_WindowWidth / 2.0f) / m_CameraZoom),
+		m_CameraPosition.x + ((m_WindowWidth / 2.0f) / m_CameraZoom),
+		m_CameraPosition.y - ((m_WindowHeight / 2.0f) / m_CameraZoom),
+		m_CameraPosition.y + ((m_WindowHeight / 2.0f) / m_CameraZoom), 
+		m_ZNear, m_ZFar);
+	m_CameraViewMatrixDirty = false;
+
+	return m_CameraViewMatrix;
+}
+
+// Gets the camera's projection matrix
+const Engine::mat4f& Engine::GraphicsManager::GetCameraProjectionMatrix()
+{
+	if (!m_CameraProjectionMatrixDirty)
+	{
+		return m_CameraProjectionMatrix;
+	}
+
+	// Calculate the projection matrix if needed
+	m_CameraProjectionMatrix.Zero();
+	m_CameraProjectionMatrix.Diagonal(f4(1, 1, 1, 1));
+
+	return m_CameraProjectionMatrix;
 }

@@ -4,11 +4,13 @@
 
 #include "glew\glew.h"
 #include "glfw\glfw3.h"
-#include <string>
 
 #include "../input/InputManager.hpp" // InputManager to make the callback hookup a friend function
 #include "../resources/ResourceManager.hpp" // Resourcemanager for managing graphics resources
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
+#include "../common/utility/VectorTypes.hpp" // For representing positions
+#include "../common/utility/MatrixTypes.hpp" // For representing transformation matrices
+#include <string> // For representing filenames and the window title
 
 namespace Engine{
 	class GraphicsManager : public Singleton<GraphicsManager>{
@@ -24,9 +26,9 @@ namespace Engine{
 		// Swaps the buffers of the main window
 		void SwapWindowBuffers();
 
-		/**************************************************************/
-		/* Sprite sheets                                              */
-		/**************************************************************/
+		////////////////////////////////////////////////////////////////
+		// Sprite sheets                                              //
+		////////////////////////////////////////////////////////////////
 
 		// Draws a frame of the specified sprite sheet
 		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z);
@@ -50,6 +52,7 @@ namespace Engine{
 		GLuint m_ShaderSpriteSheet_uSpriteUV2;
 		GLuint m_ShaderSpriteSheet_uMatModel;
 		GLuint m_ShaderSpriteSheet_uMatView;
+		GLuint m_ShaderSpriteSheet_uMatProjection;
 
 		// Initializes GLFW
 		bool InitializeGLFW();
@@ -80,6 +83,54 @@ namespace Engine{
 
 		// Path to the shaders
 		std::string m_ShaderPath;
+
+		////////////////////////////////////////////////////////////////
+		// Camera													  //
+		////////////////////////////////////////////////////////////////
+
+		// Camera focal position
+		f2 m_CameraPosition;
+
+		// Camera zoom factor
+		float m_CameraZoom;
+
+		// Cached version of the view matrix
+		mat4f m_CameraViewMatrix;
+
+		// Whether or not the view matrix should be recalculated
+		bool m_CameraViewMatrixDirty;
+
+		// Cached version of the projection matrix
+		mat4f m_CameraProjectionMatrix;
+
+		// Whether or not the projection matrix should be recalculated
+		bool m_CameraProjectionMatrixDirty;
+		
+		// Near z-plane
+		const float m_ZNear = -1000.0f;
+
+		// Far z-plane
+		const float m_ZFar = 1000.0f;
+
+	public:
+
+		// Sets the camera position
+		void SetCameraPosition(f2 position);
+
+		// Gets the camera position
+		f2 GetCameraPosition();
+
+		// Sets the camera zoom
+		void SetCameraZoom(float zoom);
+
+		// Gets the camera zoom
+		float GetCameraZoom();
+
+		// Gets the camera's view matrix
+		const mat4f& GetCameraViewMatrix();
+
+		// Gets the camera's projection matrix
+		const mat4f& GetCameraProjectionMatrix();
 
 		friend class InputManager;
 

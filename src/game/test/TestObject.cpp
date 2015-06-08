@@ -1,4 +1,5 @@
 #include "TestObject.hpp"
+#include "..\src\engine\common\utility\VectorTypes.hpp";
 
 // Creates the game object
 void GameContent::TestObject::Create()
@@ -11,7 +12,7 @@ void GameContent::TestObject::Create()
 	m_SpeedY = 0;
 
 	// Start playing music
-	Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
+	// Engine::AudioResource* mscChina = Engine::AudioManager::GetInstance().LoadAudioResource("music/thunderstruck.flac");
 	// Engine::AudioManager::GetInstance().Play(mscChina);
 
 	// Register for listening to input
@@ -129,6 +130,13 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 	// TESTING
 	world.Step(timestep, velocityIterations, positionIterations);
 	world.ClearForces(); // Needed to reset forces if they were applied during the previous update
+
+	Engine::f2 bodyPos = Engine::f2(body->GetPosition().x * scale, body->GetPosition().y * scale);
+	Engine::f2 centerPos = Engine::f2(256.0f / 2.0f, 240.0f / 2.0f);
+	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2((bodyPos.x + 3.0f * centerPos.x) / 4.0f, (bodyPos.y + 3.0f * centerPos.y) / 4.0f));
+	float test = Engine::f2(bodyPos - centerPos).Length();
+	float temp = 4.0f - 0.5f * Engine::f2(bodyPos - centerPos).Length() / 128.0f;
+	Engine::GraphicsManager::GetInstance().SetCameraZoom(temp);
 	// TESTING
 	
 	if ((gameTime.frameCount % 500) == 499)
@@ -153,7 +161,7 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 
 void GameContent::TestObject::ProcessKeyboardKeyEvent(int key, Engine::KeyboardListener::KeyboardKeyAction action)
 {
-	if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::PRESSED) m_SpeedX -= 1;
+	/*if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::PRESSED) m_SpeedX -= 1;
 	if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::RELEASED) m_SpeedX += 1;
 
 	if (key == GLFW_KEY_RIGHT && action == KeyboardKeyAction::PRESSED) m_SpeedX += 1;
@@ -163,7 +171,7 @@ void GameContent::TestObject::ProcessKeyboardKeyEvent(int key, Engine::KeyboardL
 	if (key == GLFW_KEY_DOWN && action == KeyboardKeyAction::RELEASED) m_SpeedY += 1;
 
 	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::PRESSED) m_SpeedY += 1;
-	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::RELEASED) m_SpeedY -= 1;
+	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::RELEASED) m_SpeedY -= 1;*/
 
 	if (key == GLFW_KEY_UP && action == KeyboardKeyAction::PRESSED)	body->ApplyLinearImpulse(b2Vec2(0.0f, 5.0f), body->GetPosition() + b2Vec2(0.0f / scale, 0.0f / scale), true);
 	if (key == GLFW_KEY_LEFT && action == KeyboardKeyAction::PRESSED) body->ApplyLinearImpulse(b2Vec2(-2.0f, 2.0f), body->GetPosition() + b2Vec2(16.0f / scale, 0.25f / scale), true);
