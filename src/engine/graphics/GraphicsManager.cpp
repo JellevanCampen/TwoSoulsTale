@@ -72,14 +72,14 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
 
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = spriteSheetResource.m_SheetLeft + (frame % spriteSheetResource.m_SheetColumns) * (spriteSheetResource.m_SheetSeparationX + spriteSheetResource.m_SpriteWidth);
-	float right = left + spriteSheetResource.m_SpriteWidth;
-	float top = spriteSheetResource.m_SheetTop + (int)(frame / spriteSheetResource.m_SheetColumns) * (spriteSheetResource.m_SheetSeparationY + spriteSheetResource.m_SpriteHeight);
-	float bottom = top + spriteSheetResource.m_SpriteHeight;
-	left /= spriteSheetResource.m_SheetWidth;
-	right /= spriteSheetResource.m_SheetWidth;
-	top /= spriteSheetResource.m_SheetHeight;
-	bottom /= spriteSheetResource.m_SheetHeight;
+	float left = spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth);
+	float right = left + spriteSheetResource.m_Descriptor.m_SpriteWidth;
+	float top = spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight);
+	float bottom = top + spriteSheetResource.m_Descriptor.m_SpriteHeight;
+	left /= spriteSheetResource.m_Descriptor.m_SheetWidth;
+	right /= spriteSheetResource.m_Descriptor.m_SheetWidth;
+	top /= spriteSheetResource.m_Descriptor.m_SheetHeight;
+	bottom /= spriteSheetResource.m_Descriptor.m_SheetHeight;
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
@@ -111,14 +111,14 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
 
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = spriteSheetResource.m_SheetLeft + (frame % spriteSheetResource.m_SheetColumns) * (spriteSheetResource.m_SheetSeparationX + spriteSheetResource.m_SpriteWidth);
-	float right = left + spriteSheetResource.m_SpriteWidth;
-	float top = spriteSheetResource.m_SheetTop + (int)(frame / spriteSheetResource.m_SheetColumns) * (spriteSheetResource.m_SheetSeparationY + spriteSheetResource.m_SpriteHeight);
-	float bottom = top + spriteSheetResource.m_SpriteHeight;
-	left /= spriteSheetResource.m_SheetWidth;
-	right /= spriteSheetResource.m_SheetWidth;
-	top /= spriteSheetResource.m_SheetHeight;
-	bottom /= spriteSheetResource.m_SheetHeight;
+	float left = spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth);
+	float right = left + spriteSheetResource.m_Descriptor.m_SpriteWidth;
+	float top = spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight);
+	float bottom = top + spriteSheetResource.m_Descriptor.m_SpriteHeight;
+	left /= spriteSheetResource.m_Descriptor.m_SheetWidth;
+	right /= spriteSheetResource.m_Descriptor.m_SheetWidth;
+	top /= spriteSheetResource.m_Descriptor.m_SheetHeight;
+	bottom /= spriteSheetResource.m_Descriptor.m_SheetHeight;
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 

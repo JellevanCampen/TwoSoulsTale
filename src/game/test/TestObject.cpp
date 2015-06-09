@@ -26,7 +26,8 @@ void GameContent::TestObject::Create()
 	Engine::InputManager::GetInstance().RegisterGamepadButtonListener(this);
 
 	// Reserve a sprite sheet
-	m_SpriteSheet = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/9CEvO.png");
+	m_SpriteSheetSpiny = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/9CEvO.png");
+	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/02goomba.png");
 
 	// TESTING
 	// Generate a physics world
@@ -85,13 +86,31 @@ void GameContent::TestObject::Create()
 	body = world.CreateBody(&bodyDef);
 	body->CreateFixture(&fixtureDef);
 
+	b2PolygonShape dynamicDistanceBox;
+	b2Vec2 pointsDistance[4];
+	pointsDistance[0].x = -20.0f / 2.0f / scale;
+	pointsDistance[0].y = 0.0f / 2.0f / scale;
+	pointsDistance[1].x = -20.0f / 2.0f / scale;
+	pointsDistance[1].y = 23.0f / scale;
+	pointsDistance[2].x = 20.0f / 2.0f / scale;
+	pointsDistance[2].y = 23.0f / scale;
+	pointsDistance[3].x = 20.0f / 2.0f / scale;
+	pointsDistance[3].y = 0.0f / 2.0f / scale;
+	dynamicDistanceBox.Set(pointsDistance, 4);
+
+	b2FixtureDef fixtureDistanceDef;
+	fixtureDistanceDef.shape = &dynamicDistanceBox;
+	fixtureDistanceDef.density = 1.0f;
+	fixtureDistanceDef.friction = 0.3f;
+	fixtureDistanceDef.restitution = 0.5f;
+
 	b2BodyDef bodyDistanceDef;
 	bodyDistanceDef.type = b2_dynamicBody;
 	bodyDistanceDef.position.Set(128.0f / scale, 120.0f / scale);
 	bodyDistanceDef.linearDamping = 0.1f;
 	bodyDistanceDef.angularDamping = 0.1f;
 	bodyDistance = world.CreateBody(&bodyDistanceDef);
-	bodyDistance->CreateFixture(&fixtureDef);
+	bodyDistance->CreateFixture(&fixtureDistanceDef);
 
 	b2DistanceJointDef distanceJointDef;
 	distanceJointDef.Initialize(ceilingBody, bodyDistance, ceilingBody->GetPosition(), bodyDistance->GetPosition());
@@ -117,7 +136,8 @@ void GameContent::TestObject::Destroy()
 	Engine::InputManager::GetInstance().DeregisterGamepadButtonListener(this);
 
 	// Free a sprite sheet
-	Engine::ResourceManager::GetInstance().FreeSpriteSheet(m_SpriteSheet);
+	Engine::ResourceManager::GetInstance().FreeSpriteSheet(m_SpriteSheetSpiny);
+	Engine::ResourceManager::GetInstance().FreeSpriteSheet(m_SpriteSheetGoomba);
 }
 
 // Updates the game object
@@ -151,8 +171,8 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 {
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (gameTime.totalTimeMicros / 100000) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
 }
 
 /**************************************************************/

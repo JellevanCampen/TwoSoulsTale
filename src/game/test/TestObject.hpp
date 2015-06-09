@@ -55,7 +55,8 @@ namespace GameContent{
 		double m_SpeedY;
 
 		// Sprite sheet
-		SpriteSheet m_SpriteSheet;
+		SpriteSheet m_SpriteSheetSpiny;
+		SpriteSheet m_SpriteSheetGoomba;
 
 		// TESTING
 		b2World world = b2World(b2Vec2(0.0f, -10.0f));

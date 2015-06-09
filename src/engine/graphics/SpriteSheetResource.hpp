@@ -24,20 +24,26 @@ namespace Engine
 
 	private:
 
+		// Descriptor struct for describing the sprite sheet layout
+		typedef struct Descriptor
+		{
+			// Sheet layout
+			unsigned int m_SpriteWidth = 16;
+			unsigned int m_SpriteHeight = 16;
+			int m_SpriteOriginX = 0;
+			int m_SpriteOriginY = 0;
+			unsigned int m_SheetWidth = 256;
+			unsigned int m_SheetHeight = 256;
+			unsigned int m_SheetRows = 16;
+			unsigned int m_SheetColumns = 16;
+			int m_SheetSeparationX = 0;
+			int m_SheetSeparationY = 0;
+			int m_SheetLeft = 0;
+			int m_SheetTop = 0;
+		};
+
 		// Sprite sheet specifications
-		// TODO: Remove initialization of values
-		unsigned int m_SpriteWidth = 34;
-		unsigned int m_SpriteHeight = 31;
-		int m_SpriteOriginX = 17;
-		int m_SpriteOriginY = 0;
-		unsigned int m_SheetWidth = 238;
-		unsigned int m_SheetHeight = 198;
-		unsigned int m_SheetColumns = 6;
-		unsigned int m_SheetRows = 6;
-		int m_SheetSeparationX = 2;
-		int m_SheetSeparationY = 2;
-		int m_SheetLeft = 1;
-		int m_SheetTop = 1;
+		Descriptor m_Descriptor;
 
 		// Vertex attribute object for this sprite sheet
 		GLuint m_VertexAttributes;
