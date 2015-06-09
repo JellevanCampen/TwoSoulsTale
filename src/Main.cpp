@@ -3,6 +3,7 @@
 #include "engine/Game.hpp" // Include all engine components
 #include "engine\world\WorldManager.hpp"
 #include "game\test\TestObject.hpp"
+#include "engine\common\utility\XMLFileIO.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -10,6 +11,11 @@ int main(int argc, char* argv[])
 	game.Initialize();
 
 	// TESTING
+	Engine::XMLFile file;
+	Engine::XMLFileIO::OpenFile("9CEvO.meta", file);
+
+
+
 	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2(256.0f / 2.0f, 240.0f / 2.0f));
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(4.0f);
 	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject());

@@ -95,6 +95,14 @@ if (BOX2D_FOUND)
 	add_definitions(${BOX2D_DEFINITIONS})
 endif (BOX2D_FOUND)
 
+# TinyXML2
+find_package(TINYXML2 REQUIRED)
+if (TINYXML2_FOUND)
+	include_directories(${TINYXML2_INCLUDE_DIRS})
+	target_link_libraries(TwoSoulsTale ${TINYXML2_LIBRARIES})
+	add_definitions(${TINYXML2_DEFINITIONS})
+endif (TINYXML2_FOUND)
+
 
 
 ################################################################
@@ -165,8 +173,10 @@ source_group(Engine\\World FILES ${SRC_ENGINE_WORLD})
 set(SRC_ENGINE_COMMON_UTILITY 
 	"src/engine/common/utility/ImageReader.hpp"
 	"src/engine/common/utility/ImageReader.cpp"
-	"src/engine/common/utility/BinaryFileIO.hpp"
-	"src/engine/common/utility/BinaryFileIO.cpp"
+	# "src/engine/common/utility/BinaryFileIO.hpp"
+	# "src/engine/common/utility/BinaryFileIO.cpp"
+	"src/engine/common/utility/XMLFileIO.hpp"
+	"src/engine/common/utility/XMLFileIO.cpp"
 	"src/engine/common/utility/GameTime.hpp"
 	"src/engine/common/utility/VectorTypes.hpp"
 	"src/engine/common/utility/MatrixTypes.hpp"
