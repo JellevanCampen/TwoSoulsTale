@@ -48,6 +48,7 @@ namespace Engine{
 
 		// Shaders
 		GLuint m_ShaderSpriteSheet;
+		GLuint m_ShaderSpriteSheet_uTransparancyColor;
 		GLuint m_ShaderSpriteSheet_uSpriteUV1;
 		GLuint m_ShaderSpriteSheet_uSpriteUV2;
 		GLuint m_ShaderSpriteSheet_uMatModel;

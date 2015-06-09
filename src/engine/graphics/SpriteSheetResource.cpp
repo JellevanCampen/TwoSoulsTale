@@ -143,6 +143,10 @@ void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
 	XMLFileIO::SetAttributeValue(elementLayout, "SheetSeparationY", std::to_string(m_Descriptor.m_SheetSeparationY));
 	XMLFileIO::SetAttributeValue(elementLayout, "SheetLeft", std::to_string(m_Descriptor.m_SheetLeft));
 	XMLFileIO::SetAttributeValue(elementLayout, "SheetTop", std::to_string(m_Descriptor.m_SheetTop));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyRed", std::to_string(m_Descriptor.m_ColorTransparancyRed));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyGreen", std::to_string(m_Descriptor.m_ColorTransparancyGreen));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyBlue", std::to_string(m_Descriptor.m_ColorTransparancyBlue));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyAlpha", std::to_string(m_Descriptor.m_ColorTransparancyAlpha));
 
 	// Save the file and close it
 	XMLFileIO::SaveFile(filename, file);
@@ -171,6 +175,10 @@ void Engine::SpriteSheetResource::ReadMetadataFromFile(std::string filename)
 	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetSeparationY", m_Descriptor.m_SheetSeparationY);
 	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetLeft", m_Descriptor.m_SheetLeft);
 	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetTop", m_Descriptor.m_SheetTop);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyRed", m_Descriptor.m_ColorTransparancyRed);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyGreen", m_Descriptor.m_ColorTransparancyGreen);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyBlue", m_Descriptor.m_ColorTransparancyBlue);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyAlpha", m_Descriptor.m_ColorTransparancyAlpha);
 
 	// Close the file
 	XMLFileIO::CloseFile(file);

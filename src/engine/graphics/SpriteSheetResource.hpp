@@ -40,6 +40,10 @@ namespace Engine
 			int m_SheetSeparationY = 0;
 			int m_SheetLeft = 0;
 			int m_SheetTop = 0;
+			unsigned int m_ColorTransparancyRed = 255;
+			unsigned int m_ColorTransparancyGreen = 255;
+			unsigned int m_ColorTransparancyBlue = 255;
+			unsigned int m_ColorTransparancyAlpha = 255;
 		};
 
 		// Sprite sheet specifications

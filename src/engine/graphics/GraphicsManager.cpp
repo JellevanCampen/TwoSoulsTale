@@ -83,11 +83,17 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
+	// Pass the transparancy color information
+	glUniform4f(m_ShaderSpriteSheet_uTransparancyColor,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyRed / 255.0f,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyGreen / 255.0f,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyBlue / 255.0f,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyAlpha / 255.0f);
+
+	// Pass the transformation matrices
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
-
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()[0]));
-
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()[0]));
 
 	// Draw the sprite sheet frame
@@ -122,13 +128,19 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
+	// Pass the transparancy color information
+	glUniform4f(m_ShaderSpriteSheet_uTransparancyColor,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyRed / 255.0f,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyGreen / 255.0f,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyBlue / 255.0f,
+		spriteSheetResource.m_Descriptor.m_ColorTransparancyAlpha / 255.0f);
+
+	// Pass the transformation matrices
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
 	matModel = glm::rotate(matModel, (float)rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 	matModel = glm::scale(matModel, glm::vec3(scaleX, scaleY, 1.0f));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
-
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()[0]));
-
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()[0]));
 
 	// Draw the sprite sheet frame
@@ -207,6 +219,7 @@ void Engine::GraphicsManager::InitializeShaderPrograms()
 {
 	// Sprite Sheet Shader
 	m_ShaderSpriteSheet = LoadShaderProgram("spritesheet", "spritesheet"); // Sprite sheet shader
+	m_ShaderSpriteSheet_uTransparancyColor = glGetUniformLocation(m_ShaderSpriteSheet, "uTransparancyColor");
 	m_ShaderSpriteSheet_uSpriteUV1 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1");
 	m_ShaderSpriteSheet_uSpriteUV2 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2");
 	m_ShaderSpriteSheet_uMatModel = glGetUniformLocation(m_ShaderSpriteSheet, "matModel");
