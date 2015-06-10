@@ -4,6 +4,7 @@
 #include "engine\world\WorldManager.hpp"
 #include "game\test\TestObject.hpp"
 #include "engine\common\utility\XMLFileIO.hpp"
+#include "engine\common\utility\Transform3D.hpp"
 
 int main(int argc, char* argv[])
 {

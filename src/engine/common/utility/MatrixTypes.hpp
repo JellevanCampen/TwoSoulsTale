@@ -144,7 +144,7 @@ namespace Engine
 	{
 		f4x4(){}														// Constructor (default, empty)
 		f4x4(glm::tmat4x4<glm::lowp_float>& m) : glm::mat4(m) {}		// Constructor (copy from glm matrix, low precision)
-		f4x4(glm::tmat4x4<glm::highp_float>& m) : glm::mat4(m) {}	// Constructor (copy from glm matrix, high precision) 
+		f4x4(glm::tmat4x4<glm::highp_float>& m) : glm::mat4(m) {}		// Constructor (copy from glm matrix, high precision) 
 		inline operator glm::mat4 const&() { return *this; }			// Get const reference to glm matrix (enables glm functions)
 
 		// Gets a const reference to the element at the specified index
