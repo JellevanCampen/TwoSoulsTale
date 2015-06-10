@@ -20,6 +20,9 @@ void Engine::WorldManager::Update(const GameTime& gameTime)
 	{
 		gameObject.second->Update(gameTime);
 	}
+
+	// Remove objects that have been marked for removal
+	RemoveGameObjects();
 }
 
 // Draws all game objects in the game world
@@ -48,8 +51,18 @@ Engine::GameObjectHandle Engine::WorldManager::AddGameObject(GameObject* gameObj
 // Removes a game object from the world 
 void Engine::WorldManager::RemoveGameObject(GameObjectHandle gameObjectHandle)
 {
-	// Delete the game object ad remove it from the game world
-	m_GameObjects.at(gameObjectHandle.GetHandle())->Destroy();
-	delete m_GameObjects.at(gameObjectHandle.GetHandle());
-	m_GameObjects.erase(gameObjectHandle.GetHandle());
+	// Add the game object handle to the remove list
+	m_GameObjectRemoveList.push_back(gameObjectHandle);
+}
+
+// Removes all game objects that have been marked for removal
+void Engine::WorldManager::RemoveGameObjects()
+{
+	for (GameObjectHandle gameObjectHandle : m_GameObjectRemoveList)
+	{
+		// Delete the game object and remove it from the game world
+		m_GameObjects.at(gameObjectHandle.GetHandle())->Destroy();
+		delete m_GameObjects.at(gameObjectHandle.GetHandle());
+		m_GameObjects.erase(gameObjectHandle.GetHandle());
+	}
 }
