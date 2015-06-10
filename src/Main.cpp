@@ -11,6 +11,10 @@ int main(int argc, char* argv[])
 	Engine::Game game;
 	game.Initialize();
 
+	GameContent::TestObject testA;
+	GameContent::TestObject testB;
+	GameContent::TestObject testC;
+
 	// TESTING
 	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2(256.0f / 2.0f, 240.0f / 2.0f));
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(4.0f);
