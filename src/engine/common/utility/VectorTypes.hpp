@@ -17,6 +17,10 @@ namespace Engine
 
 		inline operator glm::ivec2 const&() { return *this; }					// Get const reference to glm vector (enables glm functions)
 		inline void Zero() { x = 0; y = 0; }									// Make all vector components zero
+
+		// Swizzle operators
+		inline i2 xy() const { return i2(x, y); }
+		inline i2 yx() const { return i2(y, x); }
 	};
 	typedef i2 int2;
 
@@ -33,15 +37,24 @@ namespace Engine
 		inline operator glm::vec2 const&() { return *this; }					// Get const reference to glm vector (enables glm functions)
 		inline void Zero() { x = 0; y = 0; }									// Make all vector components zero
 
+		// Operators
+		inline f2 f2::operator+ (const f2& other) const { return f2(x + other.x, y + other.y); }
+		inline f2 f2::operator- (const f2& other) const { return f2(x - other.x, y - other.y); }
+		inline f2 f2::operator* (float scalar) const { return f2(x * scalar, y * scalar); }
+		inline f2 f2::operator/ (float scalar) const { return f2(x / scalar, y / scalar); }
+
 		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline basetype Length() const { const glm::vec2& v = *this; return glm::length<basetype>(v); }
+		inline float Length() const { return sqrtf((x * x) + (y * y)); }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline f2 Normalize()
-		{
-			*this = glm::normalize(operator glm::vec2 const&());
-			return *this;
-		}
+		inline f2& Normalize() { float l = Length(); x = (x / l); y = (y / l); return *this; }
+
+		// Calculates the Euclidean distance between this vector and another vector
+		inline float GetDistanceTo(f2 point) const { return (*this - point).Length(); }
+
+		// Swizzle operators
+		inline f2 xy() const { return f2(x, y); }
+		inline f2 yx() const { return f2(y, x); }
 	};
 
 	// 3D integer vector
@@ -57,6 +70,21 @@ namespace Engine
 
 		inline operator glm::ivec3 const&() { return *this; }					// Get const reference to glm vector (enables glm functions)
 		inline void Zero() { x = 0; y = 0; z = 0; }								// Make all vector components zero
+
+		// Swizzle operators
+		inline i2 xy() const { return i2(x, y); }
+		inline i2 xz() const { return i2(x, z); }
+		inline i2 yz() const { return i2(y, z); }
+		inline i2 yx() const { return i2(y, x); }
+		inline i2 zx() const { return i2(z, x); }
+		inline i2 zy() const { return i2(z, y); }
+
+		inline i3 xyz() const { return i3(x, y, z); }
+		inline i3 xzy() const { return i3(x, z, y); }
+		inline i3 yxz() const { return i3(y, x, z); }
+		inline i3 yzx() const { return i3(y, z, x); }
+		inline i3 zxy() const { return i3(z, x, y); }
+		inline i3 zyx() const { return i3(z, y, x); }
 	};
 	typedef i3 int3;
 
@@ -74,18 +102,38 @@ namespace Engine
 		inline operator glm::vec3 const&()	{ return *this; }					// Get const reference to glm vector (enables glm functions)
 		inline void Zero() { x = 0; y = 0; z = 0; }								// Make all vector components zero
 
-		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline basetype Length() const { const glm::vec3& v = *this; return glm::length<basetype>(v); }
+		// Operators
+		inline f3 f3::operator+ (const f3& other) const { return f3(x + other.x, y + other.y, z + other.z); }
+		inline f3 f3::operator- (const f3& other) const { return f3(x - other.x, y - other.y, z - other.z); }
+		inline f3 f3::operator* (float scalar) const { return f3(x * scalar, y * scalar, z * scalar); }
+		inline f3 f3::operator/ (float scalar) const { return f3(x / scalar, y / scalar, z / scalar); }
 
-		// Calculates the cross product of this vector with another vector
-		inline f3 Cross(const f3& other) const { return glm::cross(*this, other); }
+		// Gets the length of the vector (as the Euclidean distance to the origin)
+		inline float Length() const { return sqrtf((x * x) + (y * y) + (z * z)); }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline f3 Normalize()
-		{
-			*this = glm::normalize(operator glm::vec3 const&());
-			return *this;
-		}
+		inline f3& Normalize() { float l = Length(); x = (x / l); y = (y / l); z = (z / l); return *this; }
+
+		// Calculates the Euclidean distance between this vector and another vector
+		inline float GetDistanceTo(f3 point) const { return (*this - point).Length(); }
+
+		// Calculates the cross product of this vector with another vector
+		inline f3 Cross(const f3& other) const { return f3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x); }
+
+		// Swizzle operators
+		inline f2 xy() const { return f2(x, y); }
+		inline f2 xz() const { return f2(x, z); }
+		inline f2 yz() const { return f2(y, z); }
+		inline f2 yx() const { return f2(y, x); }
+		inline f2 zx() const { return f2(z, x); }
+		inline f2 zy() const { return f2(z, y); }
+
+		inline f3 xyz() const { return f3(x, y, z); }
+		inline f3 xzy() const { return f3(x, z, y); }
+		inline f3 yxz() const { return f3(y, x, z); }
+		inline f3 yzx() const { return f3(y, z, x); }
+		inline f3 zxy() const { return f3(z, x, y); }
+		inline f3 zyx() const { return f3(z, y, x); }
 	};
 
 	// 4D integer vector
@@ -103,8 +151,75 @@ namespace Engine
 		inline operator glm::ivec4 const&() { return *this; }					// Get const reference to glm vector (enables glm functions)
 		inline void Zero() { x = 0; y = 0; z = 0; w = 0; }						// Make all vector components zero
 
-		inline i3 xyz() const { return i3(this->x, this->y, this->z); }			// Gets the first three components of the vector
-		inline i3 xy() const { return i3(this->x, this->y, this->z); }			// Gets the first two components of the vector
+		// Swizzle operators
+		inline i2 xy() const { return i2(x, y); }
+		inline i2 xz() const { return i2(x, z); }
+		inline i2 xw() const { return i2(x, w); }
+		inline i2 yx() const { return i2(y, x); }
+		inline i2 yz() const { return i2(y, z); }
+		inline i2 yw() const { return i2(y, w); }
+		inline i2 zx() const { return i2(z, x); }
+		inline i2 zy() const { return i2(z, y); }
+		inline i2 zw() const { return i2(z, w); }
+		inline i2 wx() const { return i2(w, x); }
+		inline i2 wy() const { return i2(w, y); }
+		inline i2 wz() const { return i2(w, z); }
+
+		inline i3 xyz() const { return i3(x, y, z); }
+		inline i3 xyw() const { return i3(x, y, w); }
+		inline i3 xzy() const { return i3(x, z, y); }
+		inline i3 xzw() const { return i3(x, z, w); }
+		inline i3 xwy() const { return i3(x, w, y); }
+		inline i3 xwz() const { return i3(x, w, z); }
+
+		inline i3 yxz() const { return i3(y, x, z); }
+		inline i3 yxw() const { return i3(y, x, w); }
+		inline i3 yzx() const { return i3(y, z, x); }
+		inline i3 yzw() const { return i3(y, z, w); }
+		inline i3 ywx() const { return i3(y, w, x); }
+		inline i3 ywz() const { return i3(y, w, z); }
+
+		inline i3 zxy() const { return i3(z, x, y); }
+		inline i3 zxw() const { return i3(z, x, w); }
+		inline i3 zyx() const { return i3(z, y, x); }
+		inline i3 zyw() const { return i3(z, y, w); }
+		inline i3 zwx() const { return i3(z, w, x); }
+		inline i3 zwy() const { return i3(z, w, y); }
+
+		inline i3 wxy() const { return i3(w, x, y); }
+		inline i3 wxz() const { return i3(w, x, z); }
+		inline i3 wyx() const { return i3(w, y, x); }
+		inline i3 wyz() const { return i3(w, y, z); }
+		inline i3 wzx() const { return i3(w, z, x); }
+		inline i3 wzy() const { return i3(w, z, y); }
+
+		inline i4 xyzw() const { return i4(x, y, z, w); }
+		inline i4 xywz() const { return i4(x, y, w, z); }
+		inline i4 xzyw() const { return i4(x, z, y, w); }
+		inline i4 xzwy() const { return i4(x, z, w, y); }
+		inline i4 xwyz() const { return i4(x, w, y, z); }
+		inline i4 xwzy() const { return i4(x, w, z, y); }
+												  
+		inline i4 yxzw() const { return i4(y, x, z, w); }
+		inline i4 yxwz() const { return i4(y, x, w, z); }
+		inline i4 yzxw() const { return i4(y, z, x, w); }
+		inline i4 yzwx() const { return i4(y, z, w, x); }
+		inline i4 ywxz() const { return i4(y, w, x, z); }
+		inline i4 ywzx() const { return i4(y, w, z, x); }
+												  
+		inline i4 zxyw() const { return i4(z, x, y, w); }
+		inline i4 zxwy() const { return i4(z, x, w, y); }
+		inline i4 zyxw() const { return i4(z, y, x, w); }
+		inline i4 zywx() const { return i4(z, y, w, x); }
+		inline i4 zwxy() const { return i4(z, w, x, y); }
+		inline i4 zwyx() const { return i4(z, w, y, x); }
+												  
+		inline i4 wxyz() const { return i4(w, x, y, z); }
+		inline i4 wxzy() const { return i4(w, x, z, y); }
+		inline i4 wyxz() const { return i4(w, y, x, z); }
+		inline i4 wyzx() const { return i4(w, y, z, x); }
+		inline i4 wzxy() const { return i4(w, z, x, y); }
+		inline i4 wzyx() const { return i4(w, z, y, x); }
 	};
 	typedef i4 int4;
 
@@ -123,18 +238,105 @@ namespace Engine
 		inline operator glm::vec4 const&() { return *this; }					// Get const reference to glm vector (enables glm functions)
 		inline void Zero() { x = 0; y = 0; z = 0; w = 0; }						// Make all vector components zero
 
+		// Operators
+		inline f4 f4::operator+ (const f4& other) const { return f4(x + other.x, y + other.y, z + other.z, w + other.w); }
+		inline f4 f4::operator- (const f4& other) const { return f4(x - other.x, y - other.y, z - other.z, w - other.w); }
+		inline f4 f4::operator* (float scalar) const { return f4(x * scalar, y * scalar, z * scalar, w * scalar); }
+		inline f4 f4::operator/ (float scalar) const { return f4(x / scalar, y / scalar, z / scalar, w * scalar); }
+
+		// Operators (homogeneous versions)
+		inline f4 AddHomogeneous(const f4& other) const
+		{ 
+			if ((w == 0 && other.w != 0) || (w != 0 && other.w == 0)) { return f4(0.0f, 0.0f, 0.0f, 0.0f); } // Point + direction (undefined)
+			if (w == 0 && other.w == 0) { return f4(x + other.x, y + other.y, z + other.z, 0.0f); } // Direction + direction
+			return f4((x / w) + (other.x / other.w), (y / w) + (other.y / other.w), (z / w) + (other.z / other.w), 1); // Point + point
+		}
+		inline f4 SubtractHomogeneous(const f4& other) const { return AddHomogeneous(other.MultiplyHomogeneous(-1.0f)); }
+		inline f4 MultiplyHomogeneous (float scalar) const { return f4(x * scalar, y * scalar, z * scalar, w); }
+		inline f4 DivideHomogeneous(float scalar) const { return f4(x / scalar, y / scalar, z / scalar, w); }
+
 		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline basetype Length() const { const glm::vec4& v = *this; return glm::length<basetype>(v); }
+		inline float Length() const { return sqrtf((x * x) + (y * y) + (z * z) + (w * w)); }
+		inline float LengthHomogeneous() const { return sqrtf((x * x) + (y * y) + (z * z)) / w; }
 		
 		// Normalizes the vector (to have Euclidean unit length)
-		inline f4 Normalize()
-		{
-			*this = glm::normalize(operator glm::vec4 const&());
-			return *this;
-		}
+		inline f4& Normalize() { float l = Length(); x = (x / l); y = (y / l); z = (z / l); w = (w / l); }
+		inline f4& NormalizeHomogeneous() { float l = LengthHomogeneous(); x = (x / l); y = (y / l); z = (z / l); }
 
-		inline f3 xyz() const { return f3(this->x, this->y, this->z); }			// Gets the first three components of the vector
-		inline f3 xy() const { return f3(this->x, this->y, this->z); }			// Gets the first two components of the vector
+		// Calculates the Euclidean distance between this vector and another vector
+		// TODO: fix for w=0 vectors
+		inline float GetDistanceTo(f4 point) const { return (*this - point).Length(); }
+		inline float GetDistanceToHomogeneous(f4 point) const { return (*this - point).Length(); }
+
+		// Swizzle operators
+		inline i2 xy() const { return i2(x, y); }
+		inline i2 xz() const { return i2(x, z); }
+		inline i2 xw() const { return i2(x, w); }
+		inline i2 yx() const { return i2(y, x); }
+		inline i2 yz() const { return i2(y, z); }
+		inline i2 yw() const { return i2(y, w); }
+		inline i2 zx() const { return i2(z, x); }
+		inline i2 zy() const { return i2(z, y); }
+		inline i2 zw() const { return i2(z, w); }
+		inline i2 wx() const { return i2(w, x); }
+		inline i2 wy() const { return i2(w, y); }
+		inline i2 wz() const { return i2(w, z); }
+
+		inline i3 xyz() const { return i3(x, y, z); }
+		inline i3 xyw() const { return i3(x, y, w); }
+		inline i3 xzy() const { return i3(x, z, y); }
+		inline i3 xzw() const { return i3(x, z, w); }
+		inline i3 xwy() const { return i3(x, w, y); }
+		inline i3 xwz() const { return i3(x, w, z); }
+
+		inline i3 yxz() const { return i3(y, x, z); }
+		inline i3 yxw() const { return i3(y, x, w); }
+		inline i3 yzx() const { return i3(y, z, x); }
+		inline i3 yzw() const { return i3(y, z, w); }
+		inline i3 ywx() const { return i3(y, w, x); }
+		inline i3 ywz() const { return i3(y, w, z); }
+
+		inline i3 zxy() const { return i3(z, x, y); }
+		inline i3 zxw() const { return i3(z, x, w); }
+		inline i3 zyx() const { return i3(z, y, x); }
+		inline i3 zyw() const { return i3(z, y, w); }
+		inline i3 zwx() const { return i3(z, w, x); }
+		inline i3 zwy() const { return i3(z, w, y); }
+
+		inline i3 wxy() const { return i3(w, x, y); }
+		inline i3 wxz() const { return i3(w, x, z); }
+		inline i3 wyx() const { return i3(w, y, x); }
+		inline i3 wyz() const { return i3(w, y, z); }
+		inline i3 wzx() const { return i3(w, z, x); }
+		inline i3 wzy() const { return i3(w, z, y); }
+
+		inline f4 xyzw() const { return f4(x, y, z, w); }
+		inline f4 xywz() const { return f4(x, y, w, z); }
+		inline f4 xzyw() const { return f4(x, z, y, w); }
+		inline f4 xzwy() const { return f4(x, z, w, y); }
+		inline f4 xwyz() const { return f4(x, w, y, z); }
+		inline f4 xwzy() const { return f4(x, w, z, y); }
+
+		inline f4 yxzw() const { return f4(y, x, z, w); }
+		inline f4 yxwz() const { return f4(y, x, w, z); }
+		inline f4 yzxw() const { return f4(y, z, x, w); }
+		inline f4 yzwx() const { return f4(y, z, w, x); }
+		inline f4 ywxz() const { return f4(y, w, x, z); }
+		inline f4 ywzx() const { return f4(y, w, z, x); }
+
+		inline f4 zxyw() const { return f4(z, x, y, w); }
+		inline f4 zxwy() const { return f4(z, x, w, y); }
+		inline f4 zyxw() const { return f4(z, y, x, w); }
+		inline f4 zywx() const { return f4(z, y, w, x); }
+		inline f4 zwxy() const { return f4(z, w, x, y); }
+		inline f4 zwyx() const { return f4(z, w, y, x); }
+
+		inline f4 wxyz() const { return f4(w, x, y, z); }
+		inline f4 wxzy() const { return f4(w, x, z, y); }
+		inline f4 wyxz() const { return f4(w, y, x, z); }
+		inline f4 wyzx() const { return f4(w, y, z, x); }
+		inline f4 wzxy() const { return f4(w, z, x, y); }
+		inline f4 wzyx() const { return f4(w, z, y, x); }
 	};
 }
 

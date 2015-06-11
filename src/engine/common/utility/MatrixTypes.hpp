@@ -15,10 +15,10 @@ namespace Engine
 		inline operator glm::mat2 const&() { return *this; }			// Get const reference to glm matrix (enables glm functions)
 
 		// Gets a const reference to the element at the specified index
-		inline const float& operator[](unsigned int index) const { return glm::mat2::operator[](index / 2)[index % 2]; }
+		inline const float& operator[](size_t index) const { return glm::mat2::operator[](index / 2)[index % 2]; }
 
 		// Gets a reference to the element at the specified index
-		inline float& operator[](unsigned int index) { return glm::mat2::operator[](index / 2)[index % 2]; }
+		inline float& operator[](size_t index) { return glm::mat2::operator[](index / 2)[index % 2]; }
 
 		// Sets the diagonal elements of the matrix to the values of the given vector
 		inline void Diagonal(const f2& diagonal){ (*this)[0] = diagonal.x; (*this)[3] = diagonal.y; }
@@ -81,10 +81,10 @@ namespace Engine
 		inline operator glm::mat3 const&() { return *this; }			// Get const reference to glm matrix (enables glm functions)
 
 		// Gets a const reference to the element at the specified index
-		inline const float& operator[](unsigned int index) const { return glm::mat3::operator[](index / 3)[index % 3]; }
+		inline const float& operator[](size_t index) const { return glm::mat3::operator[](index / 3)[index % 3]; }
 
 		// Gets a reference to the element at the specified index
-		inline float& operator[](unsigned int index) { return glm::mat3::operator[](index / 3)[index % 3]; }
+		inline float& operator[](size_t index) { return glm::mat3::operator[](index / 3)[index % 3]; }
 
 		// Sets the diagonal elements of the matrix to the values of the given vector
 		inline void Diagonal(const f3& diagonal){ (*this)[0] = diagonal.x; (*this)[4] = diagonal.y; (*this)[8] = diagonal.z; }
@@ -148,10 +148,10 @@ namespace Engine
 		inline operator glm::mat4 const&() { return *this; }			// Get const reference to glm matrix (enables glm functions)
 
 		// Gets a const reference to the element at the specified index
-		inline const float& operator[](unsigned int index) const { return glm::mat4::operator[](index / 4)[index % 4]; }
+		inline const float& operator[](size_t index) const { return glm::mat4::operator[](index / 4)[index % 4]; }
 
 		// Gets a reference to the element at the specified index
-		inline float& operator[](unsigned int index) { return glm::mat4::operator[](index / 4)[index % 4]; }
+		inline float& operator[](size_t index) { return glm::mat4::operator[](index / 4)[index % 4]; }
 
 		// Sets the diagonal elements of the matrix to the values of the given vector
 		inline void Diagonal(const f4& diagonal){ (*this)[0] = diagonal.x; (*this)[5] = diagonal.y; (*this)[10] = diagonal.z; (*this)[15] = diagonal.w; }

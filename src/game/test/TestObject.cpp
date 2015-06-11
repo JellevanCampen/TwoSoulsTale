@@ -1,6 +1,13 @@
 #include "TestObject.hpp"
 #include "..\src\engine\common\utility\VectorTypes.hpp";
 
+// Constructor (given transform)
+GameContent::TestObject::TestObject(Engine::Transform3D transform)
+	: GameObject(transform)
+{
+
+}
+
 // Creates the game object
 void GameContent::TestObject::Create()
 {

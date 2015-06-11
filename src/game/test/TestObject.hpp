@@ -18,6 +18,9 @@ namespace GameContent{
 
 	public:
 
+		// Constructor (given transform)
+		TestObject(Engine::Transform3D transform);
+
 		// Creates the game object
 		void Create();
 
