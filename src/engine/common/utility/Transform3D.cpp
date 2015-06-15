@@ -125,12 +125,37 @@ const Engine::mat4f& Engine::Transform3D::GetTransformationMatrix()
 	{
 		switch (m_RotationOrder)
 		{
-			
+		case RotationOrder::XYZ:
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+			break;
+		case RotationOrder::XZY:
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+			break;
+		case RotationOrder::YXZ:
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+			break;
+		case RotationOrder::YZX:
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+			break;
+		case RotationOrder::ZXY:
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
+			break;
+		case RotationOrder::ZYX:
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+			m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
+			break;
 		}
-
-		m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
-		m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
-		m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 	
 	if (m_Scale != f3(1.0f, 1.0f, 1.0f))

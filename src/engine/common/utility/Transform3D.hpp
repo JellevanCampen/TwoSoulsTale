@@ -14,7 +14,12 @@ namespace Engine
 		// Struct for representing the order of rotations
 		enum class RotationOrder
 		{
-			ZXY
+			XYZ,
+			XZY,
+			YXZ,
+			YZX,
+			ZXY,
+			ZYX
 		};
 
 	public:
