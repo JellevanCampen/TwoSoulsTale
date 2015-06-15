@@ -21,17 +21,17 @@ Engine::Transform3D::Transform3D(
 	float scaleX, float scaleY, float scaleZ,
 	RotationOrder rotationOrder)
 {
-	m_Translation.x = translationX;
-	m_Translation.y = translationY;
-	m_Translation.z = translationZ;
+	m_Translation.x(translationX);
+	m_Translation.y(translationY);
+	m_Translation.z(translationZ);
 
-	m_Rotation.x = rotationX;
-	m_Rotation.y = rotationY;
-	m_Rotation.z = rotationZ;
+	m_Rotation.x(rotationX);
+	m_Rotation.y(rotationY);
+	m_Rotation.z(rotationZ);
 
-	m_Scale.x = scaleX;
-	m_Scale.y = scaleY;
-	m_Scale.z = scaleZ;
+	m_Scale.x(scaleX);
+	m_Scale.y(scaleY);
+	m_Scale.z(scaleZ);
 
 	m_RotationOrder = rotationOrder;
 
@@ -57,9 +57,9 @@ void Engine::Transform3D::SetTranslation(f3 translation)
 // Sets the translation component (from individual components)
 void Engine::Transform3D::SetTranslation(float x, float y, float z)
 {
-	m_Translation.x = x;
-	m_Translation.y = y;
-	m_Translation.z = z;
+	m_Translation.x(x);
+	m_Translation.y(y);
+	m_Translation.z(z);
 }
 
 // Gets the rotation component
@@ -77,9 +77,9 @@ void Engine::Transform3D::SetRotation(f3 rotation)
 // Sets the rotation component (from individual components)
 void Engine::Transform3D::SetRotation(float x, float y, float z)
 {
-	m_Rotation.x = x;
-	m_Rotation.y = y;
-	m_Rotation.z = z;
+	m_Rotation.x(x);
+	m_Rotation.y(y);
+	m_Rotation.z(z);
 }
 
 // Gets the scale component
@@ -97,9 +97,9 @@ void Engine::Transform3D::SetScale(f3 scale)
 // Sets the scale component (from individual components)
 void Engine::Transform3D::SetScale(float x, float y, float z)
 {
-	m_Scale.x = x;
-	m_Scale.y = y;
-	m_Scale.z = z;
+	m_Scale.x(x);
+	m_Scale.y(y);
+	m_Scale.z(z);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -114,11 +114,11 @@ const Engine::mat4f& Engine::Transform3D::GetTransformationMatrix()
 		return m_TransformationMatrix;
 	}
 
-	m_TransformationMatrix.Identity();
+	m_TransformationMatrix.SetIdentity();
 
 	if (m_Translation != f3(0.0f, 0.0f, 0.0f))
 	{
-		m_TransformationMatrix = glm::translate(m_TransformationMatrix, m_Translation);
+		m_TransformationMatrix = glm::translate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Translation);
 	}
 
 	if (m_Rotation != f3(0.0f, 0.0f, 0.0f))
@@ -128,14 +128,14 @@ const Engine::mat4f& Engine::Transform3D::GetTransformationMatrix()
 			
 		}
 
-		m_TransformationMatrix = glm::rotate(m_TransformationMatrix, m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		m_TransformationMatrix = glm::rotate(m_TransformationMatrix, m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
-		m_TransformationMatrix = glm::rotate(m_TransformationMatrix, m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.y(), glm::vec3(0.0f, 1.0f, 0.0f));
+		m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.x(), glm::vec3(1.0f, 0.0f, 0.0f));
+		m_TransformationMatrix = glm::rotate<float, glm::precision::defaultp>(m_TransformationMatrix, m_Rotation.z(), glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 	
 	if (m_Scale != f3(1.0f, 1.0f, 1.0f))
 	{
-		m_TransformationMatrix = glm::scale(m_TransformationMatrix, m_Scale);
+		m_TransformationMatrix = glm::scale<float, glm::precision::defaultp>(m_TransformationMatrix, m_Scale);
 	}
 	
 	return m_TransformationMatrix;

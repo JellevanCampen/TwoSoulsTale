@@ -88,13 +88,13 @@ namespace Engine
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2); }
-		inline bool Contains(f2 p) const { return (p.x >= m_X1 && p.x <= m_X2 && p.y >= m_Y1 && p.y <= m_Y2); }
-		inline bool Contains(i2 p) const { return (p.x >= m_X1 && p.x <= m_X2 && p.y >= m_Y1 && p.y <= m_Y2); }
+		inline bool Contains(f2 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
+		inline bool Contains(i2 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
 
 		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
 		inline bool ContainsStrict(basetype x, basetype y) const { return (x > m_X1 && x < m_X2 && y >= m_Y1 && y <= m_Y2); }
-		inline bool ContainsStrict(f2 p) const { return (p.x > m_X1 && p.x < m_X2 && p.y >= m_Y1 && p.y <= m_Y2); }
-		inline bool ContainsStrict(i2 p) const { return (p.x > m_X1 && p.x < m_X2 && p.y >= m_Y1 && p.y <= m_Y2); }
+		inline bool ContainsStrict(f2 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
+		inline bool ContainsStrict(i2 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
 	};
 
 	typedef interval2D<int> interval2Di, aabb2Di, rectanglei;
@@ -152,13 +152,13 @@ namespace Engine
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y, basetype z) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }
-		inline bool Contains(f3 p) const { return (p.x >= m_X1 && p.x <= m_X2 && p.y >= m_Y1 && p.y <= m_Y2 && p.z >= m_Z1 && p.z <= m_Z2); }
-		inline bool Contains(i3 p) const { return (p.x >= m_X1 && p.x <= m_X2 && p.y >= m_Y1 && p.y <= m_Y2 && p.z >= m_Z1 && p.z <= m_Z2); }
+		inline bool Contains(f3 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
+		inline bool Contains(i3 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
 
 		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
 		inline bool ContainsStrict(basetype x, basetype y, basetype z) const { return (x > m_X1 && x < m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }
-		inline bool ContainsStrict(f3 p) const { return (p.x > m_X1 && p.x < m_X2 && p.y >= m_Y1 && p.y <= m_Y2 && p.z >= m_Z1 && p.z <= m_Z2); }
-		inline bool ContainsStrict(i3 p) const { return (p.x > m_X1 && p.x < m_X2 && p.y >= m_Y1 && p.y <= m_Y2 && p.z >= m_Z1 && p.z <= m_Z2); }
+		inline bool ContainsStrict(f3 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
+		inline bool ContainsStrict(i3 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
 	};
 
 	typedef interval3D<int> interval3Di, aabb3Di, boxi;

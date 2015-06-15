@@ -93,8 +93,8 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	// Pass the transformation matrices
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()[0]));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()[0]));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
 
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
@@ -140,8 +140,8 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	matModel = glm::rotate(matModel, (float)rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 	matModel = glm::scale(matModel, glm::vec3(scaleX, scaleY, 1.0f));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()[0]));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()[0]));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
 
 	// Draw the sprite sheet frame
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
@@ -354,10 +354,10 @@ const Engine::mat4f& Engine::GraphicsManager::GetCameraViewMatrix()
 
 	// Calculate the view matrix if needed
 	m_CameraViewMatrix = glm::ortho(
-		m_CameraPosition.x - ((m_WindowWidth / 2.0f) / m_CameraZoom),
-		m_CameraPosition.x + ((m_WindowWidth / 2.0f) / m_CameraZoom),
-		m_CameraPosition.y - ((m_WindowHeight / 2.0f) / m_CameraZoom),
-		m_CameraPosition.y + ((m_WindowHeight / 2.0f) / m_CameraZoom), 
+		m_CameraPosition.x() - ((m_WindowWidth / 2.0f) / m_CameraZoom),
+		m_CameraPosition.x() + ((m_WindowWidth / 2.0f) / m_CameraZoom),
+		m_CameraPosition.y() - ((m_WindowHeight / 2.0f) / m_CameraZoom),
+		m_CameraPosition.y() + ((m_WindowHeight / 2.0f) / m_CameraZoom), 
 		m_ZNear, m_ZFar);
 	m_CameraViewMatrixDirty = false;
 
@@ -373,8 +373,8 @@ const Engine::mat4f& Engine::GraphicsManager::GetCameraProjectionMatrix()
 	}
 
 	// Calculate the projection matrix if needed
-	m_CameraProjectionMatrix.Zero();
-	m_CameraProjectionMatrix.Diagonal(f4(1, 1, 1, 1));
+	m_CameraProjectionMatrix.SetZeros();
+	m_CameraProjectionMatrix.SetDiagonal(f4(1, 1, 1, 1));
 
 	return m_CameraProjectionMatrix;
 }
