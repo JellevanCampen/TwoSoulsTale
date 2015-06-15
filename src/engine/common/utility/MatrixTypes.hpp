@@ -56,14 +56,14 @@ namespace Engine
 		inline void Set(size_t row, size_t column, valuetype value) { m_V[row * 2 + column] = value; }
 
 		// Operators
-		inline matrix2x2 matrix2x2::operator+ (const matrix2x2& other) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
-		inline matrix2x2 matrix2x2::operator- (const matrix2x2& other) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] - other.Get(i)); } return m; }
-		inline matrix2x2 matrix2x2::operator* (float scalar) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] * scalar); } return m; }
-		// inline vector2D<valuetype> matrix2x2::operator* (const vector2D<valuetype>& other) const { Multiply(other); }
-		// inline matrix2x2 matrix2x2::operator* (const matrix2x2& other) const { Multiply(other); }
-		inline matrix2x2 matrix2x2::operator/ (float scalar) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] / scalar); } return m; }
-		inline valuetype& matrix2x2::operator[] (size_t index) { return m_V[i]; }
-		template<typename valuetype> inline const valuetype& matrix2x2::operator[] (size_t index) const { return m_V[i]; }
+		inline matrix2x2 operator+ (const matrix2x2& other) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
+		inline matrix2x2 operator- (const matrix2x2& other) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] - other.Get(i)); } return m; }
+		inline matrix2x2 operator* (float scalar) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] * scalar); } return m; }
+		inline vector2D<valuetype> operator* (const vector2D<valuetype>& other) const { Multiply(other); }
+		inline matrix2x2 operator* (const matrix2x2& other) const { Multiply(other); }
+		inline matrix2x2 operator/ (float scalar) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] / scalar); } return m; }
+		inline valuetype& operator[] (size_t index) { return m_V[i]; }
+		template<typename valuetype> inline const valuetype& operator[] (size_t index) const { return m_V[i]; }
 
 		// Gets the diagonal elements of the matrix
 		inline vector2D<valuetype> GetDiagonal() const { return vector2D<valuetype>(m_V[0], m_V[3]); }
@@ -180,14 +180,14 @@ namespace Engine
 		inline void Set(size_t row, size_t column, valuetype value) { m_V[row * 3 + column] = value; }
 
 		// Operators
-		inline matrix3x3 matrix3x3::operator+ (const matrix3x3& other) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
-		inline matrix3x3 matrix3x3::operator- (const matrix3x3& other) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] - other.Get(i)); } return m; }
-		inline matrix3x3 matrix3x3::operator* (float scalar) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] * scalar); } return m; }
-		// inline vector3D<valuetype> matrix3x3::operator* (const vector3D<valuetype>& other) const { Multiply(other); }
-		// inline matrix3x3 matrix3x3::operator* (const matrix3x3& other) const { Multiply(other); }
-		inline matrix3x3 matrix3x3::operator/ (float scalar) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] / scalar); } return m; }
-		inline valuetype& matrix3x3::operator[] (size_t index) { return m_V[i]; }
-		template<typename valuetype> inline const valuetype& matrix3x3::operator[] (size_t index) const { return m_V[i]; }
+		inline matrix3x3 operator+ (const matrix3x3& other) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
+		inline matrix3x3 operator- (const matrix3x3& other) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] - other.Get(i)); } return m; }
+		inline matrix3x3 operator* (float scalar) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] * scalar); } return m; }
+		inline vector3D<valuetype> operator* (const vector3D<valuetype>& other) const { Multiply(other); }
+		inline matrix3x3 operator* (const matrix3x3& other) const { Multiply(other); }
+		inline matrix3x3 operator/ (float scalar) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] / scalar); } return m; }
+		inline valuetype& operator[] (size_t index) { return m_V[i]; }
+		template<typename valuetype> inline const valuetype& operator[] (size_t index) const { return m_V[i]; }
 
 		// Gets the diagonal elements of the matrix
 		inline vector2D<valuetype> GetDiagonal() const { return vector3D<valuetype>(m_V[0], m_V[4], m_V[8]); }
@@ -304,14 +304,14 @@ namespace Engine
 		inline void Set(size_t row, size_t column, valuetype value) { m_V[row * 4 + column] = value; }
 
 		// Operators
-		inline matrix4x4 matrix4x4::operator+ (const matrix4x4& other) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
-		inline matrix4x4 matrix4x4::operator- (const matrix4x4& other) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] - other.Get(i)); } return m; }
-		inline matrix4x4 matrix4x4::operator* (float scalar) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] * scalar); } return m; }
-		// inline vector4D<valuetype> matrix4x4::operator* (const vector4D<valuetype>& other) const { Multiply(other); }
-		// inline matrix4x4 matrix4x4::operator* (const matrix4x4& other) const { Multiply(other); }
-		inline matrix4x4 matrix4x4::operator/ (float scalar) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] / scalar); } return m; }
-		inline valuetype& matrix4x4::operator[] (size_t index) { return m_V[i]; }
-		template<typename valuetype> inline const valuetype& matrix4x4::operator[] (size_t index) const { return m_V[i]; }
+		inline matrix4x4 operator+ (const matrix4x4& other) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
+		inline matrix4x4 operator- (const matrix4x4& other) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] - other.Get(i)); } return m; }
+		inline matrix4x4 operator* (float scalar) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] * scalar); } return m; }
+		inline vector4D<valuetype> operator* (const vector4D<valuetype>& other) const { Multiply(other); }
+		inline matrix4x4 operator* (const matrix4x4& other) const { Multiply(other); }
+		inline matrix4x4 operator/ (float scalar) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] / scalar); } return m; }
+		inline valuetype& operator[] (size_t index) { return m_V[i]; }
+		template<typename valuetype> inline const valuetype& operator[] (size_t index) const { return m_V[i]; }
 
 		// Gets the diagonal elements of the matrix
 		inline vector2D<valuetype> GetDiagonal() const { return vector4D<valuetype>(m_V[0], m_V[5], m_V[10], m_V[15]); }

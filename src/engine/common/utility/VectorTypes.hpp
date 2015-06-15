@@ -37,13 +37,22 @@ namespace Engine
 		inline void y(valuetype y) { m_Y = y; };
 
 		// Operators
-		inline bool vector2D::operator== (const vector2D& other) const { return (m_X == other.m_X && m_Y == other.m_Y); }
-		inline bool vector2D::operator!= (const vector2D& other) const { return !(*this == other); }
-		inline vector2D vector2D::operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
-		inline vector2D vector2D::operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
-		inline vector2D vector2D::operator* (float scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
-		inline vector2D vector2D::operator/ (float scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
-		inline const valuetype& vector2D::operator[] (size_t index) const
+		inline bool operator== (const vector2D& other) const { return (m_X == other.m_X && m_Y == other.m_Y); }
+		inline bool operator!= (const vector2D& other) const { return !(*this == other); }
+		inline vector2D operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
+		inline vector2D operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
+		inline vector2D operator* (float scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
+		inline vector2D operator/ (float scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
+		inline valuetype& operator[] (size_t index)
+		{
+			switch (index)
+			{
+			case 0: return m_X;
+			case 1: return m_Y;
+			default: return 0;
+			}
+		}
+		inline const valuetype& operator[] (size_t index) const
 		{
 			switch (index)
 			{
@@ -108,13 +117,23 @@ namespace Engine
 		inline void z(valuetype z) { m_Z = z; };
 		
 		// Operators
-		inline bool vector3D::operator== (const vector3D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z); }
-		inline bool vector3D::operator!= (const vector3D& other) const { return !(*this == other); }
-		inline vector3D vector3D::operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
-		inline vector3D vector3D::operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
-		inline vector3D vector3D::operator* (float scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
-		inline vector3D vector3D::operator/ (float scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
-		inline const valuetype& vector3D::operator[] (size_t index) const
+		inline bool operator== (const vector3D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z); }
+		inline bool operator!= (const vector3D& other) const { return !(*this == other); }
+		inline vector3D operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
+		inline vector3D operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
+		inline vector3D operator* (float scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
+		inline vector3D operator/ (float scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
+		inline valuetype& operator[] (size_t index)
+		{
+			switch (index)
+			{
+			case 0: return m_X;
+			case 1: return m_Y;
+			case 2:	return m_Z;
+			default: return 0;
+			}
+		}
+		inline const valuetype& operator[] (size_t index) const
 		{
 			switch (index)
 			{
@@ -196,14 +215,13 @@ namespace Engine
 		inline void w(valuetype w) { m_W = w; };
 		
 		// Operators
-		inline bool vector4D::operator== (const vector4D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z && m_W == other.m_W); }
-		inline bool vector4D::operator!= (const vector4D& other) const { return !(*this == other); }
-		inline vector4D vector4D::operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
-		inline vector4D vector4D::operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
-		inline vector4D vector4D::operator* (float scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
-		inline vector4D vector4D::operator/ (float scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W * scalar); }
-		
-		inline const valuetype& vector4D::operator[] (size_t index) const
+		inline bool operator== (const vector4D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z && m_W == other.m_W); }
+		inline bool operator!= (const vector4D& other) const { return !(*this == other); }
+		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
+		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
+		inline vector4D operator* (float scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
+		inline vector4D operator/ (float scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W * scalar); }
+		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
 			{
@@ -211,7 +229,18 @@ namespace Engine
 			case 1:	return m_Y;
 			case 2:	return m_Z;
 			case 3:	return m_W;
-			default: return 0;
+			default: return m_W;
+			}
+		}
+		inline const valuetype& operator[] (size_t index) const
+		{
+			switch (index)
+			{
+			case 0:	return m_X;
+			case 1:	return m_Y;
+			case 2:	return m_Z;
+			case 3:	return m_W;
+			default: return m_W;
 			}
 		}
 
