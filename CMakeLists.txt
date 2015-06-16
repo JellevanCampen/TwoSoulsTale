@@ -186,8 +186,7 @@ set(SRC_ENGINE_COMMON_UTILITY
 	"src/engine/common/utility/VectorTypes.hpp"
 	"src/engine/common/utility/MatrixTypes.hpp"
 	"src/engine/common/utility/IntervalTypes.hpp"
-	"src/engine/common/utility/Transform3D.hpp"
-	"src/engine/common/utility/Transform3D.cpp"
+	"src/engine/common/utility/TransformTypes.hpp"
 )
 source_group(Engine\\Common\\Utility FILES ${SRC_ENGINE_COMMON_UTILITY})
 

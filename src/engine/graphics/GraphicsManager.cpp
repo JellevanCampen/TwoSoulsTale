@@ -149,6 +149,18 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	glBindVertexArray(0);
 }
 
+// Draws a frame of the specified sprite sheet using the specified transformation
+void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z)
+{
+	DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), z, transform.r(), transform.s().x(), transform.s().y());
+}
+
+// Draws a frame of the specified sprite sheet using the specified transformation (transform 3D)
+void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform3D transform)
+{
+	DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), transform.t().z(), transform.r().z(), transform.s().x(), transform.s().y());
+}
+
 // Initializes GLFW
 bool Engine::GraphicsManager::InitializeGLFW()
 {

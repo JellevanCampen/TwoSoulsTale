@@ -1,7 +1,7 @@
 #include "TestObject2.hpp"
 
 // Constructor (given transform)
-GameContent::TestObject2::TestObject2(Engine::Transform3D transform)
+GameContent::TestObject2::TestObject2(Engine::transform3D transform)
 	: GameObject(transform)
 {
 

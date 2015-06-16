@@ -5,19 +5,19 @@
 #include "game\test\TestObject.hpp"
 #include "game\test\TestObject2.hpp"
 #include "engine\common\utility\XMLFileIO.hpp"
-#include "engine\common\utility\Transform3D.hpp"
+#include "engine\common\utility\TransformTypes.hpp"
 
 int main(int argc, char* argv[])
 {
 	Engine::Game game;
 	game.Initialize();
 
-	GameContent::TestObject* testA(new GameContent::TestObject(Engine::Transform3D(0.0f, 1.0f, 1000.0f)));
-	GameContent::TestObject* testB(new GameContent::TestObject(Engine::Transform3D(1.0f, 1.0f, 100.0f)));
-	GameContent::TestObject* testC(new GameContent::TestObject(Engine::Transform3D(2.0f, 1.0f, 10.0f)));
-	GameContent::TestObject2* testA2(new GameContent::TestObject2(Engine::Transform3D(0.0f, 1.0f, 1000.0f)));
-	GameContent::TestObject2* testB2(new GameContent::TestObject2(Engine::Transform3D(1.0f, 1.0f, 100.0f)));
-	GameContent::TestObject2* testC2(new GameContent::TestObject2(Engine::Transform3D(2.0f, 1.0f, 10.0f)));
+	GameContent::TestObject* testA(new GameContent::TestObject(Engine::transform3D(0.0f, 1.0f, 1000.0f)));
+	GameContent::TestObject* testB(new GameContent::TestObject(Engine::transform3D(1.0f, 1.0f, 100.0f)));
+	GameContent::TestObject* testC(new GameContent::TestObject(Engine::transform3D(2.0f, 1.0f, 10.0f)));
+	GameContent::TestObject2* testA2(new GameContent::TestObject2(Engine::transform3D(0.0f, 1.0f, 1000.0f)));
+	GameContent::TestObject2* testB2(new GameContent::TestObject2(Engine::transform3D(1.0f, 1.0f, 100.0f)));
+	GameContent::TestObject2* testC2(new GameContent::TestObject2(Engine::transform3D(2.0f, 1.0f, 10.0f)));
 	Engine::WorldManager::GetInstance().AddGameObject(testA);
 	Engine::WorldManager::GetInstance().AddGameObject(testB);
 	Engine::WorldManager::GetInstance().AddGameObject(testC);
@@ -102,7 +102,7 @@ test6:
 
 test7:
 	gameObject = NULL;
-	Engine::WorldManager::GetInstance().RetrieveNearestGameObject(Engine::f3(0.0f, 1.0f, 100.0f), gameObject, ID_TYPE::OBJ_TESTOBJECT1);
+	Engine::WorldManager::GetInstance().RetrieveNearestGameObject(Engine::f3(0.0f, 1.0f, 100.0f), gameObject, ID_TYPE::OBJ_TESTOBJECT);
 	if (gameObject->GetGUID() == 1) { std::cout << "PASSED: RetrieveNearestGameObject" << std::endl; }
 	else { std::cout << "FAILED: RetrieveNearestGameObject" << std::endl; }
 
@@ -111,7 +111,7 @@ test7:
 	// TESTING
 	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2(256.0f / 2.0f, 240.0f / 2.0f));
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(4.0f);
-	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject(Engine::Transform3D(0.0f, 0.0f, 0.0f)));
+	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject(Engine::transform3D(0.0f, 0.0f, 0.0f)));
 	// TESTING
 
 	game.Start();

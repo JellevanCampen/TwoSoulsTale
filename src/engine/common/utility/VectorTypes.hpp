@@ -33,8 +33,8 @@ namespace Engine
 		inline valuetype y() const { return m_Y; }
 
 		// Setters
-		inline void x(valuetype x) { m_X = x; };
-		inline void y(valuetype y) { m_Y = y; };
+		inline vector2D& x(valuetype x) { m_X = x; return *this; }
+		inline vector2D& y(valuetype y) { m_Y = y; return *this; }
 
 		// Operators
 		inline bool operator== (const vector2D& other) const { return (m_X == other.m_X && m_Y == other.m_Y); }
@@ -112,9 +112,9 @@ namespace Engine
 		inline valuetype z() const { return m_Z; }
 
 		// Setters
-		inline void x(valuetype x) { m_X = x; };
-		inline void y(valuetype y) { m_Y = y; };
-		inline void z(valuetype z) { m_Z = z; };
+		inline vector3D& x(valuetype x) { m_X = x; return *this; }
+		inline vector3D& y(valuetype y) { m_Y = y; return *this; }
+		inline vector3D& z(valuetype z) { m_Z = z; return *this; }
 		
 		// Operators
 		inline bool operator== (const vector3D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z); }
@@ -209,10 +209,10 @@ namespace Engine
 		inline valuetype w() const { return m_W; }
 
 		// Setters
-		inline void x(valuetype x) { m_X = x; };
-		inline void y(valuetype y) { m_Y = y; };
-		inline void z(valuetype z) { m_Z = z; };
-		inline void w(valuetype w) { m_W = w; };
+		inline vector4D& x(valuetype x) { m_X = x; return *this; }
+		inline vector4D& y(valuetype y) { m_Y = y; return *this; }
+		inline vector4D& z(valuetype z) { m_Z = z; return *this; }
+		inline vector4D& w(valuetype w) { m_W = w; return *this; }
 		
 		// Operators
 		inline bool operator== (const vector4D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z && m_W == other.m_W); }

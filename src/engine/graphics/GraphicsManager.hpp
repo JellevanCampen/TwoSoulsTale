@@ -10,6 +10,7 @@
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
 #include "../common/utility/VectorTypes.hpp" // For representing positions
 #include "../common/utility/MatrixTypes.hpp" // For representing transformation matrices
+#include "../common/utility/TransformTypes.hpp" // For representing a 3D transform
 #include <string> // For representing filenames and the window title
 
 namespace Engine{
@@ -35,6 +36,12 @@ namespace Engine{
 
 		// Draws a frame of the specified sprite sheet using the specified transformation
 		void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z, double rotation, double scaleX, double scaleY);
+
+		// Draws a frame of the specified sprite sheet using the specified transformation (transform 2D)
+		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z = 0.0f);
+
+		// Draws a frame of the specified sprite sheet using the specified transformation (transform 3D)
+		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform3D transform);
 
 	private:
 

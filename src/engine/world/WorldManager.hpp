@@ -47,6 +47,9 @@ namespace Engine{
 		// Adds a game object to the world and returns the handle
 		GameObjectGUID AddGameObject(GameObject* gameObject);
 
+		// Removes a game object from the world (based on its pointer)
+		void RemoveGameObject(GameObject* gameObject);
+		
 		// Removes a game object from the world (based on its GUID)
 		void RemoveGameObject(GameObjectGUID gameObjectGUID);
 

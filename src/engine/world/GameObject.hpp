@@ -3,7 +3,7 @@
 #define ENGINE_WORLD_GAMEOBJECT_H
 
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
-#include "../common/utility/Transform3D.hpp" // For representing the transform of the GameObject
+#include "../common/utility/TransformTypes.hpp" // For representing the transform of the GameObject
 
 namespace Engine{
 
@@ -21,7 +21,7 @@ namespace Engine{
 		GameObject();
 
 		// Constructor (with transform)
-		GameObject(Transform3D transform);
+		GameObject(transform3D transform);
 
 		////////////////////////////////////////////////////////////////
 		// Game loop functionality                                    //
@@ -47,7 +47,7 @@ namespace Engine{
 		const GameObjectGUID& GetGUID() const;
 
 		// Transform of the game object
-		Transform3D m_Transform;
+		transform3D m_Transform;
 
 		// Gets the type of the game object
 		virtual GameObjectType GetType() const  = 0;

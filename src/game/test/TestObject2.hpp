@@ -21,7 +21,7 @@ namespace GameContent{
 	public:
 
 		// Constructor (given transform)
-		TestObject2(Engine::Transform3D transform);
+		TestObject2(Engine::transform3D transform);
 
 		// Creates the game object
 		void Create();
@@ -40,7 +40,7 @@ namespace GameContent{
 		////////////////////////////////////////////////////////////////
 
 		// Gets the type of the game object
-		virtual Engine::GameObjectType GetType() const { return ID_TYPE::OBJ_TESTOBJECT2; };
+		virtual Engine::GameObjectType GetType() const { return ID_TYPE::OBJ_TESTOBJECT2; }
 
 	};
 }

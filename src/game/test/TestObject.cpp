@@ -2,7 +2,7 @@
 #include "..\src\engine\common\utility\VectorTypes.hpp";
 
 // Constructor (given transform)
-GameContent::TestObject::TestObject(Engine::Transform3D transform)
+GameContent::TestObject::TestObject(Engine::transform3D transform)
 	: GameObject(transform)
 {
 
