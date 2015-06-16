@@ -10,6 +10,9 @@ namespace Engine{
 	// Typedef for game object globally unique IDs
 	typedef unsigned long long GameObjectGUID;
 
+	// Typedef for game object types
+	typedef unsigned int GameObjectType;
+
 	class GameObject{
 
 	public:
@@ -45,6 +48,9 @@ namespace Engine{
 
 		// Transform of the game object
 		Transform3D m_Transform;
+
+		// Gets the type of the game object
+		virtual GameObjectType GetType() const  = 0;
 
 	private:
 

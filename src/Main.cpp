@@ -3,6 +3,7 @@
 #include "engine/Game.hpp" // Include all engine components
 #include "engine\world\WorldManager.hpp"
 #include "game\test\TestObject.hpp"
+#include "game\test\TestObject2.hpp"
 #include "engine\common\utility\XMLFileIO.hpp"
 #include "engine\common\utility\Transform3D.hpp"
 
@@ -11,33 +12,101 @@ int main(int argc, char* argv[])
 	Engine::Game game;
 	game.Initialize();
 
-	Engine::aabb1Di i1Di(5, 10);
-	Engine::aabb1Df i1Df(5.0, 10.0);
-	Engine::aabb2Di i2Di(5, 10, 5, 10);
-	Engine::aabb2Df i2Df(5.0, 10.0, 5.0, 10.0);
-	Engine::aabb3Di i3Di(5, 10, 5, 10, 5, 10);
-	Engine::aabb3Df i3Df(5.0, 10.0, 5.0, 10.0, 5.0, 10.0);
+	GameContent::TestObject* testA(new GameContent::TestObject(Engine::Transform3D(0.0f, 1.0f, 1000.0f)));
+	GameContent::TestObject* testB(new GameContent::TestObject(Engine::Transform3D(1.0f, 1.0f, 100.0f)));
+	GameContent::TestObject* testC(new GameContent::TestObject(Engine::Transform3D(2.0f, 1.0f, 10.0f)));
+	GameContent::TestObject2* testA2(new GameContent::TestObject2(Engine::Transform3D(0.0f, 1.0f, 1000.0f)));
+	GameContent::TestObject2* testB2(new GameContent::TestObject2(Engine::Transform3D(1.0f, 1.0f, 100.0f)));
+	GameContent::TestObject2* testC2(new GameContent::TestObject2(Engine::Transform3D(2.0f, 1.0f, 10.0f)));
+	Engine::WorldManager::GetInstance().AddGameObject(testA);
+	Engine::WorldManager::GetInstance().AddGameObject(testB);
+	Engine::WorldManager::GetInstance().AddGameObject(testC);
+	Engine::WorldManager::GetInstance().AddGameObject(testA2);
+	Engine::WorldManager::GetInstance().AddGameObject(testB2);
+	Engine::WorldManager::GetInstance().AddGameObject(testC2);
 
-	bool contains1Di_y = i1Di.Contains(8);
-	bool contains1Di_n = i1Di.Contains(11);
-	bool contains1Di_n2 = i1Di.ContainsStrict(10);
-	bool contains1Df_y = i1Df.Contains(8.0);
-	bool contains1Df_n = i1Df.Contains(11.0);
-	bool contains1Df_n2 = i1Df.ContainsStrict(10.0);
+	Engine::GameObjectType type1 = testA->GetType();
+	Engine::GameObjectType type2 = testA2->GetType();
 
-	bool contains2Di_y = i2Di.Contains(8, 9);
-	bool contains2Di_n = i2Di.Contains(11, 9);
-	bool contains2Di_n2 = i2Di.ContainsStrict(10, 9);
-	bool contains2Df_y = i2Df.Contains(8.0, 9.0);
-	bool contains2Df_n = i2Df.Contains(11.0, 9.0);
-	bool contains2Df_n2 = i2Df.ContainsStrict(10.0, 9.0);
+	std::vector<Engine::GameObject*> gameObjects;
+	Engine::GameObject* gameObject;
 
-	bool contains3Di_y = i3Di.Contains(8, 9, 7);
-	bool contains3Di_n = i3Di.Contains(11, 9, 7);
-	bool contains3Di_n2 = i3Di.ContainsStrict(10, 9, 7);
-	bool contains3Df_y = i3Df.Contains(8.0, 9.0, 7.0);
-	bool contains3Df_n = i3Df.Contains(11.0, 9.0, 7.0);
-	bool contains3Df_n2 = i3Df.ContainsStrict(10.0, 9.0, 7.0);
+test1:
+	Engine::WorldManager::GetInstance().RetrieveAllGameObjects(gameObjects, ID_TYPE::OBJ_TESTOBJECT);
+	if (gameObjects.size() != 3) { std::cout << "FAILED: RetrieveAllGameObjects" << std::endl; goto test2; }
+	if (gameObjects[0]->GetGUID() == 0 && gameObjects[1]->GetGUID() == 1 && gameObjects[2]->GetGUID() == 2)
+	{
+		std::cout << "PASSED: RetrieveAllGameObjects" << std::endl; goto test2;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveAllGameObjects" << std::endl; goto test2;
+	}
+
+test2:
+	Engine::WorldManager::GetInstance().RetrieveGameObject(1, gameObject);
+	if (gameObject->GetGUID() == 1) { std::cout << "PASSED: RetrieveGameObject" << std::endl; goto test3; }
+	else { std::cout << "FAILED: RetrieveGameObject" << std::endl; goto test3; }
+
+test3:
+	gameObjects.clear();
+	Engine::WorldManager::GetInstance().RetrieveGameObjectsInAABB(Engine::aabb2Df(-0.5f, 1.5f, 0.0f, 2.0f), gameObjects, ID_TYPE::OBJ_TESTOBJECT);
+	if (gameObjects.size() != 2) { std::cout << "FAILED: RetrieveGameObjectsInAABB" << std::endl; goto test4; }
+	if (gameObjects[0]->GetGUID() == 0 && gameObjects[1]->GetGUID() == 1)
+	{
+		std::cout << "PASSED: RetrieveGameObjectsInAABB(aabb2D)" << std::endl; goto test4;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveGameObjectsInAABB(aabb2D)" << std::endl; goto test4;
+	}
+
+test4:
+	gameObjects.clear();
+	Engine::WorldManager::GetInstance().RetrieveGameObjectsInAABB(Engine::aabb3Df(-0.5f, 1.5f, 0.0f, 2.0f, 0.0f, 500.0f), gameObjects, ID_TYPE::OBJ_TESTOBJECT);
+	if (gameObjects.size() != 1) { std::cout << "FAILED: RetrieveGameObjectsInAABB" << std::endl; goto test5; }
+	if (gameObjects[0]->GetGUID() == 1)
+	{
+		std::cout << "PASSED: RetrieveGameObjectsInAABB(aabb3D)" << std::endl; goto test5;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveGameObjectsInAABB(aabb3D)" << std::endl; goto test5;
+	}
+
+test5:
+	gameObjects.clear();
+	Engine::WorldManager::GetInstance().RetrieveGameObjectsNearPosition(Engine::f3(0.0f, 0.0f, 0.0f), 50.0f, gameObjects, ID_TYPE::OBJ_TESTOBJECT);
+	if (gameObjects.size() != 1) { std::cout << "FAILED: RetrieveGameObjectsNearPosition" << std::endl; goto test6; }
+	if (gameObjects[0]->GetGUID() == 2)
+	{
+		std::cout << "PASSED: RetrieveGameObjectsNearPosition" << std::endl; goto test6;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveGameObjectsNearPosition" << std::endl; goto test6;
+	}
+
+test6:
+	gameObjects.clear();
+	Engine::WorldManager::GetInstance().RetrieveKNearestGameObjects(Engine::f3(0.0f, 0.0f, 0.0f), 2, gameObjects, ID_TYPE::OBJ_TESTOBJECT);
+	if (gameObjects.size() != 2) { std::cout << "FAILED: RetrieveKNearestGameObjects" << std::endl; goto test7; }
+	if (gameObjects[0]->GetGUID() == 2 && gameObjects[1]->GetGUID() == 1)
+	{
+		std::cout << "PASSED: RetrieveKNearestGameObjects" << std::endl; goto test7;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveKNearestGameObjects" << std::endl; goto test7;
+	}
+
+test7:
+	gameObject = NULL;
+	Engine::WorldManager::GetInstance().RetrieveNearestGameObject(Engine::f3(0.0f, 1.0f, 100.0f), gameObject, ID_TYPE::OBJ_TESTOBJECT1);
+	if (gameObject->GetGUID() == 1) { std::cout << "PASSED: RetrieveNearestGameObject" << std::endl; }
+	else { std::cout << "FAILED: RetrieveNearestGameObject" << std::endl; }
+
+	system("pause");
 
 	// TESTING
 	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2(256.0f / 2.0f, 240.0f / 2.0f));
