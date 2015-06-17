@@ -514,6 +514,8 @@ void Engine::WorldManager::RemoveMarkedGameObjects()
 		delete m_GameObjects[gameObjectGUID];
 		m_GameObjects.erase(gameObjectGUID);
 	}
+
+	m_GameObjectRemoveList.clear();
 }
 
 // Adds a GameObject to the by-type indexed map
