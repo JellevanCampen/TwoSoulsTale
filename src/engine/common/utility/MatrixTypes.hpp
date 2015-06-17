@@ -48,12 +48,14 @@ namespace Engine
 		inline operator glm::mat2&() const { return glm::mat2(m_V[0], m_V[1], m_V[2], m_V[3]); }
 
 		// Getters
-		inline valuetype Get(size_t element) const { return m_V[element]; }
-		inline valuetype Get(size_t row, size_t column ) const { return m_V[row * 2 + column]; }
+		inline valuetype& Get(size_t element) { return m_V[element]; }
+		inline valuetype& Get(size_t row, size_t column) { return m_V[row * 2 + column]; }
+		inline const valuetype& Get(size_t element) const { return m_V[element]; }
+		inline const valuetype& Get(size_t row, size_t column ) const { return m_V[row * 2 + column]; }
 
 		// Setters
-		inline void Set(size_t element, valuetype value) { m_V[element] = value; }
-		inline void Set(size_t row, size_t column, valuetype value) { m_V[row * 2 + column] = value; }
+		inline matrix2x2& Set(size_t element, valuetype value) { m_V[element] = value; return *this; }
+		inline matrix2x2& Set(size_t row, size_t column, valuetype value) { m_V[row * 2 + column] = value; return *this; }
 
 		// Operators
 		inline matrix2x2 operator+ (const matrix2x2& other) const { matrix2x2 m; for (size_t i = 0; i < 4; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
@@ -172,12 +174,14 @@ namespace Engine
 		inline operator glm::mat3&() const { glm::mat3 m; for (int i = 0; i < 9; i++) { m[i / 3][i % 3] = m_V[i]; } return m; }
 
 		// Getters
-		inline valuetype Get(size_t element) const { return m_V[element]; }
-		inline valuetype Get(size_t row, size_t column) const { return m_V[row * 3 + column]; }
+		inline valuetype& Get(size_t element) { return m_V[element]; }
+		inline valuetype& Get(size_t row, size_t column) { return m_V[row * 3 + column]; }
+		inline const valuetype& Get(size_t element) const { return m_V[element]; }
+		inline const valuetype& Get(size_t row, size_t column) const { return m_V[row * 3 + column]; }
 
 		// Setters
-		inline void Set(size_t element, valuetype value) { m_V[element] = value; }
-		inline void Set(size_t row, size_t column, valuetype value) { m_V[row * 3 + column] = value; }
+		inline matrix3x3& Set(size_t element, valuetype value) { m_V[element] = value; return *this; }
+		inline matrix3x3& Set(size_t row, size_t column, valuetype value) { m_V[row * 3 + column] = value; return *this; }
 
 		// Operators
 		inline matrix3x3 operator+ (const matrix3x3& other) const { matrix3x3 m; for (size_t i = 0; i < 9; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
@@ -296,12 +300,14 @@ namespace Engine
 		inline operator glm::mat4&() const { glm::mat4 m; for (int i = 0; i < 16; i++) { m[i / 4][i % 4] = m_V[i]; } return m; }
 
 		// Getters
-		inline valuetype Get(size_t element) const { return m_V[element]; }
-		inline valuetype Get(size_t row, size_t column) const { return m_V[row * 4 + column]; }
+		inline valuetype& Get(size_t element) { return m_V[element]; }
+		inline valuetype& Get(size_t row, size_t column) { return m_V[row * 4 + column]; }
+		inline const valuetype& Get(size_t element) const { return m_V[element]; }
+		inline const valuetype& Get(size_t row, size_t column) const { return m_V[row * 4 + column]; }
 
 		// Setters
-		inline void Set(size_t element, valuetype value) { m_V[element] = value; }
-		inline void Set(size_t row, size_t column, valuetype value) { m_V[row * 4 + column] = value; }
+		inline matrix4x4& Set(size_t element, valuetype value) { m_V[element] = value; return *this; }
+		inline matrix4x4& Set(size_t row, size_t column, valuetype value) { m_V[row * 4 + column] = value; return *this; }
 
 		// Operators
 		inline matrix4x4 operator+ (const matrix4x4& other) const { matrix4x4 m; for (size_t i = 0; i < 16; i++) { m.Set(i, m_V[i] + other.Get(i)); } return m; }
@@ -326,7 +332,7 @@ namespace Engine
 		inline matrix4x4& SetZeros() { for (size_t i = 0; i < 16; i++) { m_V[i] = 0; } return *this; }
 
 		// Set the matrix to be an identity matrix
-		inline matrix4x4& SetIdentity() { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? 1 : 0; }	return *this; }
+		inline matrix4x4& SetIdentity() { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? 1 : 0; } return *this; }
 
 		// Transposes the matrix
 		inline matrix4x4& Transpose()

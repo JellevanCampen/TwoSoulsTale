@@ -18,22 +18,25 @@ namespace Engine
 	public:
 
 		// Constructors
-		interval1D(basetype x1, basetype x2) : m_X1(x1), m_X2(x2) { };
-		interval1D() : interval1D(0, 0) { };
+		interval1D(basetype x1, basetype x2) : m_X1(x1), m_X2(x2) { }
+		interval1D() : interval1D(0, 0) { }
 
 		// Getters
-		inline basetype x1() const { return m_X1; };
-		inline basetype x2() const { return m_X2; };
-
-		inline basetype x() const { return m_X1; };
-		inline basetype w() const { return m_X2 - m_X1; };
+		inline basetype& x1() { return m_X1; }
+		inline basetype& x2() { return m_X2; }
+		inline basetype& x() { return m_X1; }
+		inline basetype& w() { return m_X2 - m_X1; }
+		inline const basetype& x1() const { return m_X1; }
+		inline const basetype& x2() const { return m_X2; }
+		inline const basetype& x() const { return m_X1; }
+		inline const basetype& w() const { return m_X2 - m_X1; }
 
 		// Setters
-		inline void x1(basetype x1) const { m_X1 = x1; };
-		inline void x2(basetype x2) const { m_X2 = x2; };
+		inline interval1D& x1(basetype x1) const { m_X1 = x1; return *this; }
+		inline interval1D& x2(basetype x2) const { m_X2 = x2; return *this; }
 
-		inline void x(basetype x) const { m_X1 = x; };
-		inline void w(basetype w) const { m_X2 = m_X1 + w; };
+		inline interval1D& x(basetype x) const { m_X1 = x; return *this; }
+		inline interval1D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x) const { return (x >= m_X1 && x <= m_X2); }
@@ -61,30 +64,37 @@ namespace Engine
 	public:
 
 		// Constructors
-		interval2D(basetype x1, basetype x2, basetype y1, basetype y2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2) { };
-		interval2D() : interval2D(0, 0, 0, 0) { };
+		interval2D(basetype x1, basetype x2, basetype y1, basetype y2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2) { }
+		interval2D() : interval2D(0, 0, 0, 0) { }
 
 		// Getters
-		inline basetype x1() const { return m_X1; };
-		inline basetype x2() const { return m_X2; };
-		inline basetype y1() const { return m_Y1; };
-		inline basetype y2() const { return m_Y2; };
-
-		inline basetype x() const { return m_X1; };
-		inline basetype w() const { return m_X2 - m_X1; };
-		inline basetype y() const { return m_Y1; };
-		inline basetype h() const { return m_Y2 - m_Y1; };
+		inline basetype& x1() { return m_X1; }
+		inline basetype& x2() { return m_X2; }
+		inline basetype& y1() { return m_Y1; }
+		inline basetype& y2() { return m_Y2; }
+		inline basetype& x() { return m_X1; }
+		inline basetype& w() { return m_X2 - m_X1; }
+		inline basetype& y() { return m_Y1; }
+		inline basetype& h() { return m_Y2 - m_Y1; }
+		inline const basetype& x1() const { return m_X1; }
+		inline const basetype& x2() const { return m_X2; }
+		inline const basetype& y1() const { return m_Y1; }
+		inline const basetype& y2() const { return m_Y2; }
+		inline const basetype& x() const { return m_X1; }
+		inline const basetype& w() const { return m_X2 - m_X1; }
+		inline const basetype& y() const { return m_Y1; }
+		inline const basetype& h() const { return m_Y2 - m_Y1; }
 
 		// Setters
-		inline void x1(basetype x1) const { m_X1 = x1; };
-		inline void x2(basetype x2) const { m_X2 = x2; };
-		inline void y1(basetype y1) const { m_Y1 = y1; };
-		inline void y2(basetype y2) const { m_Y2 = y2; };
+		inline interval2D& x1(basetype x1) const { m_X1 = x1; return *this; }
+		inline interval2D& x2(basetype x2) const { m_X2 = x2; return *this; }
+		inline interval2D& y1(basetype y1) const { m_Y1 = y1; return *this; }
+		inline interval2D& y2(basetype y2) const { m_Y2 = y2; return *this; }
 
-		inline void x(basetype x) const { m_X1 = x; };
-		inline void w(basetype w) const { m_X2 = m_X1 + w; };
-		inline void y(basetype y) const { m_Y1 = y; };
-		inline void h(basetype h) const { m_Y2 = m_Y1 + h; };
+		inline interval2D& x(basetype x) const { m_X1 = x; return *this; }
+		inline interval2D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
+		inline interval2D& y(basetype y) const { m_Y1 = y; return *this; }
+		inline interval2D& h(basetype h) const { m_Y2 = m_Y1 + h; return *this; }
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2); }
@@ -117,38 +127,49 @@ namespace Engine
 	public:
 
 		// Constructors
-		interval3D(basetype x1, basetype x2, basetype y1, basetype y2, basetype z1, basetype z2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2), m_Z1(z1), m_Z2(z2) { };
-		interval3D() : interval3D(0, 0, 0, 0, 0, 0) { };
+		interval3D(basetype x1, basetype x2, basetype y1, basetype y2, basetype z1, basetype z2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2), m_Z1(z1), m_Z2(z2) { }
+		interval3D() : interval3D(0, 0, 0, 0, 0, 0) { }
 
 		// Getters
-		inline basetype x1() const { return m_X1; };
-		inline basetype x2() const { return m_X2; };
-		inline basetype y1() const { return m_Y1; };
-		inline basetype y2() const { return m_Y2; };
-		inline basetype z1() const { return m_Z1; };
-		inline basetype z2() const { return m_Z2; };
-
-		inline basetype x() const { return m_X1; };
-		inline basetype w() const { return m_X2 - m_X1; };
-		inline basetype y() const { return m_Y1; };
-		inline basetype h() const { return m_Y2 - m_Y1; };
-		inline basetype z() const { return m_Z1; };
-		inline basetype d() const { return m_Z2 - m_Z1; };
+		inline basetype& x1() { return m_X1; }
+		inline basetype& x2() { return m_X2; }
+		inline basetype& y1() { return m_Y1; }
+		inline basetype& y2() { return m_Y2; }
+		inline basetype& z1() { return m_Z1; }
+		inline basetype& z2() { return m_Z2; }
+		inline basetype& x() { return m_X1; }
+		inline basetype& w() { return m_X2 - m_X1; }
+		inline basetype& y() { return m_Y1; }
+		inline basetype& h() { return m_Y2 - m_Y1; }
+		inline basetype& z() { return m_Z1; }
+		inline basetype& d() { return m_Z2 - m_Z1; }
+		inline const basetype& x1() const { return m_X1; }
+		inline const basetype& x2() const { return m_X2; }
+		inline const basetype& y1() const { return m_Y1; }
+		inline const basetype& y2() const { return m_Y2; }
+		inline const basetype& z1() const { return m_Z1; }
+		inline const basetype& z2() const { return m_Z2; }
+		inline const basetype& x() const { return m_X1; }
+		inline const basetype& w() const { return m_X2 - m_X1; }
+		inline const basetype& y() const { return m_Y1; }
+		inline const basetype& h() const { return m_Y2 - m_Y1; }
+		inline const basetype& z() const { return m_Z1; }
+		inline const basetype& d() const { return m_Z2 - m_Z1; }
 
 		// Setters
-		inline void x1(basetype x1) const { m_X1 = x1; };
-		inline void x2(basetype x2) const { m_X2 = x2; };
-		inline void y1(basetype y1) const { m_Y1 = y1; };
-		inline void y2(basetype y2) const { m_Y2 = y2; };
-		inline void z1(basetype z1) const { m_Z1 = z1; };
-		inline void z2(basetype z2) const { m_Z2 = z2; };
+		inline interval3D& x1(basetype x1) const { m_X1 = x1; return *this; }
+		inline interval3D& x2(basetype x2) const { m_X2 = x2; return *this; }
+		inline interval3D& y1(basetype y1) const { m_Y1 = y1; return *this; }
+		inline interval3D& y2(basetype y2) const { m_Y2 = y2; return *this; }
+		inline interval3D& z1(basetype z1) const { m_Z1 = z1; return *this; }
+		inline interval3D& z2(basetype z2) const { m_Z2 = z2; return *this; }
 
-		inline void x(basetype x) const { m_X1 = x; };
-		inline void w(basetype w) const { m_X2 = m_X1 + w; };
-		inline void y(basetype y) const { m_Y1 = y; };
-		inline void h(basetype h) const { m_Y2 = m_Y1 + h; };
-		inline void z(basetype z) const { m_Z1 = z; };
-		inline void d(basetype d) const { m_Z2 = m_Z1 + d; };
+		inline interval3D& x(basetype x) const { m_X1 = x; return *this; }
+		inline interval3D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
+		inline interval3D& y(basetype y) const { m_Y1 = y; return *this; }
+		inline interval3D& h(basetype h) const { m_Y2 = m_Y1 + h; return *this; }
+		inline interval3D& z(basetype z) const { m_Z1 = z; return *this; }
+		inline interval3D& d(basetype d) const { m_Z2 = m_Z1 + d; return *this; }
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y, basetype z) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }

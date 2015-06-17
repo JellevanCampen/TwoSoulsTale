@@ -220,7 +220,7 @@ namespace Engine
 		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
 		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
 		inline vector4D operator* (float scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
-		inline vector4D operator/ (float scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W * scalar); }
+		inline vector4D operator/ (float scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -315,47 +315,180 @@ namespace Engine
 		inline vector4D wzyx() const { return vector4D(m_W, m_Z, m_Y, m_X); }
 
 		// Makes all vector components zero
-		inline void Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 0; }
+		inline vector4D& Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 0; return *this; }
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
 		inline float Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z) + (m_W * m_W)); }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector4D& Normalize() { float l = Length(); m_X /= l; m_Y /= l; m_Z /= l; m_W /= l; }
+		inline vector4D& Normalize() { float l = Length(); m_X /= l; m_Y /= l; m_Z /= l; m_W /= l; return *this; }
 
 		// Calculates the Euclidean distance between this vector and another vector
 		inline float GetDistanceTo(vector4D point) const { return (*this - point).Length(); }
-
-
-
-
-
-		//// Operators (homogeneous versions)
-		//inline f4 AddHomogeneous(const f4& other) const
-		//{ 
-		//	if ((w == 0 && other.w != 0) || (w != 0 && other.w == 0)) { return f4(0.0f, 0.0f, 0.0f, 0.0f); } // Point + direction (undefined)
-		//	if (w == 0 && other.w == 0) { return f4(x + other.x, y + other.y, z + other.z, 0.0f); } // Direction + direction
-		//	return f4((x / w) + (other.x / other.w), (y / w) + (other.y / other.w), (z / w) + (other.z / other.w), 1); // Point + point
-		//}
-		//inline f4 SubtractHomogeneous(const f4& other) const { return AddHomogeneous(other.MultiplyHomogeneous(-1.0f)); }
-		//inline f4 MultiplyHomogeneous (float scalar) const { return f4(x * scalar, y * scalar, z * scalar, w); }
-		//inline f4 DivideHomogeneous(float scalar) const { return f4(x / scalar, y / scalar, z / scalar, w); }
-
-		//// Gets the length of the vector (as the Euclidean distance to the origin)
-		//inline float LengthHomogeneous() const { return sqrtf((x * x) + (y * y) + (z * z)) / w; }
-		//
-		//// Normalizes the vector (to have Euclidean unit length)
-		//inline f4& NormalizeHomogeneous() { float l = LengthHomogeneous(); x /= l; y /= l; z /= l); }
-
-		//// Calculates the Euclidean distance between this vector and another vector
-		//// TODO: fix for w=0 vectors
-		//inline float GetDistanceToHomogeneous(f4 point) const { return (*this - point).Length(); }
-
-		
 	};
 
 	typedef vector4D<int> vector4Di, int4, i4;
 	typedef vector4D<float> vector4Df, float4, f4;
+
+	////////////////////////////////////////////////////////////////
+	// 4D homogeneous vectors									  //
+	////////////////////////////////////////////////////////////////
+
+	template <typename valuetype>
+	struct vectorH4D : public vector4D<valuetype>
+	{
+
+	public:
+
+		// Constructors
+		vectorH4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
+		vectorH4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
+		vectorH4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z), m_W(w) { }
+		vectorH4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
+		vectorH4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
+		vectorH4D(const vector4D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(v.w()) { }
+
+		// Casts
+		inline operator glm::vec4 const&() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
+		inline operator vector4D<valuetype> const&() { return vector4D<valuetype>(m_X, m_Y, m_Z, m_W); }
+
+		// Getters
+		inline valuetype x() const { return m_X; }
+		inline valuetype y() const { return m_Y; }
+		inline valuetype z() const { return m_Z; }
+		inline valuetype w() const { return m_W; }
+
+		// Setters
+		inline vectorH4D& x(valuetype x) { m_X = x; return *this; }
+		inline vectorH4D& y(valuetype y) { m_Y = y; return *this; }
+		inline vectorH4D& z(valuetype z) { m_Z = z; return *this; }
+		inline vectorH4D& w(valuetype w) { m_W = w; return *this; }
+
+		// Operators
+		inline bool operator== (const vectorH4D& other) const { return (m_X / m_W == other.m_X / other.m_W && m_Y / m_W == other.m_Y / other.m_W && m_Z / m_W == other.m_Z / other.m_W); }
+		inline bool operator!= (const vectorH4D& other) const { return !(*this == other); }
+		inline vectorH4D operator+ (const vectorH4D& other) const 
+		{ 
+			if ((m_W == 0 && other.m_W != 0) || (m_W != 0 && other.m_W == 0)) { return vectorH4D(0.0f, 0.0f, 0.0f, 0.0f); } // Point + direction (undefined)
+			if (m_W == 0 && other.m_W == 0) { return f4(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, 0.0f); } // Direction + direction
+			return vectorH4D((m_X / m_W) + (other.m_X / other.m_W), (m_Y / m_W) + (other.m_Y / other.m_W), (m_Z / m_W) + (other.m_Z / other.m_W), 1); // Point + point		
+		}
+		inline vectorH4D operator- (const vectorH4D& other) const 
+		{ 
+			if ((m_W == 0 && other.m_W != 0) || (m_W != 0 && other.m_W == 0)) { return vectorH4D(0.0f, 0.0f, 0.0f, 0.0f); } // Point + direction (undefined)
+			if (m_W == 0 && other.m_W == 0) { return f4(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, 0.0f); } // Direction + direction
+			return vectorH4D((m_X / m_W) - (other.m_X / other.m_W), (m_Y / m_W) - (other.m_Y / other.m_W), (m_Z / m_W) - (other.m_Z / other.m_W), 1); // Point + point		
+		}
+		inline vectorH4D operator* (float scalar) const { return vector4D(m_X, m_Y, m_Z, m_W / scalar); }
+		inline vectorH4D operator/ (float scalar) const { return vector4D(m_X, m_Y, m_Z, m_W * scalar); }
+		inline valuetype& operator[] (size_t index)
+		{
+			switch (index)
+			{
+			case 0:	return m_X;
+			case 1:	return m_Y;
+			case 2:	return m_Z;
+			case 3:	return m_W;
+			default: return m_W;
+			}
+		}
+		inline const valuetype& operator[] (size_t index) const
+		{
+			switch (index)
+			{
+			case 0:	return m_X;
+			case 1:	return m_Y;
+			case 2:	return m_Z;
+			case 3:	return m_W;
+			default: return m_W;
+			}
+		}
+
+		// Swizzle operators
+		inline vector2D<valuetype> xy() const { return vector2D<valuetype>(m_X, m_Y); }
+		inline vector2D<valuetype> xz() const { return vector2D<valuetype>(m_X, m_Z); }
+		inline vector2D<valuetype> xw() const { return vector2D<valuetype>(m_X, m_W); }
+		inline vector2D<valuetype> yx() const { return vector2D<valuetype>(m_Y, m_X); }
+		inline vector2D<valuetype> yz() const { return vector2D<valuetype>(m_Y, m_Z); }
+		inline vector2D<valuetype> yw() const { return vector2D<valuetype>(m_Y, m_W); }
+		inline vector2D<valuetype> zx() const { return vector2D<valuetype>(m_Z, m_X); }
+		inline vector2D<valuetype> zy() const { return vector2D<valuetype>(m_Z, m_Y); }
+		inline vector2D<valuetype> zw() const { return vector2D<valuetype>(m_Z, m_W); }
+		inline vector2D<valuetype> wx() const { return vector2D<valuetype>(m_W, m_X); }
+		inline vector2D<valuetype> wy() const { return vector2D<valuetype>(m_W, m_Y); }
+		inline vector2D<valuetype> wz() const { return vector2D<valuetype>(m_W, m_Z); }
+
+		inline vector3D<valuetype> xyz() const { return vector3D<valuetype>(m_X, m_Y, m_Z); }
+		inline vector3D<valuetype> xyw() const { return vector3D<valuetype>(m_X, m_Y, m_W); }
+		inline vector3D<valuetype> xzy() const { return vector3D<valuetype>(m_X, m_Z, m_Y); }
+		inline vector3D<valuetype> xzw() const { return vector3D<valuetype>(m_X, m_Z, m_W); }
+		inline vector3D<valuetype> xwy() const { return vector3D<valuetype>(m_X, m_W, m_Y); }
+		inline vector3D<valuetype> xwz() const { return vector3D<valuetype>(m_X, m_W, m_Z); }
+
+		inline vector3D<valuetype> yxz() const { return vector3D<valuetype>(m_Y, m_X, m_Z); }
+		inline vector3D<valuetype> yxw() const { return vector3D<valuetype>(m_Y, m_X, m_W); }
+		inline vector3D<valuetype> yzx() const { return vector3D<valuetype>(m_Y, m_Z, m_X); }
+		inline vector3D<valuetype> yzw() const { return vector3D<valuetype>(m_Y, m_Z, m_W); }
+		inline vector3D<valuetype> ywx() const { return vector3D<valuetype>(m_Y, m_W, m_X); }
+		inline vector3D<valuetype> ywz() const { return vector3D<valuetype>(m_Y, m_W, m_Z); }
+
+		inline vector3D<valuetype> zxy() const { return vector3D<valuetype>(m_Z, m_X, m_Y); }
+		inline vector3D<valuetype> zxw() const { return vector3D<valuetype>(m_Z, m_X, m_W); }
+		inline vector3D<valuetype> zyx() const { return vector3D<valuetype>(m_Z, m_Y, m_X); }
+		inline vector3D<valuetype> zyw() const { return vector3D<valuetype>(m_Z, m_Y, m_W); }
+		inline vector3D<valuetype> zwx() const { return vector3D<valuetype>(m_Z, m_W, m_X); }
+		inline vector3D<valuetype> zwy() const { return vector3D<valuetype>(m_Z, m_W, m_Y); }
+
+		inline vector3D<valuetype> wxy() const { return vector3D<valuetype>(m_W, m_X, m_Y); }
+		inline vector3D<valuetype> wxz() const { return vector3D<valuetype>(m_W, m_X, m_Z); }
+		inline vector3D<valuetype> wyx() const { return vector3D<valuetype>(m_W, m_Y, m_X); }
+		inline vector3D<valuetype> wyz() const { return vector3D<valuetype>(m_W, m_Y, m_Z); }
+		inline vector3D<valuetype> wzx() const { return vector3D<valuetype>(m_W, m_Z, m_X); }
+		inline vector3D<valuetype> wzy() const { return vector3D<valuetype>(m_W, m_Z, m_Y); }
+
+		inline vector4D xyzw() const { return vector4D(m_X, m_Y, m_Z, m_W); }
+		inline vector4D xywz() const { return vector4D(m_X, m_Y, m_W, m_Z); }
+		inline vector4D xzyw() const { return vector4D(m_X, m_Z, m_Y, m_W); }
+		inline vector4D xzwy() const { return vector4D(m_X, m_Z, m_W, m_Y); }
+		inline vector4D xwyz() const { return vector4D(m_X, m_W, m_Y, m_Z); }
+		inline vector4D xwzy() const { return vector4D(m_X, m_W, m_Z, m_Y); }
+
+		inline vector4D yxzw() const { return vector4D(m_Y, m_X, m_Z, m_W); }
+		inline vector4D yxwz() const { return vector4D(m_Y, m_X, m_W, m_Z); }
+		inline vector4D yzxw() const { return vector4D(m_Y, m_Z, m_X, m_W); }
+		inline vector4D yzwx() const { return vector4D(m_Y, m_Z, m_W, m_X); }
+		inline vector4D ywxz() const { return vector4D(m_Y, m_W, m_X, m_Z); }
+		inline vector4D ywzx() const { return vector4D(m_Y, m_W, m_Z, m_X); }
+
+		inline vector4D zxyw() const { return vector4D(m_Z, m_X, m_Y, m_W); }
+		inline vector4D zxwy() const { return vector4D(m_Z, m_X, m_W, m_Y); }
+		inline vector4D zyxw() const { return vector4D(m_Z, m_Y, m_X, m_W); }
+		inline vector4D zywx() const { return vector4D(m_Z, m_Y, m_W, m_X); }
+		inline vector4D zwxy() const { return vector4D(m_Z, m_W, m_X, m_Y); }
+		inline vector4D zwyx() const { return vector4D(m_Z, m_W, m_Y, m_X); }
+
+		inline vector4D wxyz() const { return vector4D(m_W, m_X, m_Y, m_Z); }
+		inline vector4D wxzy() const { return vector4D(m_W, m_X, m_Z, m_Y); }
+		inline vector4D wyxz() const { return vector4D(m_W, m_Y, m_X, m_Z); }
+		inline vector4D wyzx() const { return vector4D(m_W, m_Y, m_Z, m_X); }
+		inline vector4D wzxy() const { return vector4D(m_W, m_Z, m_X, m_Y); }
+		inline vector4D wzyx() const { return vector4D(m_W, m_Z, m_Y, m_X); }
+
+		// Makes all vector components zero and resets the w-component to 1
+		inline vectorH4D& Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 1; return *this; }
+
+		// Gets the length of the vector (as the Euclidean distance to the origin)
+		inline float Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z)) / m_W; }
+
+		// Normalizes the vector (to have Euclidean unit length)
+		inline vectorH4D& Normalize() { float l = LengthHomogeneous(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
+
+		// Calculates the Euclidean distance between this vector and another vector
+		inline float GetDistanceTo(vectorH4D point) const { return (*this - point).Length(); }
+	};
+
+	typedef vectorH4D<int> vectorH4Di;
+	typedef vectorH4D<float> vectorH4Df;
 }
 
 #endif
