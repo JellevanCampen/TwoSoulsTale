@@ -52,7 +52,7 @@ namespace GameContent{
 		virtual void ProcessMousePositionEvent(double xPos, double yPos);
 		virtual void ProcessMouseEnterLeaveEvent(bool entered);
 		virtual void ProcessMouseButtonEvent(int button, MouseButtonAction action);
-		virtual void ProcessMouseScrollEvent(int xOffset, int yOffset);
+		virtual void ProcessMouseScrollEvent(double xOffset, double yOffset);
 
 		virtual void ProcessGamepadAxisEvent(unsigned char gamepad, int axis, float axisState);
 		virtual void ProcessGamepadButtonEvent(unsigned char gamepad, int button, GamepadButtonAction action);

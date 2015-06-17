@@ -110,7 +110,7 @@ void Engine::Game::RunVariableFramerate()
 		Draw(m_GameTime);
 
 		// Update the timing information
-		m_GameTime.deltaTimeMicros = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - previousTime).count();
+		m_GameTime.deltaTimeMicros = (unsigned int)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - previousTime).count();
 		m_GameTime.frameCount++;
 		m_GameTime.totalTimeMicros += m_GameTime.deltaTimeMicros;
 		previousTime = std::chrono::high_resolution_clock::now();

@@ -26,11 +26,13 @@ namespace Engine
 		vector2D(const glm::vec2& v) : m_X(v.x), m_Y(v.y) { }
 
 		// Casts
-		inline operator glm::vec2 const&() { return glm::vec2(m_X, m_Y); }
+		inline operator glm::vec2() { return glm::vec2(m_X, m_Y); }
 
 		// Getters
-		inline valuetype x() const { return m_X; }
-		inline valuetype y() const { return m_Y; }
+		inline valuetype& x() { return m_X; }
+		inline valuetype& y() { return m_Y; }
+		inline const valuetype& x() const { return m_X; }
+		inline const valuetype& y() const { return m_Y; }
 
 		// Setters
 		inline vector2D& x(valuetype x) { m_X = x; return *this; }
@@ -104,12 +106,15 @@ namespace Engine
 		vector3D(const glm::vec3& v) : m_X(v.x), m_Y(v.y), m_Z(v.z) { }
 		
 		// Casts
-		inline operator glm::vec3 const&() { return glm::vec3(m_X, m_Y, m_Z); }
+		inline operator glm::vec3() { return glm::vec3(m_X, m_Y, m_Z); }
 
 		// Getters
-		inline valuetype x() const { return m_X; }
-		inline valuetype y() const { return m_Y; }
-		inline valuetype z() const { return m_Z; }
+		inline valuetype& x() { return m_X; }
+		inline valuetype& y() { return m_Y; }
+		inline valuetype& z() { return m_Z; }
+		inline const valuetype& x() const { return m_X; }
+		inline const valuetype& y() const { return m_Y; }
+		inline const valuetype& z() const { return m_Z; }
 
 		// Setters
 		inline vector3D& x(valuetype x) { m_X = x; return *this; }
@@ -200,13 +205,17 @@ namespace Engine
 		vector4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		
 		// Casts
-		inline operator glm::vec4 const&() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
+		inline operator glm::vec4() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
 
 		// Getters
-		inline valuetype x() const { return m_X; }
-		inline valuetype y() const { return m_Y; }
-		inline valuetype z() const { return m_Z; }
-		inline valuetype w() const { return m_W; }
+		inline valuetype& x() { return m_X; }
+		inline valuetype& y() { return m_Y; }
+		inline valuetype& z() { return m_Z; }
+		inline valuetype& w() { return m_W; }
+		inline const valuetype& x() const { return m_X; }
+		inline const valuetype& y() const { return m_Y; }
+		inline const valuetype& z() const { return m_Z; }
+		inline const valuetype& w() const { return m_W; }
 
 		// Setters
 		inline vector4D& x(valuetype x) { m_X = x; return *this; }
@@ -349,14 +358,18 @@ namespace Engine
 		vectorH4D(const vector4D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(v.w()) { }
 
 		// Casts
-		inline operator glm::vec4 const&() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
+		inline operator glm::vec4() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
 		inline operator vector4D<valuetype> const&() { return vector4D<valuetype>(m_X, m_Y, m_Z, m_W); }
 
 		// Getters
-		inline valuetype x() const { return m_X; }
-		inline valuetype y() const { return m_Y; }
-		inline valuetype z() const { return m_Z; }
-		inline valuetype w() const { return m_W; }
+		inline valuetype& x() { return m_X; }
+		inline valuetype& y() { return m_Y; }
+		inline valuetype& z() { return m_Z; }
+		inline valuetype& w() { return m_W; }
+		inline const valuetype& x() const { return m_X; }
+		inline const valuetype& y() const { return m_Y; }
+		inline const valuetype& z() const { return m_Z; }
+		inline const valuetype& w() const { return m_W; }
 
 		// Setters
 		inline vectorH4D& x(valuetype x) { m_X = x; return *this; }

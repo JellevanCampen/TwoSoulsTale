@@ -72,10 +72,10 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
 
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth);
-	float right = left + spriteSheetResource.m_Descriptor.m_SpriteWidth;
-	float top = spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight);
-	float bottom = top + spriteSheetResource.m_Descriptor.m_SpriteHeight;
+	float left = (float)(spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth));
+	float right = (float)(left + spriteSheetResource.m_Descriptor.m_SpriteWidth);
+	float top = (float)(spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight));
+	float bottom = (float)(top + spriteSheetResource.m_Descriptor.m_SpriteHeight);
 	left /= spriteSheetResource.m_Descriptor.m_SheetWidth;
 	right /= spriteSheetResource.m_Descriptor.m_SheetWidth;
 	top /= spriteSheetResource.m_Descriptor.m_SheetHeight;
@@ -117,10 +117,10 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
 
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth);
-	float right = left + spriteSheetResource.m_Descriptor.m_SpriteWidth;
-	float top = spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight);
-	float bottom = top + spriteSheetResource.m_Descriptor.m_SpriteHeight;
+	float left = (float)(spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth));
+	float right = (float)(left + spriteSheetResource.m_Descriptor.m_SpriteWidth);
+	float top = (float)(spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight));
+	float bottom = (float)(top + spriteSheetResource.m_Descriptor.m_SpriteHeight);
 	left /= spriteSheetResource.m_Descriptor.m_SheetWidth;
 	right /= spriteSheetResource.m_Descriptor.m_SheetWidth;
 	top /= spriteSheetResource.m_Descriptor.m_SheetHeight;
@@ -147,18 +147,6 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
-}
-
-// Draws a frame of the specified sprite sheet using the specified transformation
-void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z)
-{
-	DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), z, transform.r(), transform.s().x(), transform.s().y());
-}
-
-// Draws a frame of the specified sprite sheet using the specified transformation (transform 3D)
-void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform3D transform)
-{
-	DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), transform.t().z(), transform.r().z(), transform.s().x(), transform.s().y());
 }
 
 // Initializes GLFW
@@ -304,7 +292,7 @@ GLuint Engine::GraphicsManager::LoadShaderStage(std::string filename, GLenum sha
 	// Compile the shader stage
 	const std::string &shaderCodeString = shaderCode.str();
 	const char* shaderCodePointer = shaderCodeString.c_str();
-	GLint shaderCodeLength = shaderCodeString.size();
+	GLint shaderCodeLength = (GLint)shaderCodeString.size();
 	glShaderSource(shader, 1, (const GLchar**)&shaderCodePointer, (GLint*)&shaderCodeLength);
 	glCompileShader(shader);
 

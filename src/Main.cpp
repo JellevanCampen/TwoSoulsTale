@@ -31,7 +31,6 @@ int main(int argc, char* argv[])
 	std::vector<Engine::GameObject*> gameObjects;
 	Engine::GameObject* gameObject;
 
-test1:
 	Engine::WorldManager::GetInstance().RetrieveAllGameObjects(gameObjects, ID_TYPE::OBJ_TESTOBJECT);
 	if (gameObjects.size() != 3) { std::cout << "FAILED: RetrieveAllGameObjects" << std::endl; goto test2; }
 	if (gameObjects[0]->GetGUID() == 0 && gameObjects[1]->GetGUID() == 1 && gameObjects[2]->GetGUID() == 2)

@@ -32,9 +32,12 @@ namespace Engine
 		transform2D(float tX, float tY, float r = 0.0f, float sX = 1.0f, float sY = 1.0f) : m_T(tX, tY), m_R(r), m_S(sX, sY), m_Dirty(true) { }
 
 		// Getters
-		inline f2 t() const { return m_T; }
-		inline float r() const { return m_R; }
-		inline f2 s() const { return m_S; }
+		inline f2& t() { m_Dirty = true; return m_T; }
+		inline float& r() { m_Dirty = true; return m_R; }
+		inline f2& s() { m_Dirty = true; return m_S; }
+		inline const f2& t() const { return m_T; }
+		inline const float& r() const { return m_R; }
+		inline const f2& s() const { return m_S; }
 
 		// Setters
 		inline transform2D& t(f2 t) { m_T = t; m_Dirty = true; return *this; }
@@ -93,12 +96,15 @@ namespace Engine
 		transform3D(const transform2D& t2D) : m_T(f3(t2D.t(), 0.0f)), m_R(f3(0.0f, 0.0f, t2D.r())), m_S(f3(t2D.s(), 1.0f)), m_RotationOrder(RotationOrder::ZXY), m_Dirty(true) { }
 
 		// Casts
-		inline operator transform2D&() const { transform2D t2D; t2D.t(m_T.xy()); t2D.r(m_R.z()); t2D.s(m_S.xy()); return t2D; }
+		inline operator transform2D() const { transform2D t2D; t2D.t(m_T.xy()); t2D.r(m_R.z()); t2D.s(m_S.xy()); return t2D; }
 
 		// Getters
-		inline f3 t() const { return m_T; }
-		inline f3 r() const { return m_R; }
-		inline f3 s() const { return m_S; }
+		inline f3& t() { m_Dirty = true; return m_T; }
+		inline f3& r() { m_Dirty = true; return m_R; }
+		inline f3& s() { m_Dirty = true; return m_S; }
+		inline const f3& t() const { return m_T; }
+		inline const f3& r() const { return m_R; }
+		inline const f3& s() const { return m_S; }
 
 		// Setters
 		inline transform3D& t(f3 t) { m_T = t; m_Dirty = true; return *this; }

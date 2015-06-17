@@ -45,7 +45,7 @@ namespace Engine
 
 		// Casts
 		// TODO: check if the element order is correct (GLM = row major?)
-		inline operator glm::mat2&() const { return glm::mat2(m_V[0], m_V[1], m_V[2], m_V[3]); }
+		inline operator glm::mat2() const { return glm::mat2(m_V[0], m_V[1], m_V[2], m_V[3]); }
 
 		// Getters
 		inline valuetype& Get(size_t element) { return m_V[element]; }
@@ -171,7 +171,7 @@ namespace Engine
 
 		// Casts
 		// TODO: check if the element order is correct (GLM = row major?)
-		inline operator glm::mat3&() const { glm::mat3 m; for (int i = 0; i < 9; i++) { m[i / 3][i % 3] = m_V[i]; } return m; }
+		inline operator glm::mat3() const { glm::mat3 m; for (int i = 0; i < 9; i++) { m[i / 3][i % 3] = m_V[i]; } return m; }
 
 		// Getters
 		inline valuetype& Get(size_t element) { return m_V[element]; }
@@ -297,7 +297,7 @@ namespace Engine
 
 		// Casts
 		// TODO: check if the element order is correct (GLM = row major?)
-		inline operator glm::mat4&() const { glm::mat4 m; for (int i = 0; i < 16; i++) { m[i / 4][i % 4] = m_V[i]; } return m; }
+		inline operator glm::mat4() const { glm::mat4 m; for (int i = 0; i < 16; i++) { m[i / 4][i % 4] = m_V[i]; } return m; }
 
 		// Getters
 		inline valuetype& Get(size_t element) { return m_V[element]; }
@@ -332,7 +332,7 @@ namespace Engine
 		inline matrix4x4& SetZeros() { for (size_t i = 0; i < 16; i++) { m_V[i] = 0; } return *this; }
 
 		// Set the matrix to be an identity matrix
-		inline matrix4x4& SetIdentity() { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? 1 : 0; } return *this; }
+		inline matrix4x4& SetIdentity() { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? (valuetype)1 : (valuetype)0; } return *this; }
 
 		// Transposes the matrix
 		inline matrix4x4& Transpose()
