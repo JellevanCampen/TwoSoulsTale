@@ -38,11 +38,25 @@ namespace Engine
 		inline interval1D& x(basetype x) const { m_X1 = x; return *this; }
 		inline interval1D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
 
+		// Operators
+		inline bool operator== (const interval1D& other) const { return (m_X1 == other.m_X1 && m_X2 == other.m_X2); }
+		inline bool operator!= (const interval1D& other) const { return !(*this == other); }
+		inline interval1D operator+ (const basetype& other) const { return interval1D(m_X1 + other.m_X1, m_X2 + other.m_X2); }
+		inline interval1D operator- (const basetype& other) const { return interval1D(m_X1 - other.m_X1, m_X2 - other.m_X2); }
+		inline interval1D operator* (basetype scalar) const { return interval1D(m_X1 * scalar, m_X2 * scalar); }
+		inline interval1D operator/ (basetype scalar) const { return interval1D(m_X1 / scalar, m_X2 / scalar); }
+
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x) const { return (x >= m_X1 && x <= m_X2); }
 
 		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
 		inline bool ContainsStrict(basetype x) const { return (x > m_X1 && x < m_X2); }
+
+		// Checks whether the specified interval overlaps with this interval (boundaries included)
+		inline bool Overlaps(const interval1D& other) const { return ((other.m_X2 >= m_X1) && (other.m_X1 <= m_X2)); }
+
+		// Checks whether the specified interval overlaps with this interval (boundaries not included)
+		inline bool OverlapsStrict(const interval1D& other) const { return ((other.m_X2 > m_X1) && (other.m_X1 < m_X2)); }
 	};
 
 	typedef interval1D<int> interval1Di, aabb1Di, linesegmenti;
@@ -96,15 +110,33 @@ namespace Engine
 		inline interval2D& y(basetype y) const { m_Y1 = y; return *this; }
 		inline interval2D& h(basetype h) const { m_Y2 = m_Y1 + h; return *this; }
 
+		// Operators
+		inline bool operator== (const interval2D& other) const { return (m_X1 == other.m_X1 && m_X2 == other.m_X2 && m_Y1 == other.m_Y1 && m_Y2 == other.m_Y2); }
+		inline bool operator!= (const interval2D& other) const { return !(*this == other); }
+		inline interval2D operator+ (const basetype& other) const { return interval2D(m_X1 + other.m_X1, m_X2 + other.m_X2, m_Y1 + other.m_Y1, m_Y2 + other.m_Y2); }
+		inline interval2D operator- (const basetype& other) const { return interval2D(m_X1 - other.m_X1, m_X2 - other.m_X2, m_Y1 - other.m_Y1, m_Y2 - other.m_Y2); }
+		inline interval2D operator* (basetype scalar) const { return interval2D(m_X1 * scalar, m_X2 * scalar, m_Y1 * scalar, m_Y2 * scalar); }
+		inline interval2D operator/ (basetype scalar) const { return interval2D(m_X1 / scalar, m_X2 / scalar, m_Y1 / scalar, m_Y2 / scalar); }
+
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2); }
-		inline bool Contains(f2 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
-		inline bool Contains(i2 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
+		inline bool Contains(vector2D<basetype> p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
 
 		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
 		inline bool ContainsStrict(basetype x, basetype y) const { return (x > m_X1 && x < m_X2 && y >= m_Y1 && y <= m_Y2); }
-		inline bool ContainsStrict(f2 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
-		inline bool ContainsStrict(i2 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
+		inline bool ContainsStrict(vector2D<basetype> p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
+
+		// Checks whether the specified interval overlaps with this interval (boundaries included)
+		inline bool Overlaps(const interval2D& other) const { 
+			return ((other.m_X2 >= m_X1) && (other.m_X1 <= m_X2)
+			&& (other.m_Y2 >= m_Y1) && (other.m_Y1 <= m_Y2)); 
+		}
+
+		// Checks whether the specified interval overlaps with this interval (boundaries not included)
+		inline bool OverlapsStrict(const interval2D& other) const {
+			return ((other.m_X2 > m_X1) && (other.m_X1 < m_X2)
+				&& (other.m_Y2 > m_Y1) && (other.m_Y1 < m_Y2)); 
+		}
 	};
 
 	typedef interval2D<int> interval2Di, aabb2Di, rectanglei;
@@ -171,15 +203,35 @@ namespace Engine
 		inline interval3D& z(basetype z) const { m_Z1 = z; return *this; }
 		inline interval3D& d(basetype d) const { m_Z2 = m_Z1 + d; return *this; }
 
+		// Operators
+		inline bool operator== (const interval3D& other) const { return (m_X1 == other.m_X1 && m_X2 == other.m_X2 && m_Y1 == other.m_Y1 && m_Y2 == other.m_Y2 && m_Z1 == other.m_Z1 && m_Z2 == other.m_Z2); }
+		inline bool operator!= (const interval3D& other) const { return !(*this == other); }
+		inline interval3D operator+ (const basetype& other) const { return interval3D(m_X1 + other.m_X1, m_X2 + other.m_X2, m_Y1 + other.m_Y1, m_Y2 + other.m_Y2, m_Z1 + other.m_Z1, m_Z2 + other.m_Z2); }
+		inline interval3D operator- (const basetype& other) const { return interval3D(m_X1 - other.m_X1, m_X2 - other.m_X2, m_Y1 - other.m_Y1, m_Y2 - other.m_Y2, m_Z1 - other.m_Z1, m_Z2 - other.m_Z2); }
+		inline interval3D operator* (basetype scalar) const { return interval3D(m_X1 * scalar, m_X2 * scalar, m_Y1 * scalar, m_Y2 * scalar, m_Z1 * scalar, m_Z2 * scalar); }
+		inline interval3D operator/ (basetype scalar) const { return interval3D(m_X1 / scalar, m_X2 / scalar, m_Y1 / scalar, m_Y2 / scalar, m_Z1 / scalar, m_Z2 / scalar); }
+
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y, basetype z) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }
-		inline bool Contains(f3 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
-		inline bool Contains(i3 p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
+		inline bool Contains(vector3D<basetype> p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
 
 		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
 		inline bool ContainsStrict(basetype x, basetype y, basetype z) const { return (x > m_X1 && x < m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }
-		inline bool ContainsStrict(f3 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
-		inline bool ContainsStrict(i3 p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
+		inline bool ContainsStrict(vector3D<basetype> p) const { return (p.x() > m_X1 && p.x() < m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2 && p.z() >= m_Z1 && p.z() <= m_Z2); }
+
+		// Checks whether the specified interval overlaps with this interval (boundaries included)
+		inline bool Overlaps(const interval3D& other) const {
+			return ((other.m_X2 >= m_X1) && (other.m_X1 <= m_X2)
+				&& (other.m_Y2 >= m_Y1) && (other.m_Y1 <= m_Y2)
+				&& (other.m_Z2 >= m_Z1) && (other.m_Z1 <= m_Z2));
+		}
+
+		// Checks whether the specified interval overlaps with this interval (boundaries not included)
+		inline bool OverlapsStrict(const interval3D& other) const {
+			return ((other.m_X2 > m_X1) && (other.m_X1 < m_X2)
+				&& (other.m_Y2 > m_Y1) && (other.m_Y1 < m_Y2)
+				&& (other.m_Z2 > m_Z1) && (other.m_Z1 < m_Z2));
+		}
 	};
 
 	typedef interval3D<int> interval3Di, aabb3Di, boxi;

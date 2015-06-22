@@ -4,6 +4,7 @@
 
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 #include "../common/utility/TransformTypes.hpp" // For representing the transform of the GameObject
+#include "../common/utility/IntervalTypes.hpp" // For representing AABBs
 
 namespace Engine{
 
@@ -46,11 +47,14 @@ namespace Engine{
 		// Gets the globally unique ID of the game object
 		const GameObjectGUID& GetGUID() const;
 
+		// Gets the type of the game object
+		virtual GameObjectType GetType() const = 0;
+		
 		// Transform of the game object
 		transform3D m_Transform;
 
-		// Gets the type of the game object
-		virtual GameObjectType GetType() const  = 0;
+		// AABB of the game object (in local coordinates)
+		aabb2Df m_AABB;
 
 	private:
 
