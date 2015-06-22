@@ -24,6 +24,9 @@ namespace Engine{
 		// Constructor (with transform)
 		GameObject(transform3D transform);
 
+		// Constructor (with transform and aabb)
+		GameObject(transform3D transform, aabb3Df aabb);
+
 		////////////////////////////////////////////////////////////////
 		// Game loop functionality                                    //
 		////////////////////////////////////////////////////////////////
@@ -54,7 +57,7 @@ namespace Engine{
 		transform3D m_Transform;
 
 		// AABB of the game object (in local coordinates)
-		aabb2Df m_AABB;
+		aabb3Df m_AABB;
 
 	private:
 

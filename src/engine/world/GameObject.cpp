@@ -15,6 +15,15 @@ Engine::GameObject::GameObject(transform3D transform)
 
 }
 
+// Constructor (with transform and aabb)
+Engine::GameObject::GameObject(transform3D transform, aabb3Df aabb)
+	: m_GUID(s_GUIDCounter++)
+	, m_Transform(transform)
+	, m_AABB(aabb)
+{
+
+}
+
 ////////////////////////////////////////////////////////////////
 // Property setters and getters                               //
 ////////////////////////////////////////////////////////////////

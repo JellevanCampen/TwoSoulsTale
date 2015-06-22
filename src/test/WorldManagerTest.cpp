@@ -3,12 +3,12 @@ int main(int argc, char* argv[])
 	Engine::Game game;
 	game.Initialize();
 
-	GameContent::TestObject* testA(new GameContent::TestObject(Engine::Transform3D(0.0f, 1.0f, 1000.0f)));
-	GameContent::TestObject* testB(new GameContent::TestObject(Engine::Transform3D(1.0f, 1.0f, 100.0f)));
-	GameContent::TestObject* testC(new GameContent::TestObject(Engine::Transform3D(2.0f, 1.0f, 10.0f)));
-	GameContent::TestObject2* testA2(new GameContent::TestObject2(Engine::Transform3D(0.0f, 1.0f, 1000.0f)));
-	GameContent::TestObject2* testB2(new GameContent::TestObject2(Engine::Transform3D(1.0f, 1.0f, 100.0f)));
-	GameContent::TestObject2* testC2(new GameContent::TestObject2(Engine::Transform3D(2.0f, 1.0f, 10.0f)));
+	GameContent::TestObject* testA(new GameContent::TestObject(Engine::transform3D(0.0f, 1.0f, 1000.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
+	GameContent::TestObject* testB(new GameContent::TestObject(Engine::transform3D(1.0f, 1.0f, 100.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
+	GameContent::TestObject* testC(new GameContent::TestObject(Engine::transform3D(2.0f, 1.0f, 10.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
+	GameContent::TestObject2* testA2(new GameContent::TestObject2(Engine::transform3D(0.0f, 1.0f, 1000.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
+	GameContent::TestObject2* testB2(new GameContent::TestObject2(Engine::transform3D(1.0f, 1.0f, 100.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
+	GameContent::TestObject2* testC2(new GameContent::TestObject2(Engine::transform3D(2.0f, 1.0f, 10.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
 	Engine::WorldManager::GetInstance().AddGameObject(testA);
 	Engine::WorldManager::GetInstance().AddGameObject(testB);
 	Engine::WorldManager::GetInstance().AddGameObject(testC);
@@ -93,12 +93,41 @@ test6:
 
 test7:
 	gameObject = NULL;
-	Engine::WorldManager::GetInstance().RetrieveNearestGameObject(Engine::f3(0.0f, 1.0f, 100.0f), gameObject, ID_TYPE::OBJ_TESTOBJECT1);
-	if (gameObject->GetGUID() == 1) { std::cout << "PASSED: RetrieveNearestGameObject" << std::endl; }
-	else { std::cout << "FAILED: RetrieveNearestGameObject" << std::endl; }
+	Engine::WorldManager::GetInstance().RetrieveNearestGameObject(Engine::f3(0.0f, 1.0f, 100.0f), gameObject, ID_TYPE::OBJ_TESTOBJECT);
+	if (gameObject->GetGUID() == 1) { std::cout << "PASSED: RetrieveNearestGameObject" << std::endl; goto test8; }
+	else { std::cout << "FAILED: RetrieveNearestGameObject" << std::endl; goto test8; }
 
 	system("pause");
 
+test8:
+	gameObjects.clear();
+	Engine::WorldManager::GetInstance().RetrieveOverlappingAABBGameObjects2D(*testA, gameObjects);
+	if (gameObjects.size() != 4) { std::cout << "FAILED: RetrieveOverlappingAABBGameObjects2D" << std::endl; goto test9; }
+	if (gameObjects[0]->GetGUID() == 0 && gameObjects[1]->GetGUID() == 3 && gameObjects[2]->GetGUID() == 1 && gameObjects[3]->GetGUID() == 4)
+	{
+		std::cout << "PASSED: RetrieveOverlappingAABBGameObjects2D" << std::endl; goto test9;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveOverlappingAABBGameObjects2D" << std::endl; goto test9;
+	}
+
+test9:
+	gameObjects.clear();
+	Engine::WorldManager::GetInstance().RetrieveOverlappingAABBGameObjects3D(*testA, gameObjects);
+	if (gameObjects.size() != 2) { std::cout << "FAILED: RetrieveOverlappingAABBGameObjects3D" << std::endl; goto test10; }
+	if (gameObjects[0]->GetGUID() == 0 && gameObjects[1]->GetGUID() == 3)
+	{
+		std::cout << "PASSED: RetrieveOverlappingAABBGameObjects3D" << std::endl; goto test10;
+	}
+	else
+	{
+		std::cout << "FAILED: RetrieveOverlappingAABBGameObjects3D" << std::endl; goto test10;
+	}
+
+test10:
+
+	game.Start();
 	game.Terminate();
 
 	return 0;

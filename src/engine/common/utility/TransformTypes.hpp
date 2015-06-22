@@ -10,6 +10,51 @@
 namespace Engine
 {
 	////////////////////////////////////////////////////////////////
+	// 1D transforms                                              //
+	////////////////////////////////////////////////////////////////
+
+	struct transform1D
+	{
+
+	private:
+
+		float m_T;
+		float m_S;
+
+		mat4f m_Matrix;
+		bool m_Dirty;
+
+	public:
+
+		// Constructors
+		transform1D(float t = 0.0f, float s = 1.0f) : m_T(t), m_S(s), m_Dirty(true) { }
+
+		// Getters
+		inline float& t() { m_Dirty = true; return m_T; }
+		inline float& s() { m_Dirty = true; return m_S; }
+		inline const float& t() const { return m_T; }
+		inline const float& s() const { return m_S; }
+
+		// Setters
+		inline transform1D& t(float t) { m_T = t; m_Dirty = true; return *this; }
+		inline transform1D& s(float s) { m_S = s; m_Dirty = true; return *this; }
+
+		// Gets the transformation matrix for this transform
+		const mat4f& GetTransformationMatrix()
+		{
+			if (!m_Dirty) { return m_Matrix; }
+
+			m_Matrix.SetIdentity();
+			if (m_T != 0.0f) { m_Matrix = glm::translate<float, glm::precision::defaultp>(m_Matrix, f3(m_T, 0.0f, 0.0f)); }
+			if (m_S != 1.0f) { m_Matrix = glm::scale<float, glm::precision::defaultp>(m_Matrix, f3(m_S, 1.0f, 1.0f)); }
+
+			return m_Matrix;
+		}
+	};
+
+	typedef transform1D tf1D;
+
+	////////////////////////////////////////////////////////////////
 	// 2D transforms                                              //
 	////////////////////////////////////////////////////////////////
 
@@ -30,6 +75,10 @@ namespace Engine
 		// Constructors
 		transform2D(f2 t = f2(0.0f, 0.0f), float r = 0.0f, f2 s = f2(1.0f, 1.0f)) : m_T(t), m_R(r), m_S(s), m_Dirty(true) { }
 		transform2D(float tX, float tY, float r = 0.0f, float sX = 1.0f, float sY = 1.0f) : m_T(tX, tY), m_R(r), m_S(sX, sY), m_Dirty(true) { }
+		transform2D(const transform1D& t1D) : m_T(f2(t1D.t(), 0.0f)), m_R(0.0f), m_S(f2(t1D.s(), 1.0f)), m_Dirty(true) { }
+
+		// Casts
+		inline operator transform1D() const { transform1D t1D; t1D.t(m_T.x()); t1D.s(m_S.x()); return t1D; }
 
 		// Getters
 		inline f2& t() { m_Dirty = true; return m_T; }
@@ -60,7 +109,7 @@ namespace Engine
 		}
 	};
 
-	typedef transform2D t2D;
+	typedef transform2D tf2D;
 
 	////////////////////////////////////////////////////////////////
 	// 3D transforms                                              //
@@ -97,6 +146,7 @@ namespace Engine
 
 		// Casts
 		inline operator transform2D() const { transform2D t2D; t2D.t(m_T.xy()); t2D.r(m_R.z()); t2D.s(m_S.xy()); return t2D; }
+		inline operator transform1D() const { transform1D t1D; t1D.t(m_T.x()); t1D.s(m_S.x()); return t1D; }
 
 		// Getters
 		inline f3& t() { m_Dirty = true; return m_T; }
@@ -163,7 +213,7 @@ namespace Engine
 		}
 	};
 
-	typedef transform3D t3D;
+	typedef transform3D tf3D;
 }
 
 #endif

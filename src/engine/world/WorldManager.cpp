@@ -79,9 +79,8 @@ void Engine::WorldManager::RemoveGameObject(std::vector<GameObjectGUID> gameObje
 }
 
 ////////////////////////////////////////////////////////////////
-// Game object retrieval                                      //
+// Position-based game object retrieval                       //
 ////////////////////////////////////////////////////////////////
-
 
 // Retrieves the game object with the specified GUID (returns whether the game object was found)
 bool Engine::WorldManager::RetrieveGameObject(GameObjectGUID gameObjectGUID, GameObject*& out_GameObject)
@@ -490,6 +489,82 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
 			if (aabb.Contains(gameObject->m_Transform.t()))
+			{
+				out_GameObjects.push_back(gameObject);
+				count++;
+			}
+		}
+	}
+
+	return count;
+}
+
+////////////////////////////////////////////////////////////////
+// Collision-based game object retrieval                      //
+////////////////////////////////////////////////////////////////
+
+// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
+size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df& aabb, const transform2D& transform, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
+{
+	// TODO: this is slow, accelerate this using a dedicated data structure
+	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
+
+	size_t count = 0;
+
+	aabb2Df aabbTf = aabb.GetTransformed(transform);
+
+	if (typeFilter == OBJ_ANY)
+	{
+		for (auto gameObject : m_GameObjects)
+		{
+			if (aabbTf.Overlaps(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
+			{
+				out_GameObjects.push_back(gameObject.second);
+				count++;
+			}
+		}
+	}
+	else
+	{
+		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
+		{
+			if (aabbTf.Overlaps(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
+			{
+				out_GameObjects.push_back(gameObject);
+				count++;
+			}
+		}
+	}
+
+	return count;
+}
+
+// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
+size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df& aabb, const transform3D& transform, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
+{
+	// TODO: this is slow, accelerate this using a dedicated data structure
+	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
+
+	size_t count = 0;
+
+	aabb3Df aabbTf = aabb.GetTransformed(transform);
+
+	if (typeFilter == OBJ_ANY)
+	{
+		for (auto gameObject : m_GameObjects)
+		{
+			if (aabbTf.Overlaps(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
+			{
+				out_GameObjects.push_back(gameObject.second);
+				count++;
+			}
+		}
+	}
+	else
+	{
+		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
+		{
+			if (aabbTf.Overlaps(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;

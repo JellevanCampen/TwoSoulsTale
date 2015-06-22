@@ -2,8 +2,8 @@
 #include "..\src\engine\common\utility\VectorTypes.hpp"
 
 // Constructor (given transform)
-GameContent::TestObject::TestObject(Engine::transform3D transform)
-	: GameObject(transform)
+GameContent::TestObject::TestObject(Engine::transform3D transform, Engine::aabb3Df aabb)
+	: GameObject(transform, aabb)
 {
 
 }

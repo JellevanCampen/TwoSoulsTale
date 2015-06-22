@@ -1,6 +1,9 @@
 #ifndef ENGINE_COMMON_UTILITY_INTERVALTYPES_H
 #define ENGINE_COMMON_UTILITY_INTERVALTYPES_H
 
+#include "VectorTypes.hpp" // For representing vectors
+#include "TransformTypes.hpp" // For representing transforms
+
 namespace Engine
 {
 	////////////////////////////////////////////////////////////////
@@ -46,6 +49,9 @@ namespace Engine
 		inline interval1D operator* (basetype scalar) const { return interval1D(m_X1 * scalar, m_X2 * scalar); }
 		inline interval1D operator/ (basetype scalar) const { return interval1D(m_X1 / scalar, m_X2 / scalar); }
 
+		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
+		inline interval1D GetTransformed(transform1D t1D) const { return interval1D(m_X1 * t1D.s() + t1D.t(), m_X2 * t1D.s() + t1D.t()); }
+
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x) const { return (x >= m_X1 && x <= m_X2); }
 
@@ -80,6 +86,9 @@ namespace Engine
 		// Constructors
 		interval2D(basetype x1, basetype x2, basetype y1, basetype y2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2) { }
 		interval2D() : interval2D(0, 0, 0, 0) { }
+
+		// Casts
+		inline operator interval1D<basetype>() const { return interval1D<basetype>(m_X1, m_X2); }
 
 		// Getters
 		inline basetype& x1() { return m_X1; }
@@ -117,6 +126,9 @@ namespace Engine
 		inline interval2D operator- (const basetype& other) const { return interval2D(m_X1 - other.m_X1, m_X2 - other.m_X2, m_Y1 - other.m_Y1, m_Y2 - other.m_Y2); }
 		inline interval2D operator* (basetype scalar) const { return interval2D(m_X1 * scalar, m_X2 * scalar, m_Y1 * scalar, m_Y2 * scalar); }
 		inline interval2D operator/ (basetype scalar) const { return interval2D(m_X1 / scalar, m_X2 / scalar, m_Y1 / scalar, m_Y2 / scalar); }
+
+		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
+		inline interval2D GetTransformed(transform2D t2D) const { return interval2D(m_X1 * t2D.s().x() + t2D.t().x(), m_X2 * t2D.s().x() + t2D.t().x(), m_Y1 * t2D.s().y() + t2D.t().y(), m_Y2 * t2D.s().y() + t2D.t().y()); }
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2); }
@@ -161,6 +173,10 @@ namespace Engine
 		// Constructors
 		interval3D(basetype x1, basetype x2, basetype y1, basetype y2, basetype z1, basetype z2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2), m_Z1(z1), m_Z2(z2) { }
 		interval3D() : interval3D(0, 0, 0, 0, 0, 0) { }
+
+		// Casts
+		inline operator interval2D<basetype>() const { return interval2D<basetype>(m_X1, m_X2, m_Y1, m_Y2); }
+		inline operator interval1D<basetype>() const { return interval1D<basetype>(m_X1, m_X2); }
 
 		// Getters
 		inline basetype& x1() { return m_X1; }
@@ -210,6 +226,9 @@ namespace Engine
 		inline interval3D operator- (const basetype& other) const { return interval3D(m_X1 - other.m_X1, m_X2 - other.m_X2, m_Y1 - other.m_Y1, m_Y2 - other.m_Y2, m_Z1 - other.m_Z1, m_Z2 - other.m_Z2); }
 		inline interval3D operator* (basetype scalar) const { return interval3D(m_X1 * scalar, m_X2 * scalar, m_Y1 * scalar, m_Y2 * scalar, m_Z1 * scalar, m_Z2 * scalar); }
 		inline interval3D operator/ (basetype scalar) const { return interval3D(m_X1 / scalar, m_X2 / scalar, m_Y1 / scalar, m_Y2 / scalar, m_Z1 / scalar, m_Z2 / scalar); }
+
+		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
+		inline interval3D GetTransformed(transform3D t3D) const { return interval3D(m_X1 * t3D.s().x() + t3D.t().x(), m_X2 * t3D.s().x() + t3D.t().x(), m_Y1 * t3D.s().y() + t3D.t().y(), m_Y2 * t3D.s().y() + t3D.t().y(), m_Z1 * t3D.s().z() + t3D.t().z(), m_Z2 * t3D.s().z() + t3D.t().z()); }
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y, basetype z) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }
