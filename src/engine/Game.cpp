@@ -4,7 +4,9 @@
 #include "graphics\GraphicsManager.hpp" // [GRAPHICS] Graphics Manager
 #include "input\InputManager.hpp" // [INPUT] Input Manager
 #include "audio\AudioManager.hpp" // [AUDIO] Audio Manager
+#include "timing\TimingManager.hpp" // [TIMING] Timing Manager
 #include "world\WorldManager.hpp" // [WORLD] World Manager
+#include "resources\ResourceManager.hpp" // [RESOURCES] Resource Manager
 
 #include <chrono> // Chrono for measuring time between frames
 #include <thread> // Thread to synchronize the execution of the game loop to the desired framerate
@@ -26,6 +28,8 @@ void Engine::Game::Initialize()
 	GraphicsManager::GetInstance().Initialize();
 	InputManager::Create();
 	InputManager::GetInstance().Initialize();
+	TimingManager::Create();
+	TimingManager::GetInstance().Initialize();
 	WorldManager::Create();
 	WorldManager::GetInstance().Initialize();
 	ResourceManager::Create();
@@ -51,6 +55,8 @@ void Engine::Game::Terminate()
 {
 	ResourceManager::GetInstance().Terminate();
 	ResourceManager::Destroy();
+	TimingManager::GetInstance().Terminate();
+	TimingManager::Destroy();
 	WorldManager::GetInstance().Terminate();
 	WorldManager::Destroy();
 	InputManager::GetInstance().Terminate();
@@ -121,6 +127,7 @@ void Engine::Game::RunVariableFramerate()
 void Engine::Game::Update(const GameTime& gameTime)
 {
 	// Check for input 
+	TimingManager::GetInstance().Update(gameTime); // Update timing and launch time related callbacks
 	InputManager::GetInstance().PollInputEvents(); // Launch event-based input callbacks
 	InputManager::GetInstance().Update(gameTime); // Launch polling-based input calbacks
 

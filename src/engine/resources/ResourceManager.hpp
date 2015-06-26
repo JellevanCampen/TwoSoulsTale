@@ -40,6 +40,7 @@ namespace Engine{
 
 		// Frees a sprite sheet, freeing up memory if no more reservations exist
 		void FreeSpriteSheet(SpriteSheet spriteSheet);
+
 	private:
 
 		// Holds all sprite sheet resources

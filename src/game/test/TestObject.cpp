@@ -126,6 +126,14 @@ void GameContent::TestObject::Create()
 	distanceJointDef.dampingRatio = 1.0f;
 	b2DistanceJoint* distanceJoint = (b2DistanceJoint*)world.CreateJoint(&distanceJointDef);
 	
+	m_AlarmSlow = Engine::TimingManager::GetInstance().SetAlarm(500000, 20);
+	m_AlarmFast = Engine::TimingManager::GetInstance().SetAlarm(5000, 20);
+	m_AlarmOnce = Engine::TimingManager::GetInstance().SetAlarm(1234000);
+	m_AlarmInfinite = Engine::TimingManager::GetInstance().SetAlarm(500000, (unsigned int)(-1));
+	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmSlow, this);
+	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmFast, this);
+	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmOnce, this);
+	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmInfinite, this);
 	// TESTING
 }
 
@@ -264,4 +272,12 @@ void GameContent::TestObject::ProcessGamepadAxisEvent(unsigned char gamepad, int
 void GameContent::TestObject::ProcessGamepadButtonEvent(unsigned char gamepad, int button, GamepadButtonAction action)
 {
 	Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Gamepad button event detected by TestObject.");
+}
+
+void GameContent::TestObject::ProcessAlarmEvent(Engine::AlarmID alarmID, Engine::Timestamp timestamp)
+{
+	if (alarmID == m_AlarmSlow) { Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "HEY LISTEN! (slow) @ " + std::to_string(timestamp)); }
+	if (alarmID == m_AlarmFast) { Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "HEY LISTEN! (fast) @ " + std::to_string(timestamp)); }
+	if (alarmID == m_AlarmOnce) { Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "HEY LISTEN! (once) @ " + std::to_string(timestamp)); }
+	if (alarmID == m_AlarmInfinite) { Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "HEY LISTEN! (infinite) @ " + std::to_string(timestamp)); }
 }

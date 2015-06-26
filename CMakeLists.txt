@@ -161,6 +161,14 @@ set(SRC_ENGINE_INPUT
 )
 source_group(Engine\\Input FILES ${SRC_ENGINE_INPUT})
 
+# Timing Components
+set(SRC_ENGINE_TIMING
+	"src/engine/timing/TimingManager.hpp"
+	"src/engine/timing/TimingManager.cpp"
+	"src/engine/timing/AlarmListener.hpp"
+)
+source_group(Engine\\Timing FILES ${SRC_ENGINE_TIMING})
+
 # World Components
 set(SRC_ENGINE_WORLD 
 	"src/engine/world/WorldManager.hpp"
@@ -205,6 +213,7 @@ set(SRC_ENGINE_ALL
 	${SRC_ENGINE_GRAPHICS}
 	${SRC_ENGINE_RESOURCES}
 	${SRC_ENGINE_INPUT}
+	${SRC_ENGINE_TIMING}
 	${SRC_ENGINE_WORLD}
 	${SRC_ENGINE_COMMON}
 )

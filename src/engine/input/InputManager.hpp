@@ -9,7 +9,7 @@
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 
 #include <vector> // Vector for storing the states of all gamepads
-#include <list> // List for storing al listeners to specific input events
+#include <list> // List for storing all listeners to specific input events
 
 struct GLFWwindow;
 

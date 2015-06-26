@@ -12,11 +12,12 @@
 #include "..\src\engine\audio\AudioManager.hpp" // [AUDIO] Audio Manager
 #include "..\src\engine\world\WorldManager.hpp" // [WORLD] World Manager
 #include "..\src\engine\resources\ResourceManager.hpp" // [RESOURCE] Resource Manager
+#include "..\src\engine\timing\TimingManager.hpp" // [TIMING] Timing Manager
 
 #include "Box2D.h"
 
 namespace GameContent{
-	class TestObject : public Engine::GameObject, public Engine::KeyboardListener, public Engine::MouseListener, public Engine::GamepadListener{
+	class TestObject : public Engine::GameObject, public Engine::KeyboardListener, public Engine::MouseListener, public Engine::GamepadListener, public Engine::AlarmListener{
 
 	public:
 
@@ -42,9 +43,9 @@ namespace GameContent{
 		// Gets the type of the game object
 		virtual Engine::GameObjectType GetType() const { return ID_TYPE::OBJ_TESTOBJECT; }
 
-		/**************************************************************/
-		/* Input events                                               */
-		/**************************************************************/
+		////////////////////////////////////////////////////////////////
+		// Event processing                                           //
+		////////////////////////////////////////////////////////////////
 
 		virtual void ProcessKeyboardKeyEvent(int key, KeyboardKeyAction action);
 		virtual void ProcessKeyboardCharacterEvent(unsigned int character);
@@ -56,6 +57,8 @@ namespace GameContent{
 
 		virtual void ProcessGamepadAxisEvent(unsigned char gamepad, int axis, float axisState);
 		virtual void ProcessGamepadButtonEvent(unsigned char gamepad, int button, GamepadButtonAction action);
+
+		virtual void ProcessAlarmEvent(Engine::AlarmID alarmID, Engine::Timestamp timestamp);
 
 	private:
 
@@ -78,6 +81,11 @@ namespace GameContent{
 		int32 velocityIterations = 6;
 		int32 positionIterations = 2;
 		float scale = 32.0f;
+
+		Engine::AlarmID m_AlarmSlow;
+		Engine::AlarmID m_AlarmFast;
+		Engine::AlarmID m_AlarmOnce;
+		Engine::AlarmID m_AlarmInfinite;
 		// TESTING
 
 	};

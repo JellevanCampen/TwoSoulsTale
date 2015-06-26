@@ -517,7 +517,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (aabbTf.Overlaps(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
+			if (aabbTf.OverlapsStrict(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -528,7 +528,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (aabbTf.Overlaps(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
+			if (aabbTf.OverlapsStrict(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -553,7 +553,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (aabbTf.Overlaps(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
+			if (aabbTf.OverlapsStrict(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -564,7 +564,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (aabbTf.Overlaps(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
+			if (aabbTf.OverlapsStrict(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;

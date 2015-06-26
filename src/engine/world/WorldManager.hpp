@@ -103,7 +103,7 @@ namespace Engine{
 		// Retrieves all game objects whose AABBs overlap with the specified game object's AABB. Does not consider rotations (returns the number of game objects found)
 		inline size_t RetrieveOverlappingAABBGameObjects2D(const GameObject& gameObject, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY))
 		{
-			return RetrieveOverlappingAABBGameObjects2D((Engine::aabb2Df)gameObject.m_AABB, (Engine::transform2D)gameObject.m_Transform, out_GameObjects);
+			return RetrieveOverlappingAABBGameObjects2D((Engine::aabb2Df)gameObject.m_AABB, (Engine::transform2D)gameObject.m_Transform, out_GameObjects, typeFilter);
 		}
 
 		// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
@@ -112,7 +112,7 @@ namespace Engine{
 		// Retrieves all game objects whose AABBs overlap with the specified game object's AABB. Does not consider rotations (returns the number of game objects found)
 		inline size_t RetrieveOverlappingAABBGameObjects3D(const GameObject& gameObject, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY))
 		{
-			return RetrieveOverlappingAABBGameObjects3D(gameObject.m_AABB, gameObject.m_Transform, out_GameObjects);
+			return RetrieveOverlappingAABBGameObjects3D(gameObject.m_AABB, gameObject.m_Transform, out_GameObjects, typeFilter);
 		}
 
 	private:
