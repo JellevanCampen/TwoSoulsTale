@@ -106,6 +106,29 @@ void Engine::GraphicsManager::DrawRectangle(f2 p1, f2 p2, f4 color)
 	glBindVertexArray(0);
 }
 
+// Draws a circle
+void Engine::GraphicsManager::DrawCircle(Engine::circlef circle, f4 color)
+{
+	// Use the sprite sheet shader program
+	glUseProgram(m_ShaderCircle);
+
+	// Pass the start- and endpoints of the line
+	glUniform2f(m_ShaderCircle_uPosition, circle.x(), circle.y());
+	glUniform1f(m_ShaderCircle_uRadius, circle.r());
+
+	// Pass the color of the line
+	glUniform4f(m_ShaderCircle_uColor, color.x(), color.y(), color.z(), color.w());
+
+	// Pass the transformation matrices
+	glUniformMatrix4fv(m_ShaderCircle_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+	glUniformMatrix4fv(m_ShaderCircle_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+	// Draw the line
+	glBindVertexArray(m_ShaderCircle_VAO);
+	glDrawArrays(GL_LINE_LOOP, 0, s_NumCircleSegments);
+	glBindVertexArray(0);
+}
+
 ////////////////////////////////////////////////////////////////
 // Sprite sheets                                              //
 ////////////////////////////////////////////////////////////////
@@ -297,6 +320,15 @@ void Engine::GraphicsManager::InitializeShaderPrograms()
 	m_ShaderRectangle_uTopRight = glGetUniformLocation(m_ShaderRectangle, "uTopRight");
 	m_ShaderRectangle_uMatView = glGetUniformLocation(m_ShaderRectangle, "matView");
 	m_ShaderRectangle_uMatProjection = glGetUniformLocation(m_ShaderRectangle, "matProjection");
+
+	////////////////////////////////////////////////// Circle Shader
+
+	m_ShaderCircle = LoadShaderProgram("circle", "flatColor");
+	m_ShaderCircle_uColor = glGetUniformLocation(m_ShaderCircle, "uColor");
+	m_ShaderCircle_uPosition = glGetUniformLocation(m_ShaderCircle, "uPosition");
+	m_ShaderCircle_uRadius = glGetUniformLocation(m_ShaderCircle, "uRadius");
+	m_ShaderCircle_uMatView = glGetUniformLocation(m_ShaderCircle, "matView");
+	m_ShaderCircle_uMatProjection = glGetUniformLocation(m_ShaderCircle, "matProjection");
 }
 
 // Destroys standard shader programs
@@ -305,6 +337,7 @@ void Engine::GraphicsManager::TerminateShaderPrograms()
 	glDeleteProgram(m_ShaderSpriteSheet); 
 	glDeleteProgram(m_ShaderLine); 
 	glDeleteProgram(m_ShaderRectangle); 
+	glDeleteProgram(m_ShaderCircle);
 }
 
 // Initializes standard buffers
@@ -327,10 +360,6 @@ void Engine::GraphicsManager::InitializeBuffers()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
 
-	// Unbind buffers
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	/////////////////////////////////////////////// Rectangle shader
 
 	glGenVertexArrays(1, &m_ShaderRectangle_VAO);
@@ -348,6 +377,26 @@ void Engine::GraphicsManager::InitializeBuffers()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
 
+	////////////////////////////////////////////////// Circle shader
+
+	glGenVertexArrays(1, &m_ShaderCircle_VAO);
+	glBindVertexArray(m_ShaderCircle_VAO);
+
+	// Generate and bind the vertex buffer
+	glGenBuffers(1, &m_ShaderCircle_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderCircle_VBO);
+
+	// Buffer vertex data
+	GLfloat vertexDataCircle[s_NumCircleSegments];
+	for (int i = 0; i < s_NumCircleSegments; i++) { vertexDataCircle[i] = (float)i / (float)s_NumCircleSegments; }
+	glBufferData(GL_ARRAY_BUFFER, s_NumCircleSegments * sizeof(GLfloat), &vertexDataCircle[0], GL_STATIC_DRAW);
+
+	// Specify the vertex attributes (position)
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
+
+	////////////////////////////////////////////////////////////////
+
 	// Unbind buffers
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -361,6 +410,9 @@ void Engine::GraphicsManager::TerminateBuffers()
 
 	glDeleteBuffers(1, &m_ShaderRectangle_VBO);
 	glDeleteVertexArrays(1, &m_ShaderRectangle_VAO);
+
+	glDeleteBuffers(1, &m_ShaderCircle_VBO);
+	glDeleteVertexArrays(1, &m_ShaderCircle_VAO);
 }
 
 // Loads and compiles a shader program

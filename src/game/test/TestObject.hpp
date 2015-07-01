@@ -88,8 +88,8 @@ namespace GameContent{
 		Engine::AlarmID m_AlarmOnce;
 		Engine::AlarmID m_AlarmInfinite;
 
-		Engine::circle m_Circle;
-		Engine::ray2D m_Ray;
+		Engine::circled m_Circle;
+		Engine::ray2Dd m_Ray;
 		// TESTING
 
 	};

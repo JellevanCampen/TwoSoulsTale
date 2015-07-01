@@ -174,6 +174,7 @@ namespace Engine
 
 	typedef interval2D<int> interval2Di, aabb2Di, rectanglei;
 	typedef interval2D<float> interval2Df, aabb2Df, rectanglef;
+	typedef interval2D<double> interval2Dd, aabb2Dd, rectangled;
 
 	////////////////////////////////////////////////////////////////
 	// 3D intervals                                               //

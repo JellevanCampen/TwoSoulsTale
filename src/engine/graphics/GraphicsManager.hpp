@@ -12,6 +12,7 @@
 #include "../common/utility/MatrixTypes.hpp" // For representing transformation matrices
 #include "../common/utility/TransformTypes.hpp" // For representing a 3D transform
 #include "../common/utility/IntervalTypes.hpp" // For representing a rectangle
+#include "../common/utility/ShapeTypes.hpp" // For representing primitive shapes
 #include <string> // For representing filenames and the window title
 
 namespace Engine{
@@ -40,7 +41,11 @@ namespace Engine{
 		void DrawRectangle(f2 p1, f2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
 
 		// Draws a rectangle
-		inline void DrawRectangle(aabb2Df rect, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(f2(rect.x1(), rect.y1()), f2(rect.x2(), rect.y2()), color); }
+		inline void DrawRectangle(rectanglef rect, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(f2(rect.x1(), rect.y1()), f2(rect.x2(), rect.y2()), color); }
+
+		// Draws a circle
+		void DrawCircle(Engine::circlef circle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
+		inline void DrawCircle(Engine::circled circle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawCircle(circlef((float)circle.x(), (float)circle.y(), (float)circle.r()), color); }
 
 		////////////////////////////////////////////////////////////////
 		// Sprite sheets                                              //
@@ -74,6 +79,9 @@ namespace Engine{
 		// The GLFW window object corresponding to the main window
 		GLFWwindow* m_Window;
 
+		// Settings for primitives
+		static const size_t s_NumCircleSegments = 32;
+
 		// Shaders
 		GLuint m_ShaderSpriteSheet;
 		GLuint m_ShaderSpriteSheet_uTransparancyColor;
@@ -100,6 +108,15 @@ namespace Engine{
 		GLuint m_ShaderRectangle_uMatProjection;
 		GLuint m_ShaderRectangle_VAO;
 		GLuint m_ShaderRectangle_VBO;
+
+		GLuint m_ShaderCircle;
+		GLuint m_ShaderCircle_uColor;
+		GLuint m_ShaderCircle_uPosition;
+		GLuint m_ShaderCircle_uRadius;
+		GLuint m_ShaderCircle_uMatView;
+		GLuint m_ShaderCircle_uMatProjection;
+		GLuint m_ShaderCircle_VAO;
+		GLuint m_ShaderCircle_VBO;
 
 		// Initializes GLFW
 		bool InitializeGLFW();
