@@ -26,6 +26,9 @@ void Engine::GraphicsManager::Initialize()
 	// Load standard shader programs
 	InitializeShaderPrograms();
 
+	// Load standard buffers
+	InitializeBuffers();
+
 	// Initialize OpenGL settings
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -51,6 +54,56 @@ void Engine::GraphicsManager::SwapWindowBuffers()
 {
 	glfwSwapBuffers(m_Window);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+////////////////////////////////////////////////////////////////
+// Primitives                                                 //
+////////////////////////////////////////////////////////////////
+
+// Draws a line
+void Engine::GraphicsManager::DrawLine(f2 p1, f2 p2, f4 color)
+{
+	// Use the sprite sheet shader program
+	glUseProgram(m_ShaderLine);
+
+	// Pass the start- and endpoints of the line
+	glUniform2f(m_ShaderLine_uStart, p1.x(), p1.y());
+	glUniform2f(m_ShaderLine_uEnd, p2.x(), p2.y());
+
+	// Pass the color of the line
+	glUniform4f(m_ShaderLine_uColor, color.x(), color.y(), color.z(), color.w());
+
+	// Pass the transformation matrices
+	glUniformMatrix4fv(m_ShaderLine_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+	glUniformMatrix4fv(m_ShaderLine_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+	// Draw the line
+	glBindVertexArray(m_ShaderLine_VAO);
+	glDrawArrays(GL_LINES, 0, 2);
+	glBindVertexArray(0);
+}
+
+// Draws a rectangle
+void Engine::GraphicsManager::DrawRectangle(f2 p1, f2 p2, f4 color)
+{
+	// Use the sprite sheet shader program
+	glUseProgram(m_ShaderRectangle);
+
+	// Pass the start- and endpoints of the line
+	glUniform2f(m_ShaderRectangle_uBottomLeft, p1.x(), p1.y());
+	glUniform2f(m_ShaderRectangle_uTopRight, p2.x(), p2.y());
+
+	// Pass the color of the line
+	glUniform4f(m_ShaderRectangle_uColor, color.x(), color.y(), color.z(), color.w());
+
+	// Pass the transformation matrices
+	glUniformMatrix4fv(m_ShaderRectangle_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+	glUniformMatrix4fv(m_ShaderRectangle_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+	// Draw the line
+	glBindVertexArray(m_ShaderRectangle_VAO);
+	glDrawArrays(GL_LINE_LOOP, 0, 4);
+	glBindVertexArray(0);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -217,20 +270,97 @@ void Engine::GraphicsManager::GLFWErrorCallback(int error, const char* descripti
 // Initializes standard shader programs
 void Engine::GraphicsManager::InitializeShaderPrograms()
 {
-	// Sprite Sheet Shader
-	m_ShaderSpriteSheet = LoadShaderProgram("spritesheet", "spritesheet"); // Sprite sheet shader
+	//////////////////////////////////////////// Sprite Sheet Shader
+
+	m_ShaderSpriteSheet = LoadShaderProgram("spritesheet", "spritesheet"); 
 	m_ShaderSpriteSheet_uTransparancyColor = glGetUniformLocation(m_ShaderSpriteSheet, "uTransparancyColor");
 	m_ShaderSpriteSheet_uSpriteUV1 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1");
 	m_ShaderSpriteSheet_uSpriteUV2 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2");
 	m_ShaderSpriteSheet_uMatModel = glGetUniformLocation(m_ShaderSpriteSheet, "matModel");
 	m_ShaderSpriteSheet_uMatView = glGetUniformLocation(m_ShaderSpriteSheet, "matView");
 	m_ShaderSpriteSheet_uMatProjection = glGetUniformLocation(m_ShaderSpriteSheet, "matProjection");
+
+	//////////////////////////////////////////////////// Line Shader
+
+	m_ShaderLine = LoadShaderProgram("line", "flatColor"); 
+	m_ShaderLine_uColor = glGetUniformLocation(m_ShaderLine, "uColor");
+	m_ShaderLine_uStart = glGetUniformLocation(m_ShaderLine, "uStart");
+	m_ShaderLine_uEnd = glGetUniformLocation(m_ShaderLine, "uEnd");
+	m_ShaderLine_uMatView = glGetUniformLocation(m_ShaderLine, "matView");
+	m_ShaderLine_uMatProjection = glGetUniformLocation(m_ShaderLine, "matProjection");
+
+	/////////////////////////////////////////////// Rectangle Shader
+
+	m_ShaderRectangle = LoadShaderProgram("rectangle", "flatColor");
+	m_ShaderRectangle_uColor = glGetUniformLocation(m_ShaderRectangle, "uColor");
+	m_ShaderRectangle_uBottomLeft = glGetUniformLocation(m_ShaderRectangle, "uBottomLeft");
+	m_ShaderRectangle_uTopRight = glGetUniformLocation(m_ShaderRectangle, "uTopRight");
+	m_ShaderRectangle_uMatView = glGetUniformLocation(m_ShaderRectangle, "matView");
+	m_ShaderRectangle_uMatProjection = glGetUniformLocation(m_ShaderRectangle, "matProjection");
 }
 
 // Destroys standard shader programs
 void Engine::GraphicsManager::TerminateShaderPrograms()
 {
-	glDeleteProgram(m_ShaderSpriteSheet); // Sprite sheet shader
+	glDeleteProgram(m_ShaderSpriteSheet); 
+	glDeleteProgram(m_ShaderLine); 
+	glDeleteProgram(m_ShaderRectangle); 
+}
+
+// Initializes standard buffers
+void Engine::GraphicsManager::InitializeBuffers()
+{
+	//////////////////////////////////////////////////// Line shader
+
+	glGenVertexArrays(1, &m_ShaderLine_VAO);
+	glBindVertexArray(m_ShaderLine_VAO);
+
+	// Generate and bind the vertex buffer
+	glGenBuffers(1, &m_ShaderLine_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderLine_VBO);
+
+	// Buffer vertex data
+	GLfloat vertexDataLine[2] = { 0.0f, 1.0f };
+	glBufferData(GL_ARRAY_BUFFER, 2 * sizeof(GLfloat), &vertexDataLine[0], GL_STATIC_DRAW);
+
+	// Specify the vertex attributes (position)
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
+
+	// Unbind buffers
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	/////////////////////////////////////////////// Rectangle shader
+
+	glGenVertexArrays(1, &m_ShaderRectangle_VAO);
+	glBindVertexArray(m_ShaderRectangle_VAO);
+
+	// Generate and bind the vertex buffer
+	glGenBuffers(1, &m_ShaderRectangle_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderRectangle_VBO);
+
+	// Buffer vertex data
+	GLfloat vertexDataRectangle[4][2] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(GLfloat), &vertexDataRectangle[0], GL_STATIC_DRAW);
+
+	// Specify the vertex attributes (position)
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
+
+	// Unbind buffers
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+// Destroys standard buffers
+void Engine::GraphicsManager::TerminateBuffers()
+{
+	glDeleteBuffers(1, &m_ShaderLine_VBO);
+	glDeleteVertexArrays(1, &m_ShaderLine_VAO);
+
+	glDeleteBuffers(1, &m_ShaderRectangle_VBO);
+	glDeleteVertexArrays(1, &m_ShaderRectangle_VAO);
 }
 
 // Loads and compiles a shader program
@@ -375,6 +505,7 @@ const Engine::mat4f& Engine::GraphicsManager::GetCameraProjectionMatrix()
 	// Calculate the projection matrix if needed
 	m_CameraProjectionMatrix.SetZeros();
 	m_CameraProjectionMatrix.SetDiagonal(f4(1, 1, 1, 1));
+	m_CameraProjectionMatrixDirty = false;
 
 	return m_CameraProjectionMatrix;
 }

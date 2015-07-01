@@ -11,6 +11,7 @@
 #include "../common/utility/VectorTypes.hpp" // For representing positions
 #include "../common/utility/MatrixTypes.hpp" // For representing transformation matrices
 #include "../common/utility/TransformTypes.hpp" // For representing a 3D transform
+#include "../common/utility/IntervalTypes.hpp" // For representing a rectangle
 #include <string> // For representing filenames and the window title
 
 namespace Engine{
@@ -26,6 +27,20 @@ namespace Engine{
 
 		// Swaps the buffers of the main window
 		void SwapWindowBuffers();
+
+		////////////////////////////////////////////////////////////////
+		// Primitives                                                 //
+		////////////////////////////////////////////////////////////////
+
+		// Draws a line
+		void DrawLine(f2 p1, f2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
+		inline void DrawLine(d2 p1, d2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawLine(f2(p1.x(), p1.y()), f2(p2.x(), p2.y()), color); };
+
+		// Draws a rectangle
+		void DrawRectangle(f2 p1, f2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
+
+		// Draws a rectangle
+		inline void DrawRectangle(aabb2Df rect, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(f2(rect.x1(), rect.y1()), f2(rect.x2(), rect.y2()), color); }
 
 		////////////////////////////////////////////////////////////////
 		// Sprite sheets                                              //
@@ -68,6 +83,24 @@ namespace Engine{
 		GLuint m_ShaderSpriteSheet_uMatView;
 		GLuint m_ShaderSpriteSheet_uMatProjection;
 
+		GLuint m_ShaderLine;
+		GLuint m_ShaderLine_uColor;
+		GLuint m_ShaderLine_uStart;
+		GLuint m_ShaderLine_uEnd;
+		GLuint m_ShaderLine_uMatView;
+		GLuint m_ShaderLine_uMatProjection;
+		GLuint m_ShaderLine_VAO;
+		GLuint m_ShaderLine_VBO;
+
+		GLuint m_ShaderRectangle;
+		GLuint m_ShaderRectangle_uColor;
+		GLuint m_ShaderRectangle_uBottomLeft;
+		GLuint m_ShaderRectangle_uTopRight;
+		GLuint m_ShaderRectangle_uMatView;
+		GLuint m_ShaderRectangle_uMatProjection;
+		GLuint m_ShaderRectangle_VAO;
+		GLuint m_ShaderRectangle_VBO;
+
 		// Initializes GLFW
 		bool InitializeGLFW();
 
@@ -85,6 +118,12 @@ namespace Engine{
 
 		// Destroys standard shader programs
 		void TerminateShaderPrograms();
+
+		// Initializes standard buffers
+		void InitializeBuffers();
+
+		// Destroys standard buffers
+		void TerminateBuffers();
 
 		// GLFW error callback
 		static void GLFWErrorCallback(int error, const char* description);

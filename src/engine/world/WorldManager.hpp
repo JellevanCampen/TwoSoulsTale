@@ -115,6 +115,13 @@ namespace Engine{
 			return RetrieveOverlappingAABBGameObjects3D(gameObject.m_AABB, gameObject.m_Transform, out_GameObjects, typeFilter);
 		}
 
+		////////////////////////////////////////////////////////////////
+		// Debug rendering                                            //
+		////////////////////////////////////////////////////////////////
+
+		// Draws the bounding boxes of all game objects
+		void DrawBoundingBoxes() const;
+
 	private:
 
 		// Incrementing counter for handles

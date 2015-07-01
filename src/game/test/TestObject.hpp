@@ -11,6 +11,7 @@
 #include "..\src\engine\input\InputManager.hpp" // [INPUT] Input Manager
 #include "..\src\engine\audio\AudioManager.hpp" // [AUDIO] Audio Manager
 #include "..\src\engine\world\WorldManager.hpp" // [WORLD] World Manager
+#include "..\src\engine\world\CollisionManager.hpp" // [WORLD] Collision Manager
 #include "..\src\engine\resources\ResourceManager.hpp" // [RESOURCE] Resource Manager
 #include "..\src\engine\timing\TimingManager.hpp" // [TIMING] Timing Manager
 
@@ -86,6 +87,9 @@ namespace GameContent{
 		Engine::AlarmID m_AlarmFast;
 		Engine::AlarmID m_AlarmOnce;
 		Engine::AlarmID m_AlarmInfinite;
+
+		Engine::circle m_Circle;
+		Engine::ray2D m_Ray;
 		// TESTING
 
 	};

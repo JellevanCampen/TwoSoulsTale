@@ -52,6 +52,15 @@ namespace Engine
 		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
 		inline interval1D GetTransformed(transform1D t1D) const { return interval1D(m_X1 * t1D.s() + t1D.t(), m_X2 * t1D.s() + t1D.t()); }
 
+		// Calculates the AABB that contains the sweeped version of the interval
+		inline interval1D GetSweeped(basetype velocity) const
+		{  
+			return interval1D(
+				(velocity.x() < 0) ? m_X1 + velocity.x() : m_X1,
+				(velocity.x() > 0) ? m_X2 + velocity.x() : m_X2
+				);
+		}
+
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x) const { return (x >= m_X1 && x <= m_X2); }
 
@@ -85,6 +94,7 @@ namespace Engine
 
 		// Constructors
 		interval2D(basetype x1, basetype x2, basetype y1, basetype y2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2) { }
+		interval2D(vector2D<basetype> p1, vector2D<basetype> p2) : m_X1(p1.x()), m_X2(p2.x()), m_Y1(p1.y()), m_Y2(p2.y()) { }
 		interval2D() : interval2D(0, 0, 0, 0) { }
 
 		// Casts
@@ -130,6 +140,17 @@ namespace Engine
 		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
 		inline interval2D GetTransformed(transform2D t2D) const { return interval2D(m_X1 * t2D.s().x() + t2D.t().x(), m_X2 * t2D.s().x() + t2D.t().x(), m_Y1 * t2D.s().y() + t2D.t().y(), m_Y2 * t2D.s().y() + t2D.t().y()); }
 
+		// Calculates the AABB that contains the sweeped version of the interval
+		inline interval2D GetSweeped(vector2D<basetype> velocity) const
+		{
+			return interval2D(
+				(velocity.x() < 0) ? m_X1 + velocity.x() : m_X1,
+				(velocity.x() > 0) ? m_X2 + velocity.x() : m_X2,
+				(velocity.y() < 0) ? m_Y1 + velocity.y() : m_Y1,
+				(velocity.y() > 0) ? m_Y2 + velocity.y() : m_Y2
+				);
+		}
+
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2); }
 		inline bool Contains(vector2D<basetype> p) const { return (p.x() >= m_X1 && p.x() <= m_X2 && p.y() >= m_Y1 && p.y() <= m_Y2); }
@@ -172,6 +193,7 @@ namespace Engine
 
 		// Constructors
 		interval3D(basetype x1, basetype x2, basetype y1, basetype y2, basetype z1, basetype z2) : m_X1(x1), m_X2(x2), m_Y1(y1), m_Y2(y2), m_Z1(z1), m_Z2(z2) { }
+		interval3D(vector3D<basetype> p1, vector3D<basetype> p2) : m_X1(p1.x()), m_X2(p2.x()) m_Y1(p1.y()), m_Y2(p2.y()), m_Z1(p1.z()), m_Z2(p2.z()) { }
 		interval3D() : interval3D(0, 0, 0, 0, 0, 0) { }
 
 		// Casts
@@ -229,6 +251,19 @@ namespace Engine
 
 		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
 		inline interval3D GetTransformed(transform3D t3D) const { return interval3D(m_X1 * t3D.s().x() + t3D.t().x(), m_X2 * t3D.s().x() + t3D.t().x(), m_Y1 * t3D.s().y() + t3D.t().y(), m_Y2 * t3D.s().y() + t3D.t().y(), m_Z1 * t3D.s().z() + t3D.t().z(), m_Z2 * t3D.s().z() + t3D.t().z()); }
+
+		// Calculates the AABB that contains the sweeped version of the interval
+		inline interval3D GetSweeped(vector3D<basetype> velocity) const
+		{
+			return interval3D(
+				(velocity.x() < 0) ? m_X1 + velocity.x() : m_X1,
+				(velocity.x() > 0) ? m_X2 + velocity.x() : m_X2,
+				(velocity.y() < 0) ? m_Y1 + velocity.y() : m_Y1,
+				(velocity.y() > 0) ? m_Y2 + velocity.y() : m_Y2,
+				(velocity.z() < 0) ? m_Z1 + velocity.z() : m_Z1,
+				(velocity.z() > 0) ? m_Z2 + velocity.z() : m_Z2
+				);
+		}
 
 		// Checks whether the specified point is contained in the interval (boundaries included)
 		inline bool Contains(basetype x, basetype y, basetype z) const { return (x >= m_X1 && x <= m_X2 && y >= m_Y1 && y <= m_Y2 && z >= m_Z1 && z <= m_Z2); }

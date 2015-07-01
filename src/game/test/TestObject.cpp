@@ -134,6 +134,9 @@ void GameContent::TestObject::Create()
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmFast, this);
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmOnce, this);
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmInfinite, this);
+
+	m_Circle = Engine::circle(64.0, 64.0, 16.0);
+	m_Ray = Engine::ray2D(0.0, 0.0, 128.0, 128.0);
 	// TESTING
 }
 
@@ -172,6 +175,7 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 	float test = Engine::f2(bodyPos - centerPos).Length();
 	float temp = 4.0f - 0.5f * Engine::f2(bodyPos - centerPos).Length() / 128.0f;
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(temp);
+	m_Transform.t(Engine::f3(bodyPos, 0.0f));
 	// TESTING
 	
 	if ((gameTime.frameCount % 500) == 499)
@@ -179,6 +183,9 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(gameTime.frameCount * 1000000 / (gameTime.totalTimeMicros)));
 		// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(1000000.f / gameTime.deltaTimeMicros));
 	}
+
+	m_Ray.p2.x(fmod(gameTime.totalTimeMicros / 50000.0, 160.0));
+	m_Ray.p2.y(160.0f - m_Ray.p2.x());
 }
 
 // Draws the game object
@@ -188,6 +195,29 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
 	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
 	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (gameTime.totalTimeMicros / 100000) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
+
+	Engine::GraphicsManager::GetInstance().DrawLine(Engine::f2(128.0f, 240.0f), Engine::f2(bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale), Engine::f4(0.2f, 0.2f, 1.0f, 1.0f));
+
+	Engine::f4 color(0.4f, 1.0f, 0.4f, 1.0f);
+	Engine::d2 enter, exit;
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
+	{ 
+		color = Engine::f4(1.0f, 0.4f, 0.4f, 1.0f);	
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(enter - Engine::d2(1.0f)), (Engine::f2)(enter + Engine::d2(1.0f))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(exit - Engine::d2(1.0f)), (Engine::f2)(exit + Engine::d2(1.0f))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
+	}
+
+	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1, m_Ray.p2, color);
+	Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(m_Circle.p.x() - m_Circle.r, m_Circle.p.x() + m_Circle.r, m_Circle.p.y() - m_Circle.r, m_Circle.p.y() + m_Circle.r), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
+
+	Engine::circle collCircle(0.0, 0.0, 8.0);
+	color = Engine::f4(0.4f, 1.0f, 0.4f, 1.0f);
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2, enter, exit))
+	{
+		color = Engine::f4(1.0f, 0.4f, 0.4f, 1.0f);
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(enter - Engine::d2(collCircle.r)), (Engine::f2)(enter + Engine::d2(collCircle.r))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(exit - Engine::d2(collCircle.r)), (Engine::f2)(exit + Engine::d2(collCircle.r))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
+	}
 }
 
 /**************************************************************/

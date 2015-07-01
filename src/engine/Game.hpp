@@ -21,6 +21,13 @@ namespace Engine{
 		// Terminates all engine components in the correct order
 		void Terminate();
 
+		////////////////////////////////////////////////////////////////
+		// Options													  //
+		////////////////////////////////////////////////////////////////
+
+		// Toggles bounding box rendering
+		void ToggleBoundingBoxRendering(bool enabled);
+
 	private:
 
 		// Whether or not the game is still running
@@ -43,6 +50,9 @@ namespace Engine{
 
 		// Draws the game world
 		void Draw(const GameTime& gameTime);
+
+		// Whether or not to render object bounding boxes
+		bool m_RenderBoundingBoxes = false;
 
 	};
 }

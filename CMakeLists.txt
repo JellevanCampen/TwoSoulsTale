@@ -173,6 +173,8 @@ source_group(Engine\\Timing FILES ${SRC_ENGINE_TIMING})
 set(SRC_ENGINE_WORLD 
 	"src/engine/world/WorldManager.hpp"
 	"src/engine/world/WorldManager.cpp"
+	"src/engine/world/CollisionManager.hpp"
+	"src/engine/world/CollisionManager.cpp"
 	"src/engine/world/GameObject.hpp"
 	"src/engine/world/GameObject.cpp"
 )

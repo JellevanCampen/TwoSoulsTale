@@ -44,6 +44,7 @@ namespace Engine
 		inline vector2D operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
 		inline vector2D operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
 		inline vector2D operator* (float scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
+		inline valuetype operator* (vector2D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y); }
 		inline vector2D operator/ (float scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
@@ -83,6 +84,7 @@ namespace Engine
 
 	typedef vector2D<int> vector2Di, int2, i2;
 	typedef vector2D<float> vector2Df, float2, f2;
+	typedef vector2D<double> vector2Dd, double2, d2;
 
 	////////////////////////////////////////////////////////////////
 	// 3D vectors                                                 //
@@ -127,6 +129,7 @@ namespace Engine
 		inline vector3D operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
 		inline vector3D operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
 		inline vector3D operator* (float scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
+		inline valuetype operator* (vector3D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z); }
 		inline vector3D operator/ (float scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
@@ -182,6 +185,7 @@ namespace Engine
 
 	typedef vector3D<int> vector3Di, int3, i3;
 	typedef vector3D<float> vector3Df, float3, f3;
+	typedef vector3D<double> vector3Dd, double3, d3;
 
 	////////////////////////////////////////////////////////////////
 	// 4D vectors                                                 //
@@ -229,6 +233,7 @@ namespace Engine
 		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
 		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
 		inline vector4D operator* (float scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
+		inline valuetype operator* (vector4D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z) + (m_W * other.m_W); }
 		inline vector4D operator/ (float scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
@@ -338,6 +343,7 @@ namespace Engine
 
 	typedef vector4D<int> vector4Di, int4, i4;
 	typedef vector4D<float> vector4Df, float4, f4;
+	typedef vector4D<double> vector4Dd, double4, d4;
 
 	////////////////////////////////////////////////////////////////
 	// 4D homogeneous vectors									  //

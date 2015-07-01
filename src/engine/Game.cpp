@@ -69,6 +69,16 @@ void Engine::Game::Terminate()
 	LoggingManager::Destroy();
 }
 
+////////////////////////////////////////////////////////////////
+// Options													  //
+////////////////////////////////////////////////////////////////
+
+// Toggles bounding box rendering
+void Engine::Game::ToggleBoundingBoxRendering(bool enabled)
+{
+	m_RenderBoundingBoxes = enabled;
+}
+
 // Executes the game loop in fixed framerate mode
 void Engine::Game::RunFixedFramerate()
 {
@@ -140,6 +150,9 @@ void Engine::Game::Draw(const GameTime& gameTime)
 {
 	// Draw the game world
 	WorldManager::GetInstance().Draw(gameTime);
+
+	// Draw object bounding boxes
+	WorldManager::GetInstance().DrawBoundingBoxes();
 
 	// Repaint the screen by swapping the buffers of the main window
 	GraphicsManager::GetInstance().SwapWindowBuffers();

@@ -1,5 +1,7 @@
 #include "WorldManager.hpp"
 
+#include "../graphics/GraphicsManager.hpp" // For rendering object bounding boxes
+
 #include <limits> // For initializing to the largest possible float value in NN and kNN search
 #include <list> // For storing the k nearest neighbors to a point (constant time random insertion)
 
@@ -591,6 +593,22 @@ void Engine::WorldManager::RemoveMarkedGameObjects()
 	}
 
 	m_GameObjectRemoveList.clear();
+}
+
+////////////////////////////////////////////////////////////////
+// Debug rendering                                            //
+////////////////////////////////////////////////////////////////
+
+// Draws the bounding boxes of all game objects
+void Engine::WorldManager::DrawBoundingBoxes() const
+{
+	Engine::GraphicsManager& g = Engine::GraphicsManager::GetInstance();
+	Engine::f4 c(0.8f, 0.2f, 0.2f, 1.0f);
+
+	for (auto gameObject : m_GameObjects)
+	{
+		g.DrawRectangle(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), c);
+	}
 }
 
 // Adds a GameObject to the by-type indexed map

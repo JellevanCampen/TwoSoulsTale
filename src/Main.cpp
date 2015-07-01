@@ -13,9 +13,10 @@ int main(int argc, char* argv[])
 	game.Initialize();
 
 	// TESTING
+	game.ToggleBoundingBoxRendering(true);
 	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2(256.0f / 2.0f, 240.0f / 2.0f));
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(4.0f);
-	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject(Engine::transform3D(0.0f, 0.0f, 0.0f), Engine::aabb3Df(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f)));
+	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject(Engine::transform3D(0.0f, 0.0f, 0.0f), Engine::aabb3Df(-12.0f, 12.0f, 0.0f, 24.0f, 0.0f, 0.0f)));
 	// TESTING
 
 	game.Start();
