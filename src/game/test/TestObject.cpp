@@ -135,8 +135,8 @@ void GameContent::TestObject::Create()
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmOnce, this);
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmInfinite, this);
 
-	m_Circle = Engine::circled(64.0, 64.0, 24.0);
-	m_Ray = Engine::ray2Dd(0.0, 256.0, 0.0, 256.0);
+	m_Circle = Engine::circlef(64.0, 64.0, 24.0);
+	m_Ray = Engine::ray2Df(0.0, 256.0, 0.0, 256.0);
 	// TESTING
 }
 
@@ -191,37 +191,33 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 // Draws the game object
 void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 {
+	Engine::GraphicsManager& g(Engine::GraphicsManager::GetInstance());
+
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (gameTime.totalTimeMicros / 100000) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
+	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
+	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (gameTime.totalTimeMicros / 100000) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
+	g.DrawLine(Engine::ray2Df(Engine::f2(128.0f, 240.0f), Engine::f2(bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale)));
 
-	Engine::GraphicsManager::GetInstance().DrawLine(Engine::f2(128.0f, 240.0f), Engine::f2(bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale), Engine::f4(0.2f, 0.2f, 1.0f, 1.0f));
+	// Collision testing rendering
+	g.DrawCircle(m_Circle, Engine::colorRGBA(0.4f, 0.4f, 1.0f, 1.0f));
 
-	// Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(m_Circle.p().x() - m_Circle.r(), m_Circle.p().x() + m_Circle.r(), m_Circle.p().y() - m_Circle.r(), m_Circle.p().y() + m_Circle.r()), Engine::f4(0.4f, 0.4f, 1.0f, 1.0f));
-	Engine::GraphicsManager::GetInstance().DrawCircle(m_Circle, Engine::f4(0.4f, 0.4f, 1.0f, 1.0f));
-
-	Engine::f4 color(0.4f, 1.0f, 0.4f, 1.0f);
-	Engine::d2 enter, exit;
+	Engine::colorRGBA color(0.4f, 1.0f, 0.4f, 1.0f);
+	Engine::f2 enter, exit;
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
 	{ 	
-		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(enter - Engine::d2(1.0f)), (Engine::f2)(enter + Engine::d2(1.0f))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
-		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(exit - Engine::d2(1.0f)), (Engine::f2)(exit + Engine::d2(1.0f))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
-	}
-	
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle))
-	{
-		color = Engine::f4(1.0f, 0.4f, 0.4f, 1.0f);
+		color = Engine::colorRGBA(1.0f, 0.4f, 0.4f, 1.0f);
+		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), color);
+		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), color);
 	}
 	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1(), m_Ray.p2(), color);
 
-	Engine::circled collCircle(0.0, 0.0, 8.0);
-	color = Engine::f4(0.4f, 1.0f, 0.4f, 1.0f);
+	Engine::circlef collCircle(0.0, 0.0, 8.0);
+	Engine::colorRGBA colorBlue(0.4f, 0.4f, 1.0f, 1.0f);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2(), enter, exit))
 	{
-		color = Engine::f4(1.0f, 0.4f, 0.4f, 1.0f);
-		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circled(enter, collCircle.r()), Engine::f4(0.4f, 0.4f, 1.0f, 1.0f));
-		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circled(exit, collCircle.r()), Engine::f4(0.4f, 0.4f, 1.0f, 1.0f));
+		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(enter, collCircle.r()), colorBlue);
+		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(exit, collCircle.r()), colorBlue);
 	}
 }
 

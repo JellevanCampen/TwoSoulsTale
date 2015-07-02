@@ -13,6 +13,7 @@
 #include "../common/utility/TransformTypes.hpp" // For representing a 3D transform
 #include "../common/utility/IntervalTypes.hpp" // For representing a rectangle
 #include "../common/utility/ShapeTypes.hpp" // For representing primitive shapes
+#include "../common/utility/ColorTypes.hpp" // For representing colors
 #include <string> // For representing filenames and the window title
 
 namespace Engine{
@@ -172,7 +173,7 @@ namespace Engine{
 
 		// Draws a line
 		template<typename valuetype>
-		void DrawLine(ray2D<valuetype> line, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f))
+		void DrawLine(ray2D<valuetype> line, colorRGBA color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderLine);
@@ -182,7 +183,7 @@ namespace Engine{
 			glUniform2f(m_ShaderLine_uEnd, line.x2(), line.y2());
 
 			// Pass the color of the line
-			glUniform4f(m_ShaderLine_uColor, color.x(), color.y(), color.z(), color.w());
+			glUniform4f(m_ShaderLine_uColor, color.r(), color.g(), color.b(), color.a());
 
 			// Pass the transformation matrices
 			glUniformMatrix4fv(m_ShaderLine_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
@@ -196,17 +197,17 @@ namespace Engine{
 
 		// Draws a line
 		template<typename valuetype>
-		inline void DrawLine(vector2D<valuetype> p1, vector2D<valuetype> p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawLine(ray2D<valuetype>(p1, p2), color); }
+		inline void DrawLine(vector2D<valuetype> p1, vector2D<valuetype> p2, colorRGBA color = colorRGBA()) { DrawLine(ray2D<valuetype>(p1, p2), color); }
 
 		// Draws a line
 		template<typename valuetype>
-		inline void DrawLine(valuetype x1, valuetype x2, valuetype y1, valuetype y2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawLine(ray2D<valuetype>(x1, x2, y1, y2), color); }
+		inline void DrawLine(valuetype x1, valuetype x2, valuetype y1, valuetype y2, colorRGBA color = colorRGBA()) { DrawLine(ray2D<valuetype>(x1, x2, y1, y2), color); }
 
 		///////////////////////////////////////////////////// Rectangles
 
 		// Draws a rectangle
 		template<typename valuetype>
-		void DrawRectangle(rectangle<valuetype> rectangle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f))
+		void DrawRectangle(rectangle<valuetype> rectangle, colorRGBA color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderRectangle);
@@ -216,7 +217,7 @@ namespace Engine{
 			glUniform2f(m_ShaderRectangle_uTopRight, rectangle.x2(), rectangle.y2());
 
 			// Pass the color of the line
-			glUniform4f(m_ShaderRectangle_uColor, color.x(), color.y(), color.z(), color.w());
+			glUniform4f(m_ShaderRectangle_uColor, color.r(), color.g(), color.b(), color.a());
 
 			// Pass the transformation matrices
 			glUniformMatrix4fv(m_ShaderRectangle_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
@@ -230,16 +231,16 @@ namespace Engine{
 
 		// Draws a rectangle
 		template<typename valuetype>
-		inline void DrawRectangle(vector2D<valuetype> p1, vector2D<valuetype> p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(rectangle<valuetype>(p1, p2), color); }
+		inline void DrawRectangle(vector2D<valuetype> p1, vector2D<valuetype> p2, colorRGBA color = colorRGBA()) { DrawRectangle(rectangle<valuetype>(p1, p2), color); }
 
 		// Draws a rectangle
 		template<typename valuetype>
-		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(rectangle<valuetype>(x1, x2, y1, y2), color); }
+		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, colorRGBA color = colorRGBA()) { DrawRectangle(rectangle<valuetype>(x1, x2, y1, y2), color); }
 
 		//////////////////////////////////////////////////////// Circles
 
 		template<typename valuetype>
-		void DrawCircle(circle<valuetype> circle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f))
+		void DrawCircle(circle<valuetype> circle, colorRGBA color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderCircle);
@@ -249,7 +250,7 @@ namespace Engine{
 			glUniform1f(m_ShaderCircle_uRadius, circle.r());
 
 			// Pass the color of the line
-			glUniform4f(m_ShaderCircle_uColor, color.x(), color.y(), color.z(), color.w());
+			glUniform4f(m_ShaderCircle_uColor, color.r(), color.g(), color.b(), color.a());
 
 			// Pass the transformation matrices
 			glUniformMatrix4fv(m_ShaderCircle_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
@@ -263,11 +264,11 @@ namespace Engine{
 
 		// Draws a circle
 		template<typename valuetype>
-		inline void DrawCircle(vector2D<valuetype> p, valuetype r, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawCircle(circle<valuetype>(p, r), color); }
+		inline void DrawCircle(vector2D<valuetype> p, valuetype r, colorRGBA color = colorRGBA()) { DrawCircle(circle<valuetype>(p, r), color); }
 
 		// Draws a circle
 		template<typename valuetype>
-		inline void DrawCircle(valuetype x, valuetype y, valuetype r, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawCircle(circle<valuetype>(x, y, r), color); }
+		inline void DrawCircle(valuetype x, valuetype y, valuetype r, colorRGBA color = colorRGBA()) { DrawCircle(circle<valuetype>(x, y, r), color); }
 
 		////////////////////////////////////////////////////////////////
 		// Sprite sheets                                              //

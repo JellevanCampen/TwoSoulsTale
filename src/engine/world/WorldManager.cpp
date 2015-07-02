@@ -603,7 +603,7 @@ void Engine::WorldManager::RemoveMarkedGameObjects()
 void Engine::WorldManager::DrawBoundingBoxes() const
 {
 	Engine::GraphicsManager& g = Engine::GraphicsManager::GetInstance();
-	Engine::f4 c(0.8f, 0.2f, 0.2f, 1.0f);
+	Engine::colorRGBA c(0.8f, 0.2f, 0.2f, 1.0f);
 
 	for (auto gameObject : m_GameObjects)
 	{

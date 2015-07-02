@@ -198,6 +198,7 @@ set(SRC_ENGINE_COMMON_UTILITY
 	"src/engine/common/utility/IntervalTypes.hpp"
 	"src/engine/common/utility/TransformTypes.hpp"
 	"src/engine/common/utility/ShapeTypes.hpp"
+	"src/engine/common/utility/ColorTypes.hpp"
 )
 source_group(Engine\\Common\\Utility FILES ${SRC_ENGINE_COMMON_UTILITY})
 

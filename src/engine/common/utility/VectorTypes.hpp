@@ -43,9 +43,9 @@ namespace Engine
 		inline bool operator!= (const vector2D& other) const { return !(*this == other); }
 		inline vector2D operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
 		inline vector2D operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
-		inline vector2D operator* (float scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
+		inline vector2D operator* (valuetype scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
 		inline valuetype operator* (vector2D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y); }
-		inline vector2D operator/ (float scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
+		inline vector2D operator/ (valuetype scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -73,13 +73,13 @@ namespace Engine
 		inline void Zero() { m_X = 0; m_Y = 0; }									
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline float Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y)); }
+		inline valuetype Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y)); }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector2D& Normalize() { float l = Length(); m_X /= l; m_Y /= l; return *this; }
+		inline vector2D& Normalize() { valuetype l = Length(); m_X /= l; m_Y /= l; return *this; }
 
 		// Calculates the Euclidean distance between this vector and another vector
-		inline float GetDistanceTo(vector2D point) const { return (*this - point).Length(); }
+		inline valuetype GetDistanceTo(vector2D point) const { return (*this - point).Length(); }
 	};
 
 	typedef vector2D<int> vector2Di, int2, i2;
@@ -128,9 +128,9 @@ namespace Engine
 		inline bool operator!= (const vector3D& other) const { return !(*this == other); }
 		inline vector3D operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
 		inline vector3D operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
-		inline vector3D operator* (float scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
+		inline vector3D operator* (valuetype scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
 		inline valuetype operator* (vector3D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z); }
-		inline vector3D operator/ (float scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
+		inline vector3D operator/ (valuetype scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -171,13 +171,13 @@ namespace Engine
 		inline void Zero() { m_X = 0; m_Y = 0; m_Z = 0; }								
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline float Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z)); }
+		inline valuetype Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z)); }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector3D& Normalize() { float l = Length(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
+		inline vector3D& Normalize() { valuetype l = Length(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
 
 		// Calculates the Euclidean distance between this vector and another vector
-		inline float GetDistanceTo(vector3D point) const { return (*this - point).Length(); }
+		inline valuetype GetDistanceTo(vector3D point) const { return (*this - point).Length(); }
 
 		// Calculates the cross product of this vector with another vector
 		inline vector3D CrossProduct(const vector3D& other) const { return vector3D(m_Y * other.m_Z - m_Z * other.m_Y, m_Z * other.m_X - m_X * other.m_Z, m_X * other.m_Y - m_Y * other.m_X); }
@@ -204,7 +204,7 @@ namespace Engine
 		// Constructors
 		vector4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
 		vector4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
-		vector4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z), m_W(w) { }
+		vector4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
 		vector4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
 		vector4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		
@@ -232,9 +232,9 @@ namespace Engine
 		inline bool operator!= (const vector4D& other) const { return !(*this == other); }
 		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
 		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
-		inline vector4D operator* (float scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
+		inline vector4D operator* (valuetype scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
 		inline valuetype operator* (vector4D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z) + (m_W * other.m_W); }
-		inline vector4D operator/ (float scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W / scalar); }
+		inline vector4D operator/ (valuetype scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W / scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -332,13 +332,13 @@ namespace Engine
 		inline vector4D& Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 0; return *this; }
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline float Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z) + (m_W * m_W)); }
+		inline valuetype Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z) + (m_W * m_W)); }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector4D& Normalize() { float l = Length(); m_X /= l; m_Y /= l; m_Z /= l; m_W /= l; return *this; }
+		inline vector4D& Normalize() { valuetype l = Length(); m_X /= l; m_Y /= l; m_Z /= l; m_W /= l; return *this; }
 
 		// Calculates the Euclidean distance between this vector and another vector
-		inline float GetDistanceTo(vector4D point) const { return (*this - point).Length(); }
+		inline valuetype GetDistanceTo(vector4D point) const { return (*this - point).Length(); }
 	};
 
 	typedef vector4D<int> vector4Di, int4, i4;
@@ -358,7 +358,7 @@ namespace Engine
 		// Constructors
 		vectorH4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
 		vectorH4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
-		vectorH4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z), m_W(w) { }
+		vectorH4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
 		vectorH4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
 		vectorH4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		vectorH4D(const vector4D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(v.w()) { }
@@ -398,8 +398,8 @@ namespace Engine
 			if (m_W == 0 && other.m_W == 0) { return f4(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, 0.0f); } // Direction + direction
 			return vectorH4D((m_X / m_W) - (other.m_X / other.m_W), (m_Y / m_W) - (other.m_Y / other.m_W), (m_Z / m_W) - (other.m_Z / other.m_W), 1); // Point + point		
 		}
-		inline vectorH4D operator* (float scalar) const { return vector4D(m_X, m_Y, m_Z, m_W / scalar); }
-		inline vectorH4D operator/ (float scalar) const { return vector4D(m_X, m_Y, m_Z, m_W * scalar); }
+		inline vectorH4D operator* (valuetype scalar) const { return vector4D(m_X, m_Y, m_Z, m_W / scalar); }
+		inline vectorH4D operator/ (valuetype scalar) const { return vector4D(m_X, m_Y, m_Z, m_W * scalar); }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -497,13 +497,13 @@ namespace Engine
 		inline vectorH4D& Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 1; return *this; }
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
-		inline float Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z)) / m_W; }
+		inline valuetype Length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z)) / m_W; }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vectorH4D& Normalize() { float l = LengthHomogeneous(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
+		inline vectorH4D& Normalize() { valuetype l = LengthHomogeneous(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
 
 		// Calculates the Euclidean distance between this vector and another vector
-		inline float GetDistanceTo(vectorH4D point) const { return (*this - point).Length(); }
+		inline valuetype GetDistanceTo(vectorH4D point) const { return (*this - point).Length(); }
 	};
 
 	typedef vectorH4D<int> vectorH4Di;
