@@ -41,31 +41,27 @@ double Engine::CollisionManager::GetPenetration(const circled& c1, const circled
 bool Engine::CollisionManager::IsIntersecting(const ray2Dd& r, const circled& c)
 {
 	// Ray in local coordinates of the circle
-	ray2Dd ray(r.p1() - c.p(), r.p2() - c.p());
+	ray2Dd ray(r - c.p());
 	d2 slope(ray.slope());
-	double sigma = pow(ray.p1() * slope, 2) - (slope * slope) * ((ray.p1() * ray.p1()) - pow(c.r(), 2));
+	double delta = -(ray.p1() * slope);
 
-	// The infinite extension of the ray intersects the sphere
-	if (sigma >= 0)
-	{
-		double lambda1 = (-(ray.p1() * slope) - sqrt(sigma)) / (slope * slope);
-		double lambda2 = (-(ray.p1() * slope) + sqrt(sigma)) / (slope * slope);
+	// The start of the ray is the nearest point to the circle
+	if (delta <= 0) { d2 nP = r.p1(); return (nP * nP) <= pow(c.r(), 2); }
 
-		// The ray intersects the sphere
-		if (lambda1 <= 1 && lambda2 >= 0) 
-		{
-			return true;
-		}
-	}
+	// The end of the ray is the nearest point to the circle
+	if (delta >= (slope * slope)) { d2 nP = r.p2(); return (nP * nP) <= pow(c.r(), 2); }
 
-	return false;
+	// A non-end point of the ray is the nearest point to the circle
+	double lambda = delta / (slope * slope);
+	d2 nP = ray.p1() + slope * lambda;
+	return (nP * nP) <= pow(c.r(), 2);
 }
 
 // Finds the points where a ray enters and exits a circle
 bool Engine::CollisionManager::IsIntersecting(const ray2Dd& r, const circled& c, d2& out_Enter, d2& out_Exit)
 {
 	// Ray in local coordinates of the circle
-	ray2Dd ray(r.p1() - c.p(), r.p2() - c.p());
+	ray2Dd ray(r - c.p());
 	d2 slope(ray.slope());
 	double sigma = pow(ray.p1() * slope, 2) - (slope * slope) * ((ray.p1() * ray.p1()) - pow(c.r(), 2));
 
@@ -94,7 +90,6 @@ bool Engine::CollisionManager::IsIntersecting(const circled& c1, const circled& 
 	d2 end(c1.p() + motion_c1);
 	ray2Dd r(start, end);
 	circled c(c2.p(), c1.r() + c2.r());
-	d2 enter, exit;
 	return IsIntersecting(r, c);
 }
 

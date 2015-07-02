@@ -204,12 +204,15 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	Engine::f4 color(0.4f, 1.0f, 0.4f, 1.0f);
 	Engine::d2 enter, exit;
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
-	{ 
-		color = Engine::f4(1.0f, 0.4f, 0.4f, 1.0f);	
+	{ 	
 		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(enter - Engine::d2(1.0f)), (Engine::f2)(enter + Engine::d2(1.0f))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
 		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df((Engine::f2)(exit - Engine::d2(1.0f)), (Engine::f2)(exit + Engine::d2(1.0f))), Engine::f4(1.0f, 0.5f, 0.5f, 1.0f));
 	}
-
+	
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle))
+	{
+		color = Engine::f4(1.0f, 0.4f, 0.4f, 1.0f);
+	}
 	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1(), m_Ray.p2(), color);
 
 	Engine::circled collCircle(0.0, 0.0, 8.0);
