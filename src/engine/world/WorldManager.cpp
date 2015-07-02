@@ -607,7 +607,7 @@ void Engine::WorldManager::DrawBoundingBoxes() const
 
 	for (auto gameObject : m_GameObjects)
 	{
-		g.DrawRectangle(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), c);
+		g.DrawRectangle((rectanglef)gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), c);
 	}
 }
 

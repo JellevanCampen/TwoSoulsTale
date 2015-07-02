@@ -29,46 +29,6 @@ namespace Engine{
 		// Swaps the buffers of the main window
 		void SwapWindowBuffers();
 
-		////////////////////////////////////////////////////////////////
-		// Primitives                                                 //
-		////////////////////////////////////////////////////////////////
-
-		// Draws a line
-		void DrawLine(f2 p1, f2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
-		inline void DrawLine(d2 p1, d2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawLine(f2(p1.x(), p1.y()), f2(p2.x(), p2.y()), color); };
-
-		// Draws a rectangle
-		void DrawRectangle(f2 p1, f2 p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
-
-		// Draws a rectangle
-		inline void DrawRectangle(rectanglef rect, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(f2(rect.x1(), rect.y1()), f2(rect.x2(), rect.y2()), color); }
-
-		// Draws a circle
-		void DrawCircle(Engine::circlef circle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f));
-		inline void DrawCircle(Engine::circled circle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawCircle(circlef((float)circle.x(), (float)circle.y(), (float)circle.r()), color); }
-
-		////////////////////////////////////////////////////////////////
-		// Sprite sheets                                              //
-		////////////////////////////////////////////////////////////////
-
-		// Draws a frame of the specified sprite sheet
-		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z);
-
-		// Draws a frame of the specified sprite sheet using the specified transformation
-		void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z, double rotation, double scaleX, double scaleY);
-
-		// Draws a frame of the specified sprite sheet using the specified transformation (transform 2D)
-		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z = 0.0f)
-		{
-			DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), z, transform.r(), transform.s().x(), transform.s().y());
-		}
-
-		// Draws a frame of the specified sprite sheet using the specified transformation (transform 3D)
-		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform3D transform)
-		{
-			DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), transform.t().z(), transform.r().z(), transform.s().x(), transform.s().y());
-		}
-
 	private:
 
 		// Settings for the window
@@ -175,7 +135,7 @@ namespace Engine{
 
 		// Whether or not the projection matrix should be recalculated
 		bool m_CameraProjectionMatrixDirty;
-		
+
 		// Near z-plane
 		const float m_ZNear = -1000.0f;
 
@@ -201,6 +161,135 @@ namespace Engine{
 
 		// Gets the camera's projection matrix
 		const mat4f& GetCameraProjectionMatrix();
+
+	public:
+
+		////////////////////////////////////////////////////////////////
+		// Primitives                                                 //
+		////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////// Lines
+
+		// Draws a line
+		template<typename valuetype>
+		void DrawLine(ray2D<valuetype> line, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f))
+		{
+			// Use the sprite sheet shader program
+			glUseProgram(m_ShaderLine);
+
+			// Pass the start- and endpoints of the line
+			glUniform2f(m_ShaderLine_uStart, line.x1(), line.y1());
+			glUniform2f(m_ShaderLine_uEnd, line.x2(), line.y2());
+
+			// Pass the color of the line
+			glUniform4f(m_ShaderLine_uColor, color.x(), color.y(), color.z(), color.w());
+
+			// Pass the transformation matrices
+			glUniformMatrix4fv(m_ShaderLine_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+			glUniformMatrix4fv(m_ShaderLine_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+			// Draw the line
+			glBindVertexArray(m_ShaderLine_VAO);
+			glDrawArrays(GL_LINES, 0, 2);
+			glBindVertexArray(0);
+		}
+
+		// Draws a line
+		template<typename valuetype>
+		inline void DrawLine(vector2D<valuetype> p1, vector2D<valuetype> p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawLine(ray2D<valuetype>(p1, p2), color); }
+
+		// Draws a line
+		template<typename valuetype>
+		inline void DrawLine(valuetype x1, valuetype x2, valuetype y1, valuetype y2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawLine(ray2D<valuetype>(x1, x2, y1, y2), color); }
+
+		///////////////////////////////////////////////////// Rectangles
+
+		// Draws a rectangle
+		template<typename valuetype>
+		void DrawRectangle(rectangle<valuetype> rectangle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f))
+		{
+			// Use the sprite sheet shader program
+			glUseProgram(m_ShaderRectangle);
+
+			// Pass the start- and endpoints of the line
+			glUniform2f(m_ShaderRectangle_uBottomLeft, rectangle.x1(), rectangle.y1());
+			glUniform2f(m_ShaderRectangle_uTopRight, rectangle.x2(), rectangle.y2());
+
+			// Pass the color of the line
+			glUniform4f(m_ShaderRectangle_uColor, color.x(), color.y(), color.z(), color.w());
+
+			// Pass the transformation matrices
+			glUniformMatrix4fv(m_ShaderRectangle_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+			glUniformMatrix4fv(m_ShaderRectangle_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+			// Draw the line
+			glBindVertexArray(m_ShaderRectangle_VAO);
+			glDrawArrays(GL_LINE_LOOP, 0, 4);
+			glBindVertexArray(0);
+		}
+
+		// Draws a rectangle
+		template<typename valuetype>
+		inline void DrawRectangle(vector2D<valuetype> p1, vector2D<valuetype> p2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(rectangle<valuetype>(p1, p2), color); }
+
+		// Draws a rectangle
+		template<typename valuetype>
+		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawRectangle(rectangle<valuetype>(x1, x2, y1, y2), color); }
+
+		//////////////////////////////////////////////////////// Circles
+
+		template<typename valuetype>
+		void DrawCircle(circle<valuetype> circle, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f))
+		{
+			// Use the sprite sheet shader program
+			glUseProgram(m_ShaderCircle);
+
+			// Pass the start- and endpoints of the line
+			glUniform2f(m_ShaderCircle_uPosition, circle.x(), circle.y());
+			glUniform1f(m_ShaderCircle_uRadius, circle.r());
+
+			// Pass the color of the line
+			glUniform4f(m_ShaderCircle_uColor, color.x(), color.y(), color.z(), color.w());
+
+			// Pass the transformation matrices
+			glUniformMatrix4fv(m_ShaderCircle_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+			glUniformMatrix4fv(m_ShaderCircle_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+			// Draw the line
+			glBindVertexArray(m_ShaderCircle_VAO);
+			glDrawArrays(GL_LINE_LOOP, 0, s_NumCircleSegments);
+			glBindVertexArray(0);
+		}
+
+		// Draws a circle
+		template<typename valuetype>
+		inline void DrawCircle(vector2D<valuetype> p, valuetype r, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawCircle(circle<valuetype>(p, r), color); }
+
+		// Draws a circle
+		template<typename valuetype>
+		inline void DrawCircle(valuetype x, valuetype y, valuetype r, f4 color = f4(0.0f, 0.0f, 0.0f, 1.0f)) { DrawCircle(circle<valuetype>(x, y, r), color); }
+
+		////////////////////////////////////////////////////////////////
+		// Sprite sheets                                              //
+		////////////////////////////////////////////////////////////////
+
+		// Draws a frame of the specified sprite sheet
+		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z);
+
+		// Draws a frame of the specified sprite sheet using the specified transformation
+		void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z, double rotation, double scaleX, double scaleY);
+
+		// Draws a frame of the specified sprite sheet using the specified transformation (transform 2D)
+		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z = 0.0f)
+		{
+			DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), z, transform.r(), transform.s().x(), transform.s().y());
+		}
+
+		// Draws a frame of the specified sprite sheet using the specified transformation (transform 3D)
+		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform3D transform)
+		{
+			DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), transform.t().z(), transform.r().z(), transform.s().x(), transform.s().y());
+		}
 
 		friend class InputManager;
 
