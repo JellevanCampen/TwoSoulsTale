@@ -35,11 +35,10 @@ namespace Engine
 		inline const basetype& w() const { return m_X2 - m_X1; }
 
 		// Setters
-		inline interval1D& x1(basetype x1) const { m_X1 = x1; return *this; }
-		inline interval1D& x2(basetype x2) const { m_X2 = x2; return *this; }
-
-		inline interval1D& x(basetype x) const { m_X1 = x; return *this; }
-		inline interval1D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
+		inline interval1D& x1(basetype x1) { m_X1 = x1; return *this; }
+		inline interval1D& x2(basetype x2) { m_X2 = x2; return *this; }
+		inline interval1D& x(basetype x) { m_X1 = x; return *this; }
+		inline interval1D& w(basetype w) { m_X2 = m_X1 + w; return *this; }
 
 		// Operators
 		inline bool operator== (const interval1D& other) const { return (m_X1 == other.m_X1 && m_X2 == other.m_X2); }
@@ -119,15 +118,14 @@ namespace Engine
 		inline const basetype& h() const { return m_Y2 - m_Y1; }
 
 		// Setters
-		inline interval2D& x1(basetype x1) const { m_X1 = x1; return *this; }
-		inline interval2D& x2(basetype x2) const { m_X2 = x2; return *this; }
-		inline interval2D& y1(basetype y1) const { m_Y1 = y1; return *this; }
-		inline interval2D& y2(basetype y2) const { m_Y2 = y2; return *this; }
-
-		inline interval2D& x(basetype x) const { m_X1 = x; return *this; }
-		inline interval2D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
-		inline interval2D& y(basetype y) const { m_Y1 = y; return *this; }
-		inline interval2D& h(basetype h) const { m_Y2 = m_Y1 + h; return *this; }
+		inline interval2D& x1(basetype x1) { m_X1 = x1; return *this; }
+		inline interval2D& x2(basetype x2) { m_X2 = x2; return *this; }
+		inline interval2D& y1(basetype y1) { m_Y1 = y1; return *this; }
+		inline interval2D& y2(basetype y2) { m_Y2 = y2; return *this; }
+		inline interval2D& x(basetype x) { m_X1 = x; return *this; }
+		inline interval2D& w(basetype w) { m_X2 = m_X1 + w; return *this; }
+		inline interval2D& y(basetype y) { m_Y1 = y; return *this; }
+		inline interval2D& h(basetype h) { m_Y2 = m_Y1 + h; return *this; }
 
 		// Operators
 		inline bool operator== (const interval2D& other) const { return (m_X1 == other.m_X1 && m_X2 == other.m_X2 && m_Y1 == other.m_Y1 && m_Y2 == other.m_Y2); }
@@ -228,19 +226,18 @@ namespace Engine
 		inline const basetype& d() const { return m_Z2 - m_Z1; }
 
 		// Setters
-		inline interval3D& x1(basetype x1) const { m_X1 = x1; return *this; }
-		inline interval3D& x2(basetype x2) const { m_X2 = x2; return *this; }
-		inline interval3D& y1(basetype y1) const { m_Y1 = y1; return *this; }
-		inline interval3D& y2(basetype y2) const { m_Y2 = y2; return *this; }
-		inline interval3D& z1(basetype z1) const { m_Z1 = z1; return *this; }
-		inline interval3D& z2(basetype z2) const { m_Z2 = z2; return *this; }
-
-		inline interval3D& x(basetype x) const { m_X1 = x; return *this; }
-		inline interval3D& w(basetype w) const { m_X2 = m_X1 + w; return *this; }
-		inline interval3D& y(basetype y) const { m_Y1 = y; return *this; }
-		inline interval3D& h(basetype h) const { m_Y2 = m_Y1 + h; return *this; }
-		inline interval3D& z(basetype z) const { m_Z1 = z; return *this; }
-		inline interval3D& d(basetype d) const { m_Z2 = m_Z1 + d; return *this; }
+		inline interval3D& x1(basetype x1) { m_X1 = x1; return *this; }
+		inline interval3D& x2(basetype x2) { m_X2 = x2; return *this; }
+		inline interval3D& y1(basetype y1) { m_Y1 = y1; return *this; }
+		inline interval3D& y2(basetype y2) { m_Y2 = y2; return *this; }
+		inline interval3D& z1(basetype z1) { m_Z1 = z1; return *this; }
+		inline interval3D& z2(basetype z2) { m_Z2 = z2; return *this; }
+		inline interval3D& x(basetype x) { m_X1 = x; return *this; }
+		inline interval3D& w(basetype w) { m_X2 = m_X1 + w; return *this; }
+		inline interval3D& y(basetype y) { m_Y1 = y; return *this; }
+		inline interval3D& h(basetype h) { m_Y2 = m_Y1 + h; return *this; }
+		inline interval3D& z(basetype z) { m_Z1 = z; return *this; }
+		inline interval3D& d(basetype d) { m_Z2 = m_Z1 + d; return *this; }
 
 		// Operators
 		inline bool operator== (const interval3D& other) const { return (m_X1 == other.m_X1 && m_X2 == other.m_X2 && m_Y1 == other.m_Y1 && m_Y2 == other.m_Y2 && m_Z1 == other.m_Z1 && m_Z2 == other.m_Z2); }
