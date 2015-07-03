@@ -102,6 +102,7 @@ namespace Engine{
 		template<typename valuetype>
 		static bool IsIntersecting(const circle<valuetype>& c1, const circle<valuetype>& c2, const vector2D<valuetype>& motion_c1)
 		{
+			// Convert the circle-circle raycast to a ray-circle raycast
 			vector2D<valuetype> start(c1.p());
 			vector2D<valuetype> end(c1.p() + motion_c1);
 			ray2D<valuetype> r(start, end);
@@ -113,6 +114,7 @@ namespace Engine{
 		template<typename valuetype>
 		static bool IsIntersecting(const circle<valuetype>& c1, const circle<valuetype>& c2, const vector2D<valuetype>& motion_c1, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
 		{
+			// Convert the circle-circle raycast to a ray-circle raycast
 			vector2D<valuetype> start(c1.p());
 			vector2D<valuetype> end(c1.p() + motion_c1);
 			ray2D<valuetype> r(start, end);
@@ -239,6 +241,34 @@ namespace Engine{
 			vector2D<valuetype> l_combinedExtent(r1.extent() + r2.extent());
 			rectangle<valuetype> l_rect(r2.center() - l_combinedExtent, r2.center() + l_combinedExtent);
 			return IsIntersecting(l_ray, l_rect, out_Enter, out_Exit);
+		}
+
+		////////////////////////////////////////////////// Circle - AABB
+
+		// Tests whether a circle intersects an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const circle<valuetype>& c, const rectangle<valuetype>& r)
+		{
+			// Express the problem in local coordinates to r
+			vector2D<valuetype> l_ext(r.extent());
+			circle<valuetype> l_c(c - r.center());
+
+			// Calculate the point on the aabb, closest to the circle
+			vector2D<valuetype> l_closestPoint(
+				fmin(fmax(l_c.x(), -l_ext.x()), l_ext.x()), 
+				fmin(fmax(l_c.y(), -l_ext.y()), l_ext.y())
+				);
+
+			// Check whether this point lies within the circle
+			vector2D<valuetype> d(l_c.p() - l_closestPoint);
+			return ((d * d) <= pow(c.r(), 2));
+		}
+
+		// Tests whether a circle intersects an AABB
+		template<typename valuetype>
+		inline static bool IsIntersecting(const rectangle<valuetype>& r, const circle<valuetype>& c)
+		{
+			return IsIntersecting<valuetype>(c, r);
 		}
 
 		////////////////////////////////////////////////////////////////

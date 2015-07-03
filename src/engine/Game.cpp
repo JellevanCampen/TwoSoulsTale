@@ -152,7 +152,7 @@ void Engine::Game::Draw(const GameTime& gameTime)
 	WorldManager::GetInstance().Draw(gameTime);
 
 	// Draw object bounding boxes
-	WorldManager::GetInstance().DrawBoundingBoxes();
+	if (m_RenderBoundingBoxes) { WorldManager::GetInstance().DrawBoundingBoxes(); }
 
 	// Repaint the screen by swapping the buffers of the main window
 	GraphicsManager::GetInstance().SwapWindowBuffers();

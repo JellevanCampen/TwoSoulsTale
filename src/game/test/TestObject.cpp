@@ -205,18 +205,19 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	Engine::colorRGBA colorGreen(0.4f, 1.0f, 0.4f, 1.0f);
 	Engine::colorRGBA colorBlue(0.4f, 0.4f, 1.0f, 1.0f);
 
-	bool hasIntersected = false;
+	bool hasIntersectedRay = false;
 	Engine::f2 enter, exit;
 
-	// Circle
+	// Ray-circle
 	g.DrawCircle(m_Circle, colorBlue);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
 	{ 	
-		hasIntersected = true;
+		hasIntersectedRay = true;
 		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
 		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
 	}
 
+	// Circle-circle
 	Engine::circlef collCircle(0.0, 0.0, 8.0);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2(), enter, exit))
 	{
@@ -224,15 +225,16 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(exit, collCircle.r()), colorBlue);
 	}
 
-	// Rectangle
+	// Ray-AABB
 	g.DrawRectangle(m_Rectangle, colorBlue);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Rectangle, enter, exit))
 	{
-		hasIntersected = true;
+		hasIntersectedRay = true;
 		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
 		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
 	}
 
+	// AABB-AABB
 	Engine::rectanglef collRectangle(-8.0f, 8.0f, -8.0f, 8.0f);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_Rectangle, m_Ray.p2(), enter, exit))
 	{
@@ -240,8 +242,18 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::rectanglef(exit - collRectangle.extent(), exit + collRectangle.extent()), colorBlue);
 	}
 
-	// Ray
-	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1(), m_Ray.p2(), (hasIntersected)?colorRed:colorGreen);
+	// Ray (rendering)
+	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1(), m_Ray.p2(), (hasIntersectedRay)?colorRed:colorGreen);
+
+	// Sphere-AABB
+	bool hasIntersectedBoundingBox = false;
+	Engine::rectanglef aabbTransformed = ((Engine::rectanglef)m_AABB).GetTransformed(m_Transform);
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_Circle)
+		|| Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_Rectangle))
+	{ 
+		hasIntersectedBoundingBox = true;
+	}
+	Engine::GraphicsManager::GetInstance().DrawRectangle(aabbTransformed, (hasIntersectedBoundingBox) ? colorRed : colorGreen);
 }
 
 /**************************************************************/
