@@ -24,6 +24,8 @@ namespace Engine{
 		// 2D intersection testing                                    //
 		////////////////////////////////////////////////////////////////
 
+		//////////////////////////////////////////////////////// Circles
+
 		// Tests whether two circles intersect
 		template<typename valuetype>
 		static bool IsIntersecting(const circle<valuetype>& c1, const circle<valuetype>& c2)
@@ -117,6 +119,16 @@ namespace Engine{
 			circle<valuetype> c(c2.p(), c1.r() + c2.r());
 			vector2D<valuetype> enter, exit;
 			return IsIntersecting(r, c, out_Enter, out_Exit);
+		}
+
+		///////////////////////////////////////////////////////// AABBs
+
+		// Tests whether two AABBs intersect
+		template<typename valuetype>
+		static bool IsIntersecting(const rectangle<valuetype>& r1, const rectangle<valuetype>& r2)
+		{
+			vector2D<valuetype> d(c1.p() - c2.p());
+			return (d * d) <= pow(c1.r() + c2.r(), 2);
 		}
 
 		////////////////////////////////////////////////////////////////
