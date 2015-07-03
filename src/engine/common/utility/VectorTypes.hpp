@@ -41,6 +41,12 @@ namespace Engine
 		// Operators
 		inline bool operator== (const vector2D& other) const { return (m_X == other.m_X && m_Y == other.m_Y); }
 		inline bool operator!= (const vector2D& other) const { return !(*this == other); }
+		inline bool operator>= (const vector2D& other) const { return m_X >= other.m_X && m_Y >= other.m_Y; }
+		inline bool operator<= (const vector2D& other) const { return m_X <= other.m_X && m_Y <= other.m_Y; }
+		inline bool operator> (const vector2D& other) const { return m_X > other.m_X && m_Y > other.m_Y; }
+		inline bool operator< (const vector2D& other) const { return m_X < other.m_X && m_Y < other.m_Y; }
+		inline vector2D operator+ () const { return vector2D(*this); }
+		inline vector2D operator- () const { return vector2D(-m_X, -m_Y); }
 		inline vector2D operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
 		inline vector2D operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
 		inline vector2D operator* (valuetype scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
@@ -52,7 +58,7 @@ namespace Engine
 			{
 			case 0: return m_X;
 			case 1: return m_Y;
-			default: return 0;
+			default: return m_Y;
 			}
 		}
 		inline const valuetype& operator[] (size_t index) const
@@ -61,7 +67,7 @@ namespace Engine
 			{
 			case 0: return m_X;
 			case 1: return m_Y;
-			default: return 0;
+			default: return m_Y;
 			}
 		}
 		
@@ -126,6 +132,12 @@ namespace Engine
 		// Operators
 		inline bool operator== (const vector3D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z); }
 		inline bool operator!= (const vector3D& other) const { return !(*this == other); }
+		inline bool operator>= (const vector3D& other) const { return m_X >= other.m_X && m_Y >= other.m_Y && m_Z >= other.m_Z; }
+		inline bool operator<= (const vector3D& other) const { return m_X <= other.m_X && m_Y <= other.m_Y && m_Z <= other.m_Z; }
+		inline bool operator> (const vector3D& other) const { return m_X > other.m_X && m_Y > other.m_Y && m_Z > other.m_Z; }
+		inline bool operator< (const vector3D& other) const { return m_X < other.m_X && m_Y < other.m_Y && m_Z < other.m_Z; }
+		inline vector3D operator+ () const { return vector3D(*this); }
+		inline vector3D operator- () const { return vector3D(-m_X, -m_Y, -m_Z); }
 		inline vector3D operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
 		inline vector3D operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
 		inline vector3D operator* (valuetype scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
@@ -138,7 +150,7 @@ namespace Engine
 			case 0: return m_X;
 			case 1: return m_Y;
 			case 2:	return m_Z;
-			default: return 0;
+			default: return m_Z;
 			}
 		}
 		inline const valuetype& operator[] (size_t index) const
@@ -148,7 +160,7 @@ namespace Engine
 			case 0: return m_X;
 			case 1: return m_Y;
 			case 2:	return m_Z;
-			default: return 0;
+			default: return m_Z;
 			}
 		}
 		
@@ -230,6 +242,12 @@ namespace Engine
 		// Operators
 		inline bool operator== (const vector4D& other) const { return (m_X == other.m_X && m_Y == other.m_Y && m_Z == other.m_Z && m_W == other.m_W); }
 		inline bool operator!= (const vector4D& other) const { return !(*this == other); }
+		inline bool operator>= (const vector4D& other) const { return m_X >= other.m_X && m_Y >= other.m_Y && m_Z >= other.m_Z && m_W >= other.m_W; }
+		inline bool operator<= (const vector4D& other) const { return m_X <= other.m_X && m_Y <= other.m_Y && m_Z <= other.m_Z && m_W <= other.m_W; }
+		inline bool operator> (const vector4D& other) const { return m_X > other.m_X && m_Y > other.m_Y && m_Z > other.m_Z && m_W > other.m_W; }
+		inline bool operator< (const vector4D& other) const { return m_X < other.m_X && m_Y < other.m_Y && m_Z < other.m_Z && m_W < other.m_W; }
+		inline vector4D operator+ () const { return vector4D(*this); }
+		inline vector4D operator- () const { return vector4D(-m_X, -m_Y, -m_Z, -m_W); }
 		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
 		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
 		inline vector4D operator* (valuetype scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
@@ -386,6 +404,12 @@ namespace Engine
 		// Operators
 		inline bool operator== (const vectorH4D& other) const { return (m_X / m_W == other.m_X / other.m_W && m_Y / m_W == other.m_Y / other.m_W && m_Z / m_W == other.m_Z / other.m_W); }
 		inline bool operator!= (const vectorH4D& other) const { return !(*this == other); }
+		inline bool operator>= (const vectorH4D& other) const { return (m_X / m_W) >= (other.m_X / other.m_W) && (m_Y / m_W) >= (other.m_Y / other.m_W) && (m_Z / m_W) >= (other.m_Z / other.m_W); }
+		inline bool operator<= (const vectorH4D& other) const { return (m_X / m_W) <= (other.m_X / other.m_W) && (m_Y / m_W) <= (other.m_Y / other.m_W) && (m_Z / m_W) <= (other.m_Z / other.m_W); }
+		inline bool operator> (const vectorH4D& other) const { return (m_X / m_W) > (other.m_X / other.m_W) && (m_Y / m_W) > (other.m_Y / other.m_W) && (m_Z / m_W) > (other.m_Z / other.m_W); }
+		inline bool operator< (const vectorH4D& other) const { return (m_X / m_W) < (other.m_X / other.m_W) && (m_Y / m_W) < (other.m_Y / other.m_W) && (m_Z / m_W) < (other.m_Z / other.m_W); }
+		inline vectorH4D operator+ () const { return vectorH4D(*this); }
+		inline vectorH4D operator- () const { return vectorH4D(-m_X, -m_Y, -m_Z, m_W); }
 		inline vectorH4D operator+ (const vectorH4D& other) const 
 		{ 
 			if ((m_W == 0 && other.m_W != 0) || (m_W != 0 && other.m_W == 0)) { return vectorH4D(0.0f, 0.0f, 0.0f, 0.0f); } // Point + direction (undefined)

@@ -135,8 +135,9 @@ void GameContent::TestObject::Create()
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmOnce, this);
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmInfinite, this);
 
-	m_Circle = Engine::circlef(64.0, 64.0, 24.0);
-	m_Ray = Engine::ray2Df(0.0, 256.0, 0.0, 256.0);
+	m_Circle = Engine::circlef(64.0, 96.0, 24.0);
+	m_Ray = Engine::ray2Df(0.0, 480.0, 0.0, 480.0);
+	m_Rectangle = Engine::rectanglef(128.0f, 128.0f + 32.0f, 40.0f, 40.0f + 48.0f);
 	// TESTING
 }
 
@@ -184,8 +185,8 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 		// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(1000000.f / gameTime.deltaTimeMicros));
 	}
 
-	m_Ray.p2().x(fmod(gameTime.totalTimeMicros / 50000.0, 256.0));
-	m_Ray.p2().y(256.0f - m_Ray.p2().x());
+	m_Ray.p2().x(fmod(gameTime.totalTimeMicros / 25000.0, 480.0));
+	m_Ray.p2().y(480.0f - m_Ray.p2().x());
 }
 
 // Draws the game object
@@ -200,25 +201,47 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	g.DrawLine(Engine::ray2Df(Engine::f2(128.0f, 240.0f), Engine::f2(bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale)));
 
 	// Collision testing rendering
-	g.DrawCircle(m_Circle, Engine::colorRGBA(0.4f, 0.4f, 1.0f, 1.0f));
+	Engine::colorRGBA colorRed(1.0f, 0.4f, 0.4f, 1.0f);
+	Engine::colorRGBA colorGreen(0.4f, 1.0f, 0.4f, 1.0f);
+	Engine::colorRGBA colorBlue(0.4f, 0.4f, 1.0f, 1.0f);
 
-	Engine::colorRGBA color(0.4f, 1.0f, 0.4f, 1.0f);
+	bool hasIntersected = false;
 	Engine::f2 enter, exit;
+
+	// Circle
+	g.DrawCircle(m_Circle, colorBlue);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
 	{ 	
-		color = Engine::colorRGBA(1.0f, 0.4f, 0.4f, 1.0f);
-		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), color);
-		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), color);
+		hasIntersected = true;
+		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
 	}
-	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1(), m_Ray.p2(), color);
 
 	Engine::circlef collCircle(0.0, 0.0, 8.0);
-	Engine::colorRGBA colorBlue(0.4f, 0.4f, 1.0f, 1.0f);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2(), enter, exit))
 	{
 		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(enter, collCircle.r()), colorBlue);
 		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(exit, collCircle.r()), colorBlue);
 	}
+
+	// Rectangle
+	g.DrawRectangle(m_Rectangle, colorBlue);
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Rectangle, enter, exit))
+	{
+		hasIntersected = true;
+		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
+	}
+
+	Engine::rectanglef collRectangle(-8.0f, 8.0f, -8.0f, 8.0f);
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_Rectangle, m_Ray.p2(), enter, exit))
+	{
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::rectanglef(enter - collRectangle.extent(), enter + collRectangle.extent()), colorBlue);
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::rectanglef(exit - collRectangle.extent(), exit + collRectangle.extent()), colorBlue);
+	}
+
+	// Ray
+	Engine::GraphicsManager::GetInstance().DrawLine(m_Ray.p1(), m_Ray.p2(), (hasIntersected)?colorRed:colorGreen);
 }
 
 /**************************************************************/

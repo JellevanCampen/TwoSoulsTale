@@ -117,7 +117,6 @@ namespace Engine{
 			vector2D<valuetype> end(c1.p() + motion_c1);
 			ray2D<valuetype> r(start, end);
 			circle<valuetype> c(c2.p(), c1.r() + c2.r());
-			vector2D<valuetype> enter, exit;
 			return IsIntersecting(r, c, out_Enter, out_Exit);
 		}
 
@@ -127,8 +126,119 @@ namespace Engine{
 		template<typename valuetype>
 		static bool IsIntersecting(const rectangle<valuetype>& r1, const rectangle<valuetype>& r2)
 		{
-			vector2D<valuetype> d(c1.p() - c2.p());
-			return (d * d) <= pow(c1.r() + c2.r(), 2);
+			return (r1.p1() <= r2.p2() && r2.p1() <= r1.p2());
+		}
+
+		// Tests whether a ray intersects with an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const ray2D<valuetype>& r, const rectangle<valuetype>& rect)
+		{
+			// Ray in local coordinates of the circle
+			ray2D<valuetype> l_ray(r - rect.center());
+			vector2D<valuetype> l_slope(r.slope());
+			vector2D<valuetype> l_ext(rect.extent());
+			pointOutcode p1_pc = rect.outcode(r.p1());
+			pointOutcode p2_pc = rect.outcode(r.p2());
+
+			// Ray lies completely to one side of the rectangle
+			pointOutcode test = p1_pc & p2_pc;
+			if ((p1_pc & p2_pc) != 0) {
+				return false;
+			}
+
+			// The ray might intersect the rectangle
+			valuetype lambdaEnter = 0;
+			valuetype lambdaExit = 1;
+			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
+
+			// For all interval boundaries (2 per dimension), check intersection points
+			for (int i = 0; i < 2; i++)
+			{
+				if ((p1_pc & bit) != 0) { lambdaEnter = fmax(lambdaEnter, (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				else if ((p2_pc & bit) != 0) { lambdaExit = fmin(lambdaExit, (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				bit <<= 1;
+				if ((p1_pc & bit) != 0) { lambdaEnter = fmax(lambdaEnter, (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				else if ((p2_pc & bit) != 0) { lambdaExit = fmin(lambdaExit, (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				bit <<= 1;
+			}
+
+			// The ray intersects the box 
+			if (lambdaEnter <= lambdaExit)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		// Finds the points where a ray enters and exits an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const ray2D<valuetype>& r, const rectangle<valuetype>& rect, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
+		{
+			// Ray in local coordinates of the circle
+			ray2D<valuetype> l_ray(r - rect.center());
+			vector2D<valuetype> l_slope(r.slope());
+			vector2D<valuetype> l_ext(rect.extent());
+			pointOutcode p1_pc = rect.outcode(r.p1());
+			pointOutcode p2_pc = rect.outcode(r.p2());
+
+			// Ray lies completely to one side of the rectangle
+			pointOutcode test = p1_pc & p2_pc;
+			if ((p1_pc & p2_pc) != 0) {
+				return false; 
+			}
+
+			// The ray might intersect the rectangle
+			valuetype lambdaEnter = 0;
+			valuetype lambdaExit = 1;
+			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
+
+			// For all interval boundaries (2 per dimension), check intersection points
+			for (int i = 0; i < 2; i++)
+			{
+				if ((p1_pc & bit) != 0) { lambdaEnter = fmax(lambdaEnter, (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				else if ((p2_pc & bit) != 0) { lambdaExit = fmin(lambdaExit, (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				bit <<= 1;
+				if ((p1_pc & bit) != 0) { lambdaEnter = fmax(lambdaEnter, (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				else if ((p2_pc & bit) != 0) { lambdaExit = fmin(lambdaExit, (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i])); }
+				bit <<= 1;
+			}
+
+			// The ray intersects the box 
+			if (lambdaEnter <= lambdaExit) 
+			{ 
+				out_Enter = r.p1() + (l_slope * lambdaEnter);
+				out_Exit = r.p1() + (l_slope * lambdaExit);
+				return true; 
+			}
+
+			return false;
+		}
+
+		// Tests whether a moving AABB intersects with another AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const rectangle<valuetype>& r1, const rectangle<valuetype>& r2, const vector2D<valuetype>& motion_r1)
+		{
+			// Convert the aabb-aabb raycast to a ray-aabb raycast
+			vector2D<valuetype> l_start(r1.center());
+			vector2D<valuetype> l_end(l_start + motion_r1);
+			ray2D<valuetype> l_ray(l_start, l_end);
+			vector2D<valuetype> l_combinedExtent(r1.extent() + r2.extent());
+			rectangle<valuetype> l_rect(r2.center() - l_combinedExtent, r2.center() + l_combinedExtent);
+			return IsIntersecting(l_ray, l_rect);
+		}
+
+		// Finds the points where a moving AABB enters and exits another AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const rectangle<valuetype>& r1, const rectangle<valuetype>& r2, const vector2D<valuetype>& motion_r1, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
+		{
+			// Convert the aabb-aabb raycast to a ray-aabb raycast
+			vector2D<valuetype> l_start(r1.center());
+			vector2D<valuetype> l_end(l_start + motion_r1);
+			ray2D<valuetype> l_ray(l_start, l_end);
+			vector2D<valuetype> l_combinedExtent(r1.extent() + r2.extent());
+			rectangle<valuetype> l_rect(r2.center() - l_combinedExtent, r2.center() + l_combinedExtent);
+			return IsIntersecting(l_ray, l_rect, out_Enter, out_Exit);
 		}
 
 		////////////////////////////////////////////////////////////////

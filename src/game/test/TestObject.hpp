@@ -90,6 +90,7 @@ namespace GameContent{
 
 		Engine::circlef m_Circle;
 		Engine::ray2Df m_Ray;
+		Engine::rectanglef m_Rectangle;
 		// TESTING
 
 	};
