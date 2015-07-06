@@ -106,6 +106,62 @@ namespace Engine{
 			return false;
 		}
 
+		// Finds the point, normal and path progression where a ray enters a circle
+		template<typename valuetype>
+		static bool IsIntersecting(const ray2D<valuetype>& r, const circle<valuetype>& c, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression)
+		{
+			// Ray in local coordinates of the circle
+			ray2D<valuetype> ray(r - c.p());
+			vector2D<valuetype> slope(ray.slope());
+			valuetype sigma = pow(ray.p1() * slope, 2) - (slope * slope) * ((ray.p1() * ray.p1()) - pow(c.r(), 2));
+
+			// The infinite extension of the ray intersects the circle
+			if (sigma >= 0)
+			{
+				out_EnterProgression = (-(ray.p1() * slope) - sqrt(sigma)) / (slope * slope);
+				valuetype lambda2 = (-(ray.p1() * slope) + sqrt(sigma)) / (slope * slope);
+
+				// The ray intersects the circle
+				if (out_EnterProgression <= 1 && lambda2 >= 0)
+				{
+					out_EnterPosition = r.p1() + (slope * fmax(out_EnterProgression, 0));
+					out_EnterNormal = (out_EnterPosition - c.p()) / c.r();
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		// Finds the points, normals and path progression where a ray enters and exits a circle
+		template<typename valuetype>
+		static bool IsIntersecting(const ray2D<valuetype>& r, const circle<valuetype>& c, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector2D<valuetype>& out_ExitPosition, vector2D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Ray in local coordinates of the circle
+			ray2D<valuetype> ray(r - c.p());
+			vector2D<valuetype> slope(ray.slope());
+			valuetype sigma = pow(ray.p1() * slope, 2) - (slope * slope) * ((ray.p1() * ray.p1()) - pow(c.r(), 2));
+
+			// The infinite extension of the ray intersects the circle
+			if (sigma >= 0)
+			{
+				out_EnterProgression = (-(ray.p1() * slope) - sqrt(sigma)) / (slope * slope);
+				out_ExitProgression = (-(ray.p1() * slope) + sqrt(sigma)) / (slope * slope);
+
+				// The ray intersects the circle
+				if (out_EnterProgression <= 1 && out_EnterProgression >= 0)
+				{
+					out_EnterPosition = r.p1() + (slope * fmax(out_EnterProgression, 0));
+					out_ExitPosition = r.p1() + (slope * fmin(out_ExitProgression, 1));
+					out_EnterNormal = (out_EnterPosition - c.p()) / c.r();
+					out_ExitNormal = (out_ExitPosition - c.p()) / c.r();
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		// Tests whether a moving circle intersects with another circle
 		template<typename valuetype>
 		static bool IsIntersecting(const circle<valuetype>& c1, const circle<valuetype>& c2, const vector2D<valuetype>& motion_c1)
@@ -130,32 +186,56 @@ namespace Engine{
 			return IsIntersecting(r, c, out_Enter, out_Exit);
 		}
 
+		// Finds the point, normal and path progression where a moving circle enters another circle
+		template<typename valuetype>
+		static bool IsIntersecting(const circle<valuetype>& c1, const circle<valuetype>& c2, const vector2D<valuetype>& motion_c1, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression)
+		{
+			// Convert the circle-circle raycast to a ray-circle raycast
+			vector2D<valuetype> start(c1.p());
+			vector2D<valuetype> end(c1.p() + motion_c1);
+			ray2D<valuetype> r(start, end);
+			circle<valuetype> c(c2.p(), c1.r() + c2.r());
+			return IsIntersecting(r, c, out_EnterPosition, out_EnterNormal, out_EnterProgression);
+		}
+
+		// Finds the points, normals and path progression where a moving circle enters and exits another circle
+		template<typename valuetype>
+		static bool IsIntersecting(const circle<valuetype>& c1, const circle<valuetype>& c2, const vector2D<valuetype>& motion_c1, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector2D<valuetype>& out_ExitPosition, vector2D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Convert the circle-circle raycast to a ray-circle raycast
+			vector2D<valuetype> start(c1.p());
+			vector2D<valuetype> end(c1.p() + motion_c1);
+			ray2D<valuetype> r(start, end);
+			circle<valuetype> c(c2.p(), c1.r() + c2.r());
+			return IsIntersecting(r, c, out_EnterPosition, out_EnterNormal, out_EnterProgression, out_ExitPosition, out_ExitNormal, out_ExitProgression);
+		}
+
 		///////////////////////////////////////////////////////// AABBs
 
 		// Tests whether a point overlaps with an AABB
 		template<typename valuetype>
-		static bool IsIntersecting(const vector2D<valuetype>& p, const interval2D<valuetype>& r)
+		static bool IsIntersecting(const vector2D<valuetype>& p, const aabb2D<valuetype>& aabb)
 		{
-			return (p >= r.p1() && p <= r.p2());
+			return (p >= aabb.p1() && p <= aabb.p2());
 		}
 
 		// Tests whether two AABBs intersect
 		template<typename valuetype>
-		static bool IsIntersecting(const interval2D<valuetype>& r1, const interval2D<valuetype>& r2)
+		static bool IsIntersecting(const aabb2D<valuetype>& aabb1, const aabb2D<valuetype>& aabb2)
 		{
-			return (r1.p1() <= r2.p2() && r2.p1() <= r1.p2());
+			return (aabb1.p1() <= aabb2.p2() && aabb2.p1() <= aabb1.p2());
 		}
 
 		// Tests whether a ray intersects with an AABB
 		template<typename valuetype>
-		static bool IsIntersecting(const ray2D<valuetype>& r, const interval2D<valuetype>& rect)
+		static bool IsIntersecting(const ray2D<valuetype>& r, const aabb2D<valuetype>& aabb)
 		{
 			// Ray in local coordinates of the circle
-			ray2D<valuetype> l_ray(r - rect.center());
+			ray2D<valuetype> l_ray(r - aabb.center());
 			vector2D<valuetype> l_slope(r.slope());
-			vector2D<valuetype> l_ext(rect.extent());
-			pointOutcode p1_pc = rect.outcode(r.p1());
-			pointOutcode p2_pc = rect.outcode(r.p2());
+			vector2D<valuetype> l_ext(aabb.extent());
+			pointOutcode p1_pc = aabb.outcode(r.p1());
+			pointOutcode p2_pc = aabb.outcode(r.p2());
 
 			// Ray lies completely to one side of the rectangle
 			pointOutcode test = p1_pc & p2_pc;
@@ -190,14 +270,14 @@ namespace Engine{
 
 		// Finds the points where a ray enters and exits an AABB
 		template<typename valuetype>
-		static bool IsIntersecting(const ray2D<valuetype>& r, const interval2D<valuetype>& rect, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
+		static bool IsIntersecting(const ray2D<valuetype>& r, const aabb2D<valuetype>& aabb, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
 		{
 			// Ray in local coordinates of the rectangle
-			ray2D<valuetype> l_ray(r - rect.center());
+			ray2D<valuetype> l_ray(r - aabb.center());
 			vector2D<valuetype> l_slope(r.slope());
-			vector2D<valuetype> l_ext(rect.extent());
-			pointOutcode p1_pc = rect.outcode(r.p1());
-			pointOutcode p2_pc = rect.outcode(r.p2());
+			vector2D<valuetype> l_ext(aabb.extent());
+			pointOutcode p1_pc = aabb.outcode(r.p1());
+			pointOutcode p2_pc = aabb.outcode(r.p2());
 
 			// Ray lies completely to one side of the rectangle
 			pointOutcode test = p1_pc & p2_pc;
@@ -232,41 +312,203 @@ namespace Engine{
 			return false;
 		}
 
+		// Finds the point, normal and path progression where a ray enters an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const ray2D<valuetype>& r, const aabb2D<valuetype>& aabb, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression)
+		{
+			// Ray in local coordinates of the rectangle
+			ray2D<valuetype> l_ray(r - aabb.center());
+			vector2D<valuetype> l_slope(r.slope());
+			vector2D<valuetype> l_ext(aabb.extent());
+			pointOutcode p1_pc = aabb.outcode(r.p1());
+			pointOutcode p2_pc = aabb.outcode(r.p2());
+
+			// Ray lies completely to one side of the rectangle
+			pointOutcode test = p1_pc & p2_pc;
+			if ((p1_pc & p2_pc) != 0) {
+				return false;
+			}
+
+			// The ray might intersect the rectangle
+			out_EnterProgression = 0;
+			valuetype labmda2 = 1;
+			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
+			unsigned char enterBit = 0; // Index for looking up the normal of the plane where the ray enters the AABB
+
+			// For all interval boundaries (2 per dimension), check intersection points
+			for (int i = 0; i < 2; i++)
+			{
+				if ((p1_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < lambda2) { lambda2 = lambda; }
+				}
+				bit <<= 1;
+
+				if ((p1_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < lambda2) { lambda2 = lambda; }
+				}
+				bit <<= 1;
+			}
+
+			// The ray intersects the box 
+			if (out_EnterProgression <= lambda2)
+			{
+				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
+				out_EnterNormal = vector2D<valuetype>(
+					-((enterBit >> 0) & 0x01) + ((enterBit >> 1) & 0x01),
+					-((enterBit >> 2) & 0x01) + ((enterBit >> 3) & 0x01)
+					);
+				return true;
+			}
+
+			return false;
+		}
+
+		// Finds the points, normals and path progressions where a ray enters and exits an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const ray2D<valuetype>& r, const aabb2D<valuetype>& aabb, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector2D<valuetype>& out_ExitPosition, vector2D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Ray in local coordinates of the rectangle
+			ray2D<valuetype> l_ray(r - aabb.center());
+			vector2D<valuetype> l_slope(r.slope());
+			vector2D<valuetype> l_ext(aabb.extent());
+			pointOutcode p1_pc = aabb.outcode(r.p1());
+			pointOutcode p2_pc = aabb.outcode(r.p2());
+
+			// Ray lies completely to one side of the rectangle
+			pointOutcode test = p1_pc & p2_pc;
+			if ((p1_pc & p2_pc) != 0) {
+				return false;
+			}
+
+			// The ray might intersect the rectangle
+			out_EnterProgression = 0;
+			out_ExitProgression = 1;
+			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
+			unsigned char enterBit = 0; // Index for looking up the normal of the plane where the ray enters the AABB
+			unsigned char exitBit = 0; // Index for looking up the normal of the plane where the ray exits the AABB
+
+			// For all interval boundaries (2 per dimension), check intersection points
+			for (int i = 0; i < 2; i++)
+			{
+				if ((p1_pc & bit) != 0) 
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0) 
+				{ 
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < out_ExitProgression) { out_ExitProgression = lambda; exitBit = bit; }
+				}
+				bit <<= 1;
+
+				if ((p1_pc & bit) != 0) 
+				{ 
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0) 
+				{ 
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < out_ExitProgression) { out_ExitProgression = lambda; exitBit = bit; }
+				}
+				bit <<= 1;
+			}
+
+			// The ray intersects the box 
+			if (out_EnterProgression <= out_ExitProgression)
+			{				
+				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
+				out_ExitPosition = r.p1() + (l_slope * out_ExitProgression);	
+				out_EnterNormal = vector2D<valuetype>(
+					-((enterBit >> 0) & 0x01) + ((enterBit >> 1) & 0x01),
+					-((enterBit >> 2) & 0x01) + ((enterBit >> 3) & 0x01)
+					);
+				out_ExitNormal = vector2D<valuetype>(
+					-((exitBit >> 0) & 0x01) + ((exitBit >> 1) & 0x01),
+					-((exitBit >> 2) & 0x01) + ((exitBit >> 3) & 0x01)
+					);
+				return true;
+			}
+
+			return false;
+		}
+
 		// Tests whether a moving AABB intersects with another AABB
 		template<typename valuetype>
-		static bool IsIntersecting(const interval2D<valuetype>& r1, const interval2D<valuetype>& r2, const vector2D<valuetype>& motion_r1)
+		static bool IsIntersecting(const aabb2D<valuetype>& aabb1, const aabb2D<valuetype>& aabb2, const vector2D<valuetype>& motion_aabb1)
 		{
 			// Convert the aabb-aabb raycast to a ray-aabb raycast
-			vector2D<valuetype> l_start(r1.center());
-			vector2D<valuetype> l_end(l_start + motion_r1);
+			vector2D<valuetype> l_start(aabb1.center());
+			vector2D<valuetype> l_end(l_start + motion_aabb1);
 			ray2D<valuetype> l_ray(l_start, l_end);
-			vector2D<valuetype> l_combinedExtent(r1.extent() + r2.extent());
-			interval2D<valuetype> l_rect(r2.center() - l_combinedExtent, r2.center() + l_combinedExtent);
+			vector2D<valuetype> l_combinedExtent(aabb1.extent() + aabb2.extent());
+			aabb2D<valuetype> l_rect(aabb2.center() - l_combinedExtent, aabb2.center() + l_combinedExtent);
 			return IsIntersecting(l_ray, l_rect);
 		}
 
 		// Finds the points where a moving AABB enters and exits another AABB
 		template<typename valuetype>
-		static bool IsIntersecting(const interval2D<valuetype>& r1, const interval2D<valuetype>& r2, const vector2D<valuetype>& motion_r1, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
+		static bool IsIntersecting(const aabb2D<valuetype>& aabb1, const aabb2D<valuetype>& aabb2, const vector2D<valuetype>& motion_aabb1, vector2D<valuetype>& out_Enter, vector2D<valuetype>& out_Exit)
 		{
 			// Convert the aabb-aabb raycast to a ray-aabb raycast
-			vector2D<valuetype> l_start(r1.center());
-			vector2D<valuetype> l_end(l_start + motion_r1);
+			vector2D<valuetype> l_start(aabb1.center());
+			vector2D<valuetype> l_end(l_start + motion_aabb1);
 			ray2D<valuetype> l_ray(l_start, l_end);
-			vector2D<valuetype> l_combinedExtent(r1.extent() + r2.extent());
-			interval2D<valuetype> l_rect(r2.center() - l_combinedExtent, r2.center() + l_combinedExtent);
+			vector2D<valuetype> l_combinedExtent(aabb1.extent() + aabb2.extent());
+			aabb2D<valuetype> l_rect(aabb2.center() - l_combinedExtent, aabb2.center() + l_combinedExtent);
 			return IsIntersecting(l_ray, l_rect, out_Enter, out_Exit);
+		}
+
+		// Finds the points, normals and path progressions where a moving AABB enters and exits another AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const aabb2D<valuetype>& aabb1, const aabb2D<valuetype>& aabb2, const vector2D<valuetype>& motion_aabb1, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression)
+		{
+			// Convert the aabb-aabb raycast to a ray-aabb raycast
+			vector2D<valuetype> l_start(aabb1.center());
+			vector2D<valuetype> l_end(l_start + motion_aabb1);
+			ray2D<valuetype> l_ray(l_start, l_end);
+			vector2D<valuetype> l_combinedExtent(aabb1.extent() + aabb2.extent());
+			aabb2D<valuetype> l_rect(aabb2.center() - l_combinedExtent, aabb2.center() + l_combinedExtent);
+			return IsIntersecting(l_ray, l_rect, out_EnterPosition, out_EnterNormal, out_EnterProgression);
+		}
+
+		// Finds the points, normals and path progressions where a moving AABB enters and exits another AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const aabb2D<valuetype>& aabb1, const aabb2D<valuetype>& aabb2, const vector2D<valuetype>& motion_aabb1, vector2D<valuetype>& out_EnterPosition, vector2D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector2D<valuetype>& out_ExitPosition, vector2D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Convert the aabb-aabb raycast to a ray-aabb raycast
+			vector2D<valuetype> l_start(aabb1.center());
+			vector2D<valuetype> l_end(l_start + motion_aabb1);
+			ray2D<valuetype> l_ray(l_start, l_end);
+			vector2D<valuetype> l_combinedExtent(aabb1.extent() + aabb2.extent());
+			aabb2D<valuetype> l_rect(aabb2.center() - l_combinedExtent, aabb2.center() + l_combinedExtent);
+			return IsIntersecting(l_ray, l_rect, out_EnterPosition, out_EnterNormal, out_EnterProgression, out_ExitPosition, out_ExitNormal, out_ExitProgression);
 		}
 
 		////////////////////////////////////////////////// Circle - AABB
 
 		// Tests whether a circle intersects an AABB
 		template<typename valuetype>
-		static bool IsIntersecting(const circle<valuetype>& c, const interval2D<valuetype>& r)
+		static bool IsIntersecting(const circle<valuetype>& c, const aabb2D<valuetype>& aabb)
 		{
 			// Express the problem in local coordinates to r
-			vector2D<valuetype> l_ext(r.extent());
-			circle<valuetype> l_c(c - r.center());
+			vector2D<valuetype> l_ext(aabb.extent());
+			circle<valuetype> l_c(c - aabb.center());
 
 			// Calculate the point on the aabb, closest to the circle
 			vector2D<valuetype> l_closestPoint(
@@ -281,9 +523,9 @@ namespace Engine{
 
 		// Tests whether a circle intersects an AABB
 		template<typename valuetype>
-		inline static bool IsIntersecting(const interval2D<valuetype>& r, const circle<valuetype>& c)
+		inline static bool IsIntersecting(const aabb2D<valuetype>& aabb, const circle<valuetype>& c)
 		{
-			return IsIntersecting<valuetype>(c, r);
+			return IsIntersecting<valuetype>(c, aabb);
 		}
 
 		////////////////////////////////////////////////////////////////
@@ -372,6 +614,35 @@ namespace Engine{
 			return false;
 		}
 
+		// Finds the points, normals and path progression where a ray enters and exits a sphere
+		template<typename valuetype>
+		static bool IsIntersecting(const ray3D<valuetype>& r, const sphere<valuetype>& s, vector3D<valuetype>& out_EnterPosition, vector3D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector3D<valuetype>& out_ExitPosition, vector3D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Ray in local coordinates of the sphere
+			ray3D<valuetype> ray(r - s.p());
+			vector3D<valuetype> slope(ray.slope());
+			valuetype sigma = pow(ray.p1() * slope, 2) - (slope * slope) * ((ray.p1() * ray.p1()) - pow(s.r(), 2));
+
+			// The infinite extension of the ray intersects the sphere
+			if (sigma >= 0)
+			{
+				out_EnterProgression = (-(ray.p1() * slope) - sqrt(sigma)) / (slope * slope);
+				out_ExitProgression = (-(ray.p1() * slope) + sqrt(sigma)) / (slope * slope);
+
+				// The ray intersects the sphere
+				if (out_EnterProgression <= 1 && out_EnterProgression >= 0)
+				{
+					out_EnterPosition = r.p1() + (slope * fmax(out_EnterProgression, 0));
+					out_ExitPosition = r.p1() + (slope * fmin(out_ExitProgression, 1));
+					out_EnterNormal = (out_EnterPosition - s.p()) / s.r();
+					out_ExitNormal = (out_ExitPosition - s.p()) / s.r();
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		// Tests whether a moving sphere intersects with another sphere
 		template<typename valuetype>
 		static bool IsIntersecting(const sphere<valuetype>& s1, const sphere<valuetype>& s2, const vector3D<valuetype>& motion_s1)
@@ -394,6 +665,18 @@ namespace Engine{
 			ray3D<valuetype> r(start, end);
 			sphere<valuetype> s(s2.p(), s1.r() + s2.r());
 			return IsIntersecting(r, s, out_Enter, out_Exit);
+		}
+
+		// Finds the points, normals and path progression where a moving sphere enters and exits another sphere
+		template<typename valuetype>
+		static bool IsIntersecting(const sphere<valuetype>& s1, const sphere<valuetype>& s2, const vector3D<valuetype>& motion_s1, vector3D<valuetype>& out_EnterPosition, vector3D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector3D<valuetype>& out_ExitPosition, vector3D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Convert the circle-circle raycast to a ray-circle raycast
+			vector3D<valuetype> start(s1.p());
+			vector3D<valuetype> end(s1.p() + motion_s1);
+			ray3D<valuetype> r(start, end);
+			sphere<valuetype> s(s2.p(), s1.r() + s2.r());
+			return IsIntersecting(r, s, out_EnterPosition, out_EnterNormal, out_EnterProgression, out_ExitPosition, out_ExitNormal, out_ExitProgression);
 		}
 
 		///////////////////////////////////////////////////////// AABBs
@@ -492,6 +775,79 @@ namespace Engine{
 			{
 				out_Enter = r.p1() + (l_slope * lambdaEnter);
 				out_Exit = r.p1() + (l_slope * lambdaExit);
+				return true;
+			}
+
+			return false;
+		}
+
+		// Finds the points, normals and path progressions where a ray enters and exits an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const ray3D<valuetype>& r, const aabb3D<valuetype>& aabb, vector3D<valuetype>& out_EnterPosition, vector3D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression, vector3D<valuetype>& out_ExitPosition, vector3D<valuetype>& out_ExitNormal, valuetype& out_ExitProgression)
+		{
+			// Ray in local coordinates of the AABB
+			ray3D<valuetype> l_ray(r - aabb.center());
+			vector3D<valuetype> l_slope(r.slope());
+			vector3D<valuetype> l_ext(aabb.extent());
+			pointOutcode p1_pc = aabb.outcode(r.p1());
+			pointOutcode p2_pc = aabb.outcode(r.p2());
+
+			// Ray lies completely to one side of the AABB
+			pointOutcode test = p1_pc & p2_pc;
+			if ((p1_pc & p2_pc) != 0) {
+				return false;
+			}
+
+			// The ray might intersect the AABB
+			out_EnterProgression = 0;
+			out_ExitProgression = 1;
+			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
+			unsigned char enterBit = 0; // Index for looking up the normal of the plane where the ray enters the AABB
+			unsigned char exitBit = 0; // Index for looking up the normal of the plane where the ray exits the AABB
+
+			// For all interval boundaries (2 per dimension), check intersection points
+			for (int i = 0; i < 2; i++)
+			{
+				if ((p1_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < out_ExitProgression) { out_ExitProgression = lambda; exitBit = bit; }
+				}
+				bit <<= 1;
+
+				if ((p1_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < out_ExitProgression) { out_ExitProgression = lambda; exitBit = bit; }
+				}
+				bit <<= 1;
+			}
+
+			// The ray intersects the AABB
+			if (out_EnterProgression <= out_ExitProgression)
+			{
+				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
+				out_ExitPosition = r.p1() + (l_slope * out_ExitProgression);
+				out_EnterNormal = vector3D<valuetype>(
+					- ((enterBit >> 0) & 0x01) + ((enterBit >> 1) & 0x01),
+					- ((enterBit >> 2) & 0x01) + ((enterBit >> 3) & 0x01)
+					- ((enterBit >> 4) & 0x01) + ((enterBit >> 5) & 0x01)
+					);
+				out_ExitNormal = vector3D<valuetype>(
+					- ((exitBit >> 0) & 0x01) + ((exitBit >> 1) & 0x01),
+					- ((exitBit >> 2) & 0x01) + ((exitBit >> 3) & 0x01)
+					- ((exitBit >> 4) & 0x01) + ((exitBit >> 5) & 0x01)
+					);
 				return true;
 			}
 

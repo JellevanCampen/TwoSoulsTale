@@ -116,6 +116,84 @@ namespace Engine{
 		}
 
 		////////////////////////////////////////////////////////////////
+		// Collision-aware movement		                              //
+		////////////////////////////////////////////////////////////////
+
+		// Possible responses on collisions
+		enum class CollisionResponse
+		{
+			IGNORE,		// Ignore collisions
+			STOP,		// Stop moving on collision
+			SLIDE		// Remove the motion component parallel to the collision normal
+		};
+
+	private:
+
+		///////////////////////////////////////////////////////////// 2D
+
+		// Move a game object along the specified motion vector, ignoring collisions
+		template<typename valuetype>
+		inline void MoveIgnore(GameObject& gameObject, vector2D<valuetype> motion)
+		{
+			gameObject.m_Transform.t() += motion;
+		}
+
+		// Move a game object along the specified motion vector, stopping at the first collision
+		template<typename valuetype>
+		inline bool MoveStop(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		{
+			valuetype minProgression = 1.0f;
+			vector2D<valuetype> minPosition(gameObject.m_Transform.t() + motion);
+
+			valuetype currentProgression = 1.0f;
+			vector2D<valuetype> currentPosition;
+			vector2D<valuetype> currentNormal;
+
+			CollisionManager c = CollisionManager::GetInstance();
+
+			for (GameObject* g : other) {
+				if (gameObject.GetGUID() == g->GetGUID()) { continue; }
+				if (c.IsIntersecting(gameObject.m_AABB, g->m_AABB, motion, currentPosition, currentNormal, currentProgression))
+				{
+					if (currentProgression < minProgression) 
+					{
+						minProgression = currentProgression;
+						minPosition = currentPosition;
+					}
+				}
+			}
+
+			MoveIgnore(gameObject, motion * minProgression);
+		}
+
+		// Move a game object along the specified motion vector, sliding along colliding objects
+		template<typename valuetype>
+		inline bool MoveSlide(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		{
+			// TODO
+		}
+
+	public:
+
+		// Moves a game object along the specified motion vector, resolving collisions on the way
+		template<typename valuetype>
+		inline bool Move(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const std::vector<GameObject*>& other)
+		{
+			switch (response)
+			{
+			case CollisionResponse::IGNORE:
+				MoveIgnore(gameObject, motion); 
+				return false;
+			case CollisionResponse::STOP:
+				return MoveStop(gameObject, motion);
+				break;
+			case CollisionResponse::SLIDE:
+				return MoveSlide(gameObject, motion);
+				break;
+			}
+		}
+
+		////////////////////////////////////////////////////////////////
 		// Debug rendering                                            //
 		////////////////////////////////////////////////////////////////
 

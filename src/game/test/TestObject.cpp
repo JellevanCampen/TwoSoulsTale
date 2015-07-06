@@ -206,40 +206,54 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	Engine::colorRGBA colorBlue(0.4f, 0.4f, 1.0f, 1.0f);
 
 	bool hasIntersectedRay = false;
-	Engine::f2 enter, exit;
+	Engine::f2 enterPosition, exitPosition, enterNormal, exitNormal;
+	float enterProgression, exitProgression;
 
 	// Ray-circle
 	g.DrawCircle(m_Circle, colorBlue);
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
-	{ 	
+
+	// if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enterPosition, enterNormal, enterProgression, exitPosition, exitNormal, exitProgression))
+	{
 		hasIntersectedRay = true;
-		g.DrawRectangle(Engine::aabb2Df(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
-		g.DrawRectangle(Engine::aabb2Df(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(enterPosition - Engine::f2(1.0f), enterPosition + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(exitPosition - Engine::f2(1.0f), exitPosition + Engine::f2(1.0f)), colorRed);
+		g.DrawLine(enterPosition, enterPosition + (enterNormal * 24.0f), colorRed);
+		g.DrawLine(exitPosition, exitPosition + (exitNormal * 24.0f), colorRed);
 	}
 
 	// Circle-circle
 	Engine::circlef collCircle(0.0, 0.0, 8.0);
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2(), enter, exit))
+	// if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2(), enter, exit))
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(collCircle, m_Circle, m_Ray.p2(), enterPosition, enterNormal, enterProgression, exitPosition, exitNormal, exitProgression))
 	{
-		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(enter, collCircle.r()), colorBlue);
-		Engine::GraphicsManager::GetInstance().DrawCircle(Engine::circlef(exit, collCircle.r()), colorBlue);
+		g.DrawCircle(Engine::circlef(enterPosition, collCircle.r()), colorBlue);
+		g.DrawCircle(Engine::circlef(exitPosition, collCircle.r()), colorBlue);
+		g.DrawLine(enterPosition, enterPosition + (enterNormal * 24.0f), colorBlue);
+		g.DrawLine(exitPosition, exitPosition + (exitNormal * 24.0f), colorBlue);
 	}
 
 	// Ray-AABB
 	g.DrawRectangle(m_AABBRect, colorBlue);
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_AABBRect, enter, exit))
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_AABBRect, enterPosition, enterNormal, enterProgression, exitPosition, exitNormal, exitProgression))
+	// if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_AABBRect, enterPosition, exitPosition))
 	{
 		hasIntersectedRay = true;
-		g.DrawRectangle(Engine::aabb2Df(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
-		g.DrawRectangle(Engine::aabb2Df(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(enterPosition - Engine::f2(1.0f), enterPosition + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(exitPosition - Engine::f2(1.0f), exitPosition + Engine::f2(1.0f)), colorRed);
+		g.DrawLine(enterPosition, enterPosition + (enterNormal * 24.0f), colorRed);
+		g.DrawLine(exitPosition, exitPosition + (exitNormal * 24.0f), colorRed);
 	}
 
 	// AABB-AABB
 	Engine::aabb2Df collRectangle(-8.0f, 8.0f, -8.0f, 8.0f);
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_AABBRect, m_Ray.p2(), enter, exit))
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_AABBRect, m_Ray.p2(), enterPosition, enterNormal, enterProgression, exitPosition, exitNormal, exitProgression))
+	// if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_AABBRect, m_Ray.p2(), enterPosition, exitPosition))
 	{
-		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(enter - collRectangle.extent(), enter + collRectangle.extent()), colorBlue);
-		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(exit - collRectangle.extent(), exit + collRectangle.extent()), colorBlue);
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(enterPosition - collRectangle.extent(), enterPosition + collRectangle.extent()), colorBlue);
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(exitPosition - collRectangle.extent(), exitPosition + collRectangle.extent()), colorBlue);
+		g.DrawLine(enterPosition, enterPosition + (enterNormal * 24.0f), colorBlue);
+		g.DrawLine(exitPosition, exitPosition + (exitNormal * 24.0f), colorBlue);
 	}
 
 	// Ray (rendering)
