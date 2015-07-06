@@ -207,7 +207,7 @@ namespace Engine{
 
 		// Draws a rectangle
 		template<typename valuetype>
-		void DrawRectangle(rectangle<valuetype> rectangle, colorRGBA color = colorRGBA())
+		void DrawRectangle(interval2D<valuetype> rectangle, colorRGBA color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderRectangle);
@@ -231,11 +231,11 @@ namespace Engine{
 
 		// Draws a rectangle
 		template<typename valuetype>
-		inline void DrawRectangle(vector2D<valuetype> p1, vector2D<valuetype> p2, colorRGBA color = colorRGBA()) { DrawRectangle(rectangle<valuetype>(p1, p2), color); }
+		inline void DrawRectangle(vector2D<valuetype> p1, vector2D<valuetype> p2, colorRGBA color = colorRGBA()) { DrawRectangle(interval2D<valuetype>(p1, p2), color); }
 
 		// Draws a rectangle
 		template<typename valuetype>
-		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, colorRGBA color = colorRGBA()) { DrawRectangle(rectangle<valuetype>(x1, x2, y1, y2), color); }
+		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, colorRGBA color = colorRGBA()) { DrawRectangle(interval2D<valuetype>(x1, x2, y1, y2), color); }
 
 		//////////////////////////////////////////////////////// Circles
 

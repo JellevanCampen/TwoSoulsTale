@@ -7,11 +7,18 @@
 namespace Engine{
 
 	////////////////////////////////////////////////////////////////
-	// Rectangle                                                  //
+	// AABBs	                                                  //
 	////////////////////////////////////////////////////////////////
 
-	// Engine::rectanglef (IntervalTypes) 
-	// Engine::rectangled (IntervalTypes)
+	template<typename valuetype> using aabb1D = interval1D<valuetype>;
+	typedef aabb1D<int> aabb1Di;
+	typedef aabb1D<float> aabb1Df;
+	template<typename valuetype> using aabb2D = interval2D<valuetype>;
+	typedef aabb2D<int> aabb2Di;
+	typedef aabb2D<float> aabb2Df;
+	template<typename valuetype> using aabb3D = interval3D<valuetype>;
+	typedef aabb3D<int> aabb3Di;
+	typedef aabb3D<float> aabb3Df;
 
 	////////////////////////////////////////////////////////////////
 	// Circle                                                     //
@@ -90,15 +97,15 @@ namespace Engine{
 		inline const valuetype& r() const { return m_R; }
 
 		// Setters
-		inline circle& p(vector3D<valuetype> p) { m_P = p; return *this; }
-		inline circle& x(valuetype x) { m_P.x(x); return *this; }
-		inline circle& y(valuetype y) { m_P.y(y); return *this; }
-		inline circle& z(valuetype z) { m_P.z(z); return *this; }
-		inline circle& r(valuetype r) { m_R = r; return *this; }
+		inline sphere& p(vector3D<valuetype> p) { m_P = p; return *this; }
+		inline sphere& x(valuetype x) { m_P.x(x); return *this; }
+		inline sphere& y(valuetype y) { m_P.y(y); return *this; }
+		inline sphere& z(valuetype z) { m_P.z(z); return *this; }
+		inline sphere& r(valuetype r) { m_R = r; return *this; }
 
 		// Operators
-		inline circle operator+ (const vector3D<valuetype>& v) const { return circle(m_P + v, m_R); }
-		inline circle operator- (const vector3D<valuetype>& v) const { return circle(m_P - v, m_R); }
+		inline sphere operator+ (const vector3D<valuetype>& v) const { return sphere(m_P + v, m_R); }
+		inline sphere operator- (const vector3D<valuetype>& v) const { return sphere(m_P - v, m_R); }
 	};
 
 	typedef sphere<float> spheref;

@@ -4,7 +4,7 @@
 
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 #include "../common/utility/TransformTypes.hpp" // For representing the transform of the GameObject
-#include "../common/utility/IntervalTypes.hpp" // For representing AABBs
+#include "../common/utility/ShapeTypes.hpp" // For representing AABBs
 
 namespace Engine{
 

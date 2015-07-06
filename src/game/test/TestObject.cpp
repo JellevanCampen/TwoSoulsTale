@@ -137,7 +137,7 @@ void GameContent::TestObject::Create()
 
 	m_Circle = Engine::circlef(64.0, 96.0, 24.0);
 	m_Ray = Engine::ray2Df(0.0, 480.0, 0.0, 480.0);
-	m_Rectangle = Engine::rectanglef(128.0f, 128.0f + 32.0f, 40.0f, 40.0f + 48.0f);
+	m_AABBRect = Engine::aabb2Df(128.0f, 128.0f + 32.0f, 40.0f, 40.0f + 48.0f);
 	// TESTING
 }
 
@@ -213,8 +213,8 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Circle, enter, exit)) 
 	{ 	
 		hasIntersectedRay = true;
-		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
-		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
 	}
 
 	// Circle-circle
@@ -226,20 +226,20 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 	}
 
 	// Ray-AABB
-	g.DrawRectangle(m_Rectangle, colorBlue);
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_Rectangle, enter, exit))
+	g.DrawRectangle(m_AABBRect, colorBlue);
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(m_Ray, m_AABBRect, enter, exit))
 	{
 		hasIntersectedRay = true;
-		g.DrawRectangle(Engine::rectanglef(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
-		g.DrawRectangle(Engine::rectanglef(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(enter - Engine::f2(1.0f), enter + Engine::f2(1.0f)), colorRed);
+		g.DrawRectangle(Engine::aabb2Df(exit - Engine::f2(1.0f), exit + Engine::f2(1.0f)), colorRed);
 	}
 
 	// AABB-AABB
-	Engine::rectanglef collRectangle(-8.0f, 8.0f, -8.0f, 8.0f);
-	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_Rectangle, m_Ray.p2(), enter, exit))
+	Engine::aabb2Df collRectangle(-8.0f, 8.0f, -8.0f, 8.0f);
+	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_AABBRect, m_Ray.p2(), enter, exit))
 	{
-		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::rectanglef(enter - collRectangle.extent(), enter + collRectangle.extent()), colorBlue);
-		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::rectanglef(exit - collRectangle.extent(), exit + collRectangle.extent()), colorBlue);
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(enter - collRectangle.extent(), enter + collRectangle.extent()), colorBlue);
+		Engine::GraphicsManager::GetInstance().DrawRectangle(Engine::aabb2Df(exit - collRectangle.extent(), exit + collRectangle.extent()), colorBlue);
 	}
 
 	// Ray (rendering)
@@ -247,9 +247,9 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 
 	// Sphere-AABB
 	bool hasIntersectedBoundingBox = false;
-	Engine::rectanglef aabbTransformed = ((Engine::rectanglef)m_AABB).GetTransformed(m_Transform);
+	Engine::aabb2Df aabbTransformed = ((Engine::aabb2Df)m_AABB).GetTransformed(m_Transform);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_Circle)
-		|| Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_Rectangle))
+		|| Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_AABBRect))
 	{ 
 		hasIntersectedBoundingBox = true;
 	}

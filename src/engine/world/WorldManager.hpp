@@ -6,7 +6,7 @@
 #include "GameObject.hpp" // For representing game objects
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 #include "../common/utility/VectorTypes.hpp" // For representing 2D and 3D positions
-#include "../common/utility/IntervalTypes.hpp" // For representing 2D and 3D AABBs
+#include "../common/utility/ShapeTypes.hpp" // For representing shapes
 
 #include <unordered_map> // For holding the game objects in the game world
 #include <list> // For holding the game objects that are marked for removal, and for indexing game objects

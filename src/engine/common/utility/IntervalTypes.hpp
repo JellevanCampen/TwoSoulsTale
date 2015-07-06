@@ -83,22 +83,10 @@ namespace Engine
 				(velocity.x() > 0) ? m_P2 + velocity.x() : m_P2
 				);
 		}
-
-		// Checks whether the specified point is contained in the interval (boundaries included)
-		inline bool Contains(valuetype x) const { return (x >= m_P1 && x <= m_P2); }
-
-		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
-		inline bool ContainsStrict(valuetype x) const { return (x > m_P1 && x < m_P2); }
-
-		// Checks whether the specified interval overlaps with this interval (boundaries included)
-		inline bool Overlaps(const interval1D& other) const { return ((other.m_P2 >= m_P1) && (other.m_P1 <= m_P2)); }
-
-		// Checks whether the specified interval overlaps with this interval (boundaries not included)
-		inline bool OverlapsStrict(const interval1D& other) const { return ((other.m_P2 > m_P1) && (other.m_P1 < m_P2)); }
 	};
 
-	typedef interval1D<int> interval1Di, aabb1Di, linesegmenti;
-	typedef interval1D<float> interval1Df, aabb1Df, linesegmentf;
+	typedef interval1D<int> interval1Di;
+	typedef interval1D<float> interval1Df;
 
 	////////////////////////////////////////////////////////////////
 	// 2D intervals                                               //
@@ -205,35 +193,10 @@ namespace Engine
 				(velocity.y() > 0) ? m_P2.y() + velocity.y() : m_P2.y()
 				);
 		}
-
-		// Checks whether the specified point is contained in the interval (boundaries included)
-		inline bool Contains(valuetype x, valuetype y) const { return (x >= m_P1.x() && x <= m_P2.x() && y >= m_P1.y() && y <= m_P2.y()); }
-		inline bool Contains(vector2D<valuetype> p) const { return (p.x() >= m_P1.x() && p.x() <= m_P2.x() && p.y() >= m_P1.y() && p.y() <= m_P2.y()); }
-
-		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
-		inline bool ContainsStrict(valuetype x, valuetype y) const { return (x > m_P1.x() && x < m_P2.x() && y > m_P1.y() && y < m_P2.y()); }
-		inline bool ContainsStrict(vector2D<valuetype> p) const { return (p.x() > m_P1.x() && p.x() < m_P2.x() && p.y() > m_P1.y() && p.y() < m_P2.y()); }
-
-		// Checks whether the specified interval overlaps with this interval (boundaries included)
-		inline bool Overlaps(const interval2D& other) const { 
-			return ((other.m_P2.x() >= m_P1.x()) && (other.m_P1.x() <= m_P2.x())
-				&& (other.m_P2.y() >= m_P1.y()) && (other.m_P1.y() <= m_P2.y())); 
-		}
-
-		// Checks whether the specified interval overlaps with this interval (boundaries not included)
-		inline bool OverlapsStrict(const interval2D& other) const {
-			return ((other.m_P2.x() > m_P1.x()) && (other.m_P1.x() < m_P2.x())
-				&& (other.m_P2.y() > m_P1.y()) && (other.m_P1.y() < m_P2.y()));
-		}
 	};
 
-	typedef interval2D<int> interval2Di, aabb2Di;
-	typedef interval2D<float> interval2Df, aabb2Df;
-	typedef interval2D<double> interval2Dd, aabb2Dd;
-	template<typename valuetype> using rectangle = interval2D < valuetype >;
-	typedef rectangle<int> rectanglei;
-	typedef rectangle<float> rectanglef;
-	typedef rectangle<double> rectangled;
+	typedef interval2D<int> interval2Di;
+	typedef interval2D<float> interval2Df;
 
 	////////////////////////////////////////////////////////////////
 	// 3D intervals                                               //
@@ -356,37 +319,10 @@ namespace Engine
 				(velocity.z() > 0) ? m_P2.z() + velocity.z() : m_P2.z()
 				);
 		}
-
-		// Checks whether the specified point is contained in the interval (boundaries included)
-		inline bool Contains(valuetype x, valuetype y, valuetype z) const { return (x >= m_P1.x() && x <= m_P2.x() && y >= m_P1.y() && y <= m_P2.y() && z >= m_P1.z() && z <= m_P2.z()); }
-		inline bool Contains(vector3D<valuetype> p) const { return (p.x() >= m_P1.x() && p.x() <= m_P2.x() && p.y() >= m_P1.y() && p.y() <= m_P2.y() && p.z() >= m_P1.z() && p.z() <= m_P2.z()); }
-
-		// Checks whether the specified point is strictly contained in the interval (boundaries not included)
-		inline bool ContainsStrict(valuetype x, valuetype y, valuetype z) const { return (x > m_P1.x() && x < m_P2.x() && y > m_P1.y() && y < m_P2.y() && z > m_P1.z() && z < m_P2.z()); }
-		inline bool ContainsStrict(vector3D<valuetype> p) const { return (p.x() > m_P1.x() && p.x() < m_P2.x() && p.y() > m_P1.y() && p.y() < m_P2.y() && p.z() > m_P1.z() && p.z() < m_P2.z()); }
-
-		// Checks whether the specified interval overlaps with this interval (boundaries included)
-		inline bool Overlaps(const interval3D& other) const {
-			return ((other.m_P2.x() >= m_P1.x()) && (other.m_P1.x() <= m_P2.x())
-				&& (other.m_P2.y() >= m_P1.y()) && (other.m_P1.y() <= m_P2.y())
-				&& (other.m_P2.z() >= m_P1.z()) && (other.m_P1.z() <= m_P2.z()));
-		}
-
-		// Checks whether the specified interval overlaps with this interval (boundaries not included)
-		inline bool OverlapsStrict(const interval3D& other) const {
-			return ((other.m_P2.x() > m_P1.x()) && (other.m_P1.x() < m_P2.x())
-				&& (other.m_P2.y() > m_P1.y()) && (other.m_P1.y() < m_P2.y())
-				&& (other.m_P2.z() > m_P1.z()) && (other.m_P1.z() < m_P2.z()));
-		}
 	};
 
-	typedef interval3D<int> interval3Di, aabb3Di;
-	typedef interval3D<float> interval3Df, aabb3Df;
-	typedef interval3D<double> interval3Dd, aabb3Dd;
-	template<typename valuetype> using box = interval3D < valuetype >;
-	typedef box<int> boxi;
-	typedef box<float> boxf;
-	typedef box<double> boxd;
+	typedef interval3D<int> interval3Di;
+	typedef interval3D<float> interval3Df;
 }
 
 #endif

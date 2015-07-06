@@ -1,6 +1,7 @@
 #include "WorldManager.hpp"
 
 #include "../graphics/GraphicsManager.hpp" // For rendering object bounding boxes
+#include "../world/CollisionManager.hpp" // For querying objects by intersection
 
 #include <limits> // For initializing to the largest possible float value in NN and kNN search
 #include <list> // For storing the k nearest neighbors to a point (constant time random insertion)
@@ -440,12 +441,13 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb2Df aabb, std::vector
 	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
 
 	size_t count = 0;
+	CollisionManager& c = CollisionManager::GetInstance();
 
 	if (typeFilter == OBJ_ANY)
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (aabb.Contains(gameObject.second->m_Transform.t().xy()))
+			if (c.IsIntersecting(gameObject.second->m_Transform.t().xy(), aabb))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -456,7 +458,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb2Df aabb, std::vector
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (aabb.Contains(gameObject->m_Transform.t().xy()))
+			if (c.IsIntersecting(gameObject->m_Transform.t().xy(), aabb))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -474,12 +476,13 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector
 	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
 
 	size_t count = 0;
+	CollisionManager& c = CollisionManager::GetInstance();
 
 	if (typeFilter == OBJ_ANY)
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (aabb.Contains(gameObject.second->m_Transform.t()))
+			if (c.IsIntersecting(gameObject.second->m_Transform.t(), aabb))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -490,7 +493,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (aabb.Contains(gameObject->m_Transform.t()))
+			if (c.IsIntersecting(gameObject->m_Transform.t(), aabb))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -512,6 +515,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
 
 	size_t count = 0;
+	CollisionManager& c = CollisionManager::GetInstance();
 
 	aabb2Df aabbTf = aabb.GetTransformed(transform);
 
@@ -519,7 +523,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (aabbTf.OverlapsStrict(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
+			if (c.IsIntersecting(((aabb2Df)gameObject.second->m_AABB).GetTransformed(gameObject.second->m_Transform), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -530,7 +534,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (aabbTf.OverlapsStrict(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
+			if (c.IsIntersecting(((aabb2Df)gameObject->m_AABB).GetTransformed(gameObject->m_Transform), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -548,6 +552,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
 
 	size_t count = 0;
+	CollisionManager& c = CollisionManager::GetInstance();
 
 	aabb3Df aabbTf = aabb.GetTransformed(transform);
 
@@ -555,7 +560,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (aabbTf.OverlapsStrict(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform)))
+			if (c.IsIntersecting(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -566,7 +571,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (aabbTf.OverlapsStrict(gameObject->m_AABB.GetTransformed(gameObject->m_Transform)))
+			if (c.IsIntersecting(gameObject->m_AABB.GetTransformed(gameObject->m_Transform), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -607,7 +612,7 @@ void Engine::WorldManager::DrawBoundingBoxes() const
 
 	for (auto gameObject : m_GameObjects)
 	{
-		g.DrawRectangle((rectanglef)gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), c);
+		g.DrawRectangle((aabb2Df)gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), c);
 	}
 }
 
