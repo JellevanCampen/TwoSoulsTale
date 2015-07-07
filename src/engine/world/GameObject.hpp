@@ -69,11 +69,14 @@ namespace Engine{
 
 	private:
 
-		// Transform of the game object
-		transform3D m_Transform;
-
 		// Dirty bit for the transform
 		bool m_TransformIsDirty = true;
+
+		// 3D Transform of the game object
+		transform3D m_Transform;
+
+		// 2D Transform of the game object
+		transform2D m_Transform2D;
 
 		// 3D AABB of the game object in local coordinates
 		aabb3Df m_AABB;
@@ -109,10 +112,10 @@ namespace Engine{
 		inline void s(const f3& s) { m_TransformIsDirty = true; m_Transform.s(s); }
 
 		// 2D transform getters
-		inline const transform2D& tf2D() const { return m_Transform; }
-		inline const f2& t2D() const { return m_Transform.t().xy(); }
-		inline const float& r2D() const { return m_Transform.r().z(); }
-		inline const f2& s2D() const { return m_Transform.s().xy(); }
+		inline const transform2D& tf2D() const { return m_Transform2D; }
+		inline const f2& t2D() const { return m_Transform2D.t(); }
+		inline const float& r2D() const { return m_Transform2D.r(); }
+		inline const f2& s2D() const { return m_Transform2D.s(); }
 
 		// 3D AABB getters
 		inline const aabb3Df& aabb_local() const { return m_AABB; }

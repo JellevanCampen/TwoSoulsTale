@@ -125,12 +125,51 @@ namespace Engine{
 		{
 			IGNORE,		// Ignore collisions
 			STOP,		// Stop moving on collision
-			SLIDE		// Remove the motion component parallel to the collision normal
+			SLIDE,		// Remove the motion component parallel to the collision normal (removes speed)
+			REDIRECT,	// Redirects the motion to move perpendicular to the collision normal (does not remove speed, except for perpendicular collisions)
+			REFLECT		// Reflects the object of the colliding surface (does not remove speed)
 		};
 
 	private:
 
+		// Maximum number of iterations in movement solver
+		static const unsigned char s_MaxMovementIterations = 8;
+
 		///////////////////////////////////////////////////////////// 2D
+
+		// Finds the nearest collision along a specified motion vector
+		template<typename valuetype>
+		inline bool FindFirstCollision(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other, vector2D<valuetype>& out_Position, vector2D<valuetype>& out_Normal, valuetype& out_Progression)
+		{
+			// Initialize to full motion (1.0 progression)
+			out_Position = gameObject.m_Transform.t() + motion;
+			out_Progression = 1.0f;
+
+			vector2D<valuetype> currentPosition;
+			vector2D<valuetype> currentNormal;
+			valuetype currentProgression = 1.0f;
+
+			bool collision = false;
+
+			// Ray cast all other objects to find the nearest collision
+			CollisionManager c = CollisionManager::GetInstance();
+
+			for (GameObject* g : other) {
+				if (gameObject.GetGUID() == g->GetGUID()) { continue; }
+				if (c.IsIntersecting(gameObject.m_AABB, g->m_AABB, motion, currentPosition, currentNormal, currentProgression))
+				{
+					if (currentProgression < minProgression)
+					{
+						minProgression = currentProgression;
+						minPosition = currentPosition;
+						minNormal = currentNormal;
+						collision = true;
+					}
+				}
+			}
+
+			return collision;
+		}
 
 		// Move a game object along the specified motion vector, ignoring collisions
 		template<typename valuetype>
@@ -143,67 +182,105 @@ namespace Engine{
 		template<typename valuetype>
 		inline bool MoveStop(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
 		{
-			valuetype minProgression = 1.0f;
-			vector2D<valuetype> minPosition(gameObject.m_Transform.t() + motion);
+			vector2D<valuetype> position;
+			vector2D<valuetype> normal;
+			valuetype progression;
 
-			valuetype currentProgression = 1.0f;
-			vector2D<valuetype> currentPosition;
-			vector2D<valuetype> currentNormal;
-
-			CollisionManager c = CollisionManager::GetInstance();
-
-			for (GameObject* g : other) {
-				if (gameObject.GetGUID() == g->GetGUID()) { continue; }
-				if (c.IsIntersecting(gameObject.m_AABB, g->m_AABB, motion, currentPosition, currentNormal, currentProgression))
-				{
-					if (currentProgression < minProgression) 
-					{
-						minProgression = currentProgression;
-						minPosition = currentPosition;
-					}
-				}
-			}
-
-			MoveIgnore(gameObject, motion * minProgression);
+			FindFirstCollision(gameObject, motion, other, position, normal, progression);
+			gameObject.m_Transform.t(position);
 		}
 
 		// Move a game object along the specified motion vector, sliding along colliding objects
 		template<typename valuetype>
 		inline bool MoveSlide(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
 		{
-			// TODO
+			vector2D<valuetype> position;
+			vector2D<valuetype> normal;
+			valuetype progression;
+
+			unsigned char iteration = 0;
+
+			do
+			{
+				FindFirstCollision(gameObject, motion, other, position, normal, progression);
+				gameObject.m_Transform.t(position);
+
+				motion = (motion) * (1.0f - progression);
+				motion -= motion.project(normal);
+				iteration++;
+
+			} while (progression < 1.0f && iteration < s_MaxMovementIterations);
+		}
+
+		// Move a game object along the specified motion vector, redirecting motion along colliding objects
+		template<typename valuetype>
+		inline bool MoveRedirect(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		{
+			vector2D<valuetype> position;
+			vector2D<valuetype> normal;
+			valuetype progression;
+
+			unsigned char iteration = 0;
+
+			do
+			{
+				FindFirstCollision(gameObject, motion, other, position, normal, progression);
+				gameObject.m_Transform.t(position);
+
+				motion = (motion)* (1.0f - progression);
+				vector2D<valuetype> direction = motion - motion.project(normal);
+				motion = motion.align(direction);
+				iteration++;
+
+			} while (progression < 1.0f && iteration < s_MaxMovementIterations);
+		}
+
+		// Move a game object along the specified motion vector, reflecting of colliding objects
+		template<typename valuetype>
+		inline bool MoveReflect(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		{
+			vector2D<valuetype> position;
+			vector2D<valuetype> normal;
+			valuetype progression;
+
+			unsigned char iteration = 0;
+
+			do
+			{
+				FindFirstCollision(gameObject, motion, other, position, normal, progression);
+				gameObject.m_Transform.t(position);
+				motion = (motion.reflect(normal)) * (1.0f - progression);
+				iteration++;
+
+			} while (progression < 1.0f && iteration < s_MaxMovementIterations);
 		}
 
 	public:
 
 		// Moves a game object along the specified motion vector, resolving collisions on the way
 		template<typename valuetype>
-		inline bool Move(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const std::vector<GameObject*>& other)
+		inline bool Move(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const GameObjectCollection& other)
 		{
-			// TODO !!
+			// If collisions should be ignored, skip broadphase filtering
+			if (response == CollisionResponse::IGNORE) { MoveIgnore(gameObject, motion); return false; }
 
 			// Broadphase filtering based on AABB sweep
 			CollisionManager& c(CollisionManager::GetInstance());
-			aabb2D<valuetype> sweep(((aabb2D<valuetype>)gameObject.m_AABB).GetTransformed(gameObject.m_Transform).sweep(motion));
+			aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+			GameObjectCollection g(other);
+			g.FilterByOverlap(sweep);
 
-			std::vector<GameObject*> otherFiltered;
-			for (GameObject* g : other)
-			{ if (c.IsIntersecting())
-
-			}
-
-			// Move the object
+			// Move the object based on the specified collision response
 			switch (response)
 			{
-			case CollisionResponse::IGNORE:
-				MoveIgnore(gameObject, motion); 
-				return false;
 			case CollisionResponse::STOP:
-				return MoveStop(gameObject, motion);
-				break;
+				return MoveStop(gameObject, motion, g);	
 			case CollisionResponse::SLIDE:
-				return MoveSlide(gameObject, motion);
-				break;
+				return MoveSlide(gameObject, motion, g); 
+			case CollisionResponse::REDIRECT:
+				return MoveRedirect(gameObject, motion, g);
+			case CollisionResponse::REFLECT:
+				return MoveReflect(gameObject, motion, g);
 			}
 		}
 

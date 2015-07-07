@@ -173,8 +173,8 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 	Engine::f2 bodyPos = Engine::f2(body->GetPosition().x * scale, body->GetPosition().y * scale);
 	Engine::f2 centerPos = Engine::f2(256.0f / 2.0f, 240.0f / 2.0f);
 	Engine::GraphicsManager::GetInstance().SetCameraPosition(Engine::f2((bodyPos.x() + 3.0f * centerPos.x()) / 4.0f, (bodyPos.y() + 3.0f * centerPos.y()) / 4.0f));
-	float test = Engine::f2(bodyPos - centerPos).Length();
-	float temp = 4.0f - 0.5f * Engine::f2(bodyPos - centerPos).Length() / 128.0f;
+	float test = Engine::f2(bodyPos - centerPos).length();
+	float temp = 4.0f - 0.5f * Engine::f2(bodyPos - centerPos).length() / 128.0f;
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(temp);
 	t(Engine::f3(bodyPos, 0.0f));
 	// TESTING

@@ -30,7 +30,7 @@ namespace Engine{
 		template<typename valuetype>
 		static bool IsIntersecting(const vector2D<valuetype>& p, const circle<valuetype>& c)
 		{
-			valuetype d = p.GetDistanceTo(c.p());
+			valuetype d = p.distance(c.p());
 			return (d <= c.r());
 		}
 

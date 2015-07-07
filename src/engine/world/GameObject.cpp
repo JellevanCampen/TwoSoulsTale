@@ -44,6 +44,7 @@ Engine::GameObjectGUID Engine::GameObject::s_GUIDCounter = 0;
 // Calculates the AABB in world coordinates
 void Engine::GameObject::CalculateAABBs()
 {
+	m_Transform2D = (transform2D)m_Transform;
 	m_AABBWorld = (m_AABB * m_Transform.s()) + m_Transform.t();
 	m_AABB2D = (aabb2Df)m_AABB;
 	m_AABB2DWorld = (aabb2Df)m_AABBWorld;

@@ -140,7 +140,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			float distance = gameObject.second->t().xy().GetDistanceTo(position);
+			float distance = gameObject.second->t().xy().distance(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -152,7 +152,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			float distance = gameObject->t2D().GetDistanceTo(position);
+			float distance = gameObject->t2D().distance(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -183,7 +183,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f3 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			float distance = gameObject.second->t().GetDistanceTo(position);
+			float distance = gameObject.second->t().distance(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -195,7 +195,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f3 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			float distance = gameObject->t().GetDistanceTo(position);
+			float distance = gameObject->t().distance(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -235,7 +235,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f2 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject.second;
-			gameObjectDistanceNew.m_Distance = gameObject.second->t2D().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject.second->t2D().distance(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -260,7 +260,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f2 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject;
-			gameObjectDistanceNew.m_Distance = gameObject->t2D().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject->t2D().distance(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -312,7 +312,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f3 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject.second;
-			gameObjectDistanceNew.m_Distance = gameObject.second->t().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject.second->t().distance(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -337,7 +337,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f3 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject;
-			gameObjectDistanceNew.m_Distance = gameObject->t().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject->t().distance(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -378,7 +378,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f2 position, float 
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (gameObject.second->t2D().GetDistanceTo(position) <= maxDistance)
+			if (gameObject.second->t2D().distance(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -389,7 +389,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f2 position, float 
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (gameObject->t2D().GetDistanceTo(position) <= maxDistance)
+			if (gameObject->t2D().distance(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -412,7 +412,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f3 position, float 
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (gameObject.second->t().GetDistanceTo(position) <= maxDistance)
+			if (gameObject.second->t().distance(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -423,7 +423,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f3 position, float 
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (gameObject->t().GetDistanceTo(position) <= maxDistance)
+			if (gameObject->t().distance(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
