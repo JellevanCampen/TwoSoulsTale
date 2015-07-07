@@ -4,6 +4,7 @@
 
 #include "../common/patterns/Singleton.hpp" // Singleton pattern
 #include "GameObject.hpp" // For representing game objects
+#include "GameObjectCollection.hpp" // For representing a collection of game objects
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 #include "../common/utility/VectorTypes.hpp" // For representing 2D and 3D positions
 #include "../common/utility/ShapeTypes.hpp" // For representing shapes
@@ -57,7 +58,7 @@ namespace Engine{
 		void RemoveGameObject(std::vector<GameObject*> gameObjects);
 
 		// Removes a group of game objects from the world (based on their GUIDs)
-		void RemoveGameObject(std::vector<GameObjectGUID> gameObjectGUIDs);
+		void RemoveGameObject(std::vector<GameObjectGUID> gameObjectGUIDs);	
 
 		////////////////////////////////////////////////////////////////
 		// Position-based game object retrieval                       //
@@ -103,7 +104,7 @@ namespace Engine{
 		// Retrieves all game objects whose AABBs overlap with the specified game object's AABB. Does not consider rotations (returns the number of game objects found)
 		inline size_t RetrieveOverlappingAABBGameObjects2D(const GameObject& gameObject, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY))
 		{
-			return RetrieveOverlappingAABBGameObjects2D((Engine::aabb2Df)gameObject.m_AABB, (Engine::transform2D)gameObject.m_Transform, out_GameObjects, typeFilter);
+			return RetrieveOverlappingAABBGameObjects2D((Engine::aabb2Df)gameObject.aabb_local(), gameObject.tf2D(), out_GameObjects, typeFilter);
 		}
 
 		// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
@@ -112,7 +113,7 @@ namespace Engine{
 		// Retrieves all game objects whose AABBs overlap with the specified game object's AABB. Does not consider rotations (returns the number of game objects found)
 		inline size_t RetrieveOverlappingAABBGameObjects3D(const GameObject& gameObject, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY))
 		{
-			return RetrieveOverlappingAABBGameObjects3D(gameObject.m_AABB, gameObject.m_Transform, out_GameObjects, typeFilter);
+			return RetrieveOverlappingAABBGameObjects3D(gameObject.aabb_local(), gameObject.tf(), out_GameObjects, typeFilter);
 		}
 
 		////////////////////////////////////////////////////////////////
@@ -179,6 +180,19 @@ namespace Engine{
 		template<typename valuetype>
 		inline bool Move(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const std::vector<GameObject*>& other)
 		{
+			// TODO !!
+
+			// Broadphase filtering based on AABB sweep
+			CollisionManager& c(CollisionManager::GetInstance());
+			aabb2D<valuetype> sweep(((aabb2D<valuetype>)gameObject.m_AABB).GetTransformed(gameObject.m_Transform).sweep(motion));
+
+			std::vector<GameObject*> otherFiltered;
+			for (GameObject* g : other)
+			{ if (c.IsIntersecting())
+
+			}
+
+			// Move the object
 			switch (response)
 			{
 			case CollisionResponse::IGNORE:

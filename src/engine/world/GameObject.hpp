@@ -44,20 +44,8 @@ namespace Engine{
 		virtual void Draw(const GameTime& gameTime) { };
 
 		////////////////////////////////////////////////////////////////
-		// Property setters and getters                               //
+		// Game object properties		                              //
 		////////////////////////////////////////////////////////////////
-
-		// Gets the globally unique ID of the game object
-		const GameObjectGUID& GetGUID() const;
-
-		// Gets the type of the game object
-		virtual GameObjectType GetType() const = 0;
-		
-		// Transform of the game object
-		transform3D m_Transform;
-
-		// AABB of the game object (in local coordinates)
-		aabb3Df m_AABB;
 
 	private:
 
@@ -67,6 +55,72 @@ namespace Engine{
 		// Incrementing GUID counter
 		static GameObjectGUID s_GUIDCounter;
 
+	public:
+
+		// Gets the globally unique ID of the game object
+		const GameObjectGUID& guid() const;
+
+		// Gets the type of the game object
+		virtual GameObjectType type() const = 0;
+		
+		////////////////////////////////////////////////////////////////
+		// Transform and motion			                              //
+		////////////////////////////////////////////////////////////////
+
+	private:
+
+		// Transform of the game object
+		transform3D m_Transform;
+
+		// Dirty bit for the transform
+		bool m_TransformIsDirty = true;
+
+		// 3D AABB of the game object in local coordinates
+		aabb3Df m_AABB;
+
+		// 2D AABB of the game object in local coordinates
+		aabb2Df m_AABB2D;
+
+		// 3D AABB of the game object in world coordinates
+		aabb3Df m_AABBWorld;
+
+		// 2D AABB of the game object in world coordinates
+		aabb2Df m_AABB2DWorld;
+
+		// Calculates the AABB in world coordinates
+		void CalculateAABBs();
+
+	public:
+
+		// 3D transform getters
+		const transform3D& tf() const { return m_Transform; }
+		inline const f3& t() const { return m_Transform.t(); }
+		inline const f3& r() const { return m_Transform.r(); }
+		inline const f3& s() const { return m_Transform.s(); }
+		transform3D& tf() { m_TransformIsDirty = true; return m_Transform; }
+		inline f3& t() { m_TransformIsDirty = true; return m_Transform.t(); }
+		inline f3& r() { m_TransformIsDirty = true; return m_Transform.r(); }
+		inline f3& s() { m_TransformIsDirty = true; return m_Transform.s(); }
+
+		// 3D transform setters
+		transform3D& tf(const transform3D& transform) { m_TransformIsDirty = true; m_Transform = transform; }
+		inline void t(const f3& t) { m_TransformIsDirty = true; m_Transform.t(t); }
+		inline void r(const f3& r) { m_TransformIsDirty = true; m_Transform.r(r); }
+		inline void s(const f3& s) { m_TransformIsDirty = true; m_Transform.s(s); }
+
+		// 2D transform getters
+		inline const transform2D& tf2D() const { return m_Transform; }
+		inline const f2& t2D() const { return m_Transform.t().xy(); }
+		inline const float& r2D() const { return m_Transform.r().z(); }
+		inline const f2& s2D() const { return m_Transform.s().xy(); }
+
+		// 3D AABB getters
+		inline const aabb3Df& aabb_local() const { return m_AABB; }
+		inline const aabb3Df& aabb_world() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABBWorld; }
+
+		// 2D AABB getters
+		inline const aabb2Df& aabb2D_local() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABB2D; }
+		inline const aabb2Df& aabb2D_world() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABB2DWorld; }
 	};
 }
 

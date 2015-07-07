@@ -29,10 +29,23 @@ Engine::GameObject::GameObject(transform3D transform, aabb3Df aabb)
 ////////////////////////////////////////////////////////////////
 
 // Gets the globally unique ID of the game object
-const Engine::GameObjectGUID& Engine::GameObject::GetGUID() const 
+const Engine::GameObjectGUID& Engine::GameObject::guid() const 
 { 
 	return m_GUID; 
 }
 
 // Incrementing GUID counter
 Engine::GameObjectGUID Engine::GameObject::s_GUIDCounter = 0;
+
+////////////////////////////////////////////////////////////////
+// Transform and motion			                              //
+////////////////////////////////////////////////////////////////
+
+// Calculates the AABB in world coordinates
+void Engine::GameObject::CalculateAABBs()
+{
+	m_AABBWorld = (m_AABB * m_Transform.s()) + m_Transform.t();
+	m_AABB2D = (aabb2Df)m_AABB;
+	m_AABB2DWorld = (aabb2Df)m_AABBWorld;
+	m_TransformIsDirty = false;
+}

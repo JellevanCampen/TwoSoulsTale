@@ -177,6 +177,8 @@ set(SRC_ENGINE_WORLD
 	"src/engine/world/CollisionManager.cpp"
 	"src/engine/world/GameObject.hpp"
 	"src/engine/world/GameObject.cpp"
+	"src/engine/world/GameObjectCollection.hpp"
+	"src/engine/world/GameObjectCollection.cpp"
 )
 source_group(Engine\\World FILES ${SRC_ENGINE_WORLD})
 

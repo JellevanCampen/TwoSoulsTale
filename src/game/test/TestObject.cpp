@@ -176,7 +176,7 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 	float test = Engine::f2(bodyPos - centerPos).Length();
 	float temp = 4.0f - 0.5f * Engine::f2(bodyPos - centerPos).Length() / 128.0f;
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(temp);
-	m_Transform.t(Engine::f3(bodyPos, 0.0f));
+	t(Engine::f3(bodyPos, 0.0f));
 	// TESTING
 	
 	if ((gameTime.frameCount % 500) == 499)
@@ -261,7 +261,7 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 
 	// Sphere-AABB
 	bool hasIntersectedBoundingBox = false;
-	Engine::aabb2Df aabbTransformed = ((Engine::aabb2Df)m_AABB).GetTransformed(m_Transform);
+	Engine::aabb2Df aabbTransformed = aabb2D_world();
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_Circle)
 		|| Engine::CollisionManager::GetInstance().IsIntersecting(aabbTransformed, m_AABBRect))
 	{ 

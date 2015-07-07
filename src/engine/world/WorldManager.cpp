@@ -45,16 +45,16 @@ Engine::GameObjectGUID Engine::WorldManager::AddGameObject(GameObject* gameObjec
 {
 	// Initialize the object and add it to the game world
 	gameObject->Create();
-	m_GameObjects.insert(std::pair<GameObjectGUID, GameObject*>(gameObject->GetGUID(), gameObject));
+	m_GameObjects.insert(std::pair<GameObjectGUID, GameObject*>(gameObject->guid(), gameObject));
 	AddToByTypeMap(gameObject);
 
-	return gameObject->GetGUID();
+	return gameObject->guid();
 }
 
 // Removes a game object from the world (based on its pointer)
 void Engine::WorldManager::RemoveGameObject(GameObject* gameObject)
 {
-	m_GameObjectRemoveList.push_back(gameObject->GetGUID());
+	m_GameObjectRemoveList.push_back(gameObject->guid());
 }
 
 // Removes a game object from the world (based on its GUID)
@@ -70,7 +70,7 @@ void Engine::WorldManager::RemoveGameObject(std::vector<GameObject*> gameObjects
 	// Add the game object GUIDs to the remove list
 	for (auto gameObject : gameObjects) 
 	{ 
-		m_GameObjectRemoveList.push_back(gameObject->GetGUID()); 
+		m_GameObjectRemoveList.push_back(gameObject->guid()); 
 	}
 }
 
@@ -140,7 +140,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			float distance = gameObject.second->m_Transform.t().xy().GetDistanceTo(position);
+			float distance = gameObject.second->t().xy().GetDistanceTo(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -152,7 +152,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			float distance = gameObject->m_Transform.t().xy().GetDistanceTo(position);
+			float distance = gameObject->t2D().GetDistanceTo(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -183,7 +183,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f3 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			float distance = gameObject.second->m_Transform.t().GetDistanceTo(position);
+			float distance = gameObject.second->t().GetDistanceTo(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -195,7 +195,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f3 position, GameObject*& o
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			float distance = gameObject->m_Transform.t().GetDistanceTo(position);
+			float distance = gameObject->t().GetDistanceTo(position);
 			if (distance < smallestDistance)
 			{
 				smallestDistance = distance;
@@ -235,7 +235,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f2 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject.second;
-			gameObjectDistanceNew.m_Distance = gameObject.second->m_Transform.t().xy().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject.second->t2D().GetDistanceTo(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -260,7 +260,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f2 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject;
-			gameObjectDistanceNew.m_Distance = gameObject->m_Transform.t().xy().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject->t2D().GetDistanceTo(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -312,7 +312,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f3 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject.second;
-			gameObjectDistanceNew.m_Distance = gameObject.second->m_Transform.t().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject.second->t().GetDistanceTo(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -337,7 +337,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f3 position, size_t k, 
 			// Iteratively insert elements in the correct order (elements are sorted in large-to-small distance)
 			GameObjectDistance gameObjectDistanceNew;
 			gameObjectDistanceNew.m_GameObject = gameObject;
-			gameObjectDistanceNew.m_Distance = gameObject->m_Transform.t().GetDistanceTo(position);
+			gameObjectDistanceNew.m_Distance = gameObject->t().GetDistanceTo(position);
 
 			bool inserted = false;
 			for (auto gameObjectDistanceIt = nearestGameObjects.begin(); gameObjectDistanceIt != nearestGameObjects.end(); gameObjectDistanceIt++)
@@ -378,7 +378,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f2 position, float 
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (gameObject.second->m_Transform.t().xy().GetDistanceTo(position) <= maxDistance)
+			if (gameObject.second->t2D().GetDistanceTo(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -389,7 +389,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f2 position, float 
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (gameObject->m_Transform.t().xy().GetDistanceTo(position) <= maxDistance)
+			if (gameObject->t2D().GetDistanceTo(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -412,7 +412,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f3 position, float 
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (gameObject.second->m_Transform.t().GetDistanceTo(position) <= maxDistance)
+			if (gameObject.second->t().GetDistanceTo(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -423,7 +423,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f3 position, float 
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (gameObject->m_Transform.t().GetDistanceTo(position) <= maxDistance)
+			if (gameObject->t().GetDistanceTo(position) <= maxDistance)
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -447,7 +447,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb2Df aabb, std::vector
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (c.IsIntersecting(gameObject.second->m_Transform.t().xy(), aabb))
+			if (c.IsIntersecting(gameObject.second->t2D(), aabb))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -458,7 +458,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb2Df aabb, std::vector
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (c.IsIntersecting(gameObject->m_Transform.t().xy(), aabb))
+			if (c.IsIntersecting(gameObject->t2D(), aabb))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -482,7 +482,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (c.IsIntersecting(gameObject.second->m_Transform.t(), aabb))
+			if (c.IsIntersecting(gameObject.second->t(), aabb))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -493,7 +493,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (c.IsIntersecting(gameObject->m_Transform.t(), aabb))
+			if (c.IsIntersecting(gameObject->t(), aabb))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -523,7 +523,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (c.IsIntersecting(((aabb2Df)gameObject.second->m_AABB).GetTransformed(gameObject.second->m_Transform), aabbTf))
+			if (c.IsIntersecting(gameObject.second->aabb2D_world(), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -534,7 +534,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df&
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (c.IsIntersecting(((aabb2Df)gameObject->m_AABB).GetTransformed(gameObject->m_Transform), aabbTf))
+			if (c.IsIntersecting(gameObject->aabb2D_world(), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -560,7 +560,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	{
 		for (auto gameObject : m_GameObjects)
 		{
-			if (c.IsIntersecting(gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), aabbTf))
+			if (c.IsIntersecting(gameObject.second->aabb_world(), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject.second);
 				count++;
@@ -571,7 +571,7 @@ size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df&
 	{
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
-			if (c.IsIntersecting(gameObject->m_AABB.GetTransformed(gameObject->m_Transform), aabbTf))
+			if (c.IsIntersecting(gameObject->aabb_world(), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;
@@ -612,30 +612,30 @@ void Engine::WorldManager::DrawBoundingBoxes() const
 
 	for (auto gameObject : m_GameObjects)
 	{
-		g.DrawRectangle((aabb2Df)gameObject.second->m_AABB.GetTransformed(gameObject.second->m_Transform), c);
+		g.DrawRectangle(gameObject.second->aabb2D_world(), c);
 	}
 }
 
 // Adds a GameObject to the by-type indexed map
 void Engine::WorldManager::AddToByTypeMap(GameObject* gameObject)
 {
-	if (m_GameObjectsByType.count(gameObject->GetType()) == 0)
+	if (m_GameObjectsByType.count(gameObject->type()) == 0)
 	{
 		std::list<GameObject*> gameObjectList;
 		gameObjectList.push_back(gameObject);
-		m_GameObjectsByType.insert(std::pair<GameObjectType, std::list<GameObject*>>(gameObject->GetType(), gameObjectList));
+		m_GameObjectsByType.insert(std::pair<GameObjectType, std::list<GameObject*>>(gameObject->type(), gameObjectList));
 	}
 	else
 	{
-		m_GameObjectsByType.at(gameObject->GetType()).push_back(gameObject);
+		m_GameObjectsByType.at(gameObject->type()).push_back(gameObject);
 	}
 }
 
 // Removes a GameObject from the by-type indexed map
 void Engine::WorldManager::RemoveFromByTypeMap(GameObject* gameObject)
 {
-	if (m_GameObjectsByType.count(gameObject->GetType()) != 0)
+	if (m_GameObjectsByType.count(gameObject->type()) != 0)
 	{
-		m_GameObjectsByType[gameObject->GetType()].remove(gameObject);
+		m_GameObjectsByType[gameObject->type()].remove(gameObject);
 	}
 }

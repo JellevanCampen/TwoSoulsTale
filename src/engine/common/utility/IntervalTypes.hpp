@@ -72,17 +72,17 @@ namespace Engine
 			return c;
 		}
 
-		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
-		inline interval1D GetTransformed(transform1D t1D) const { return interval1D(m_P1 * t1D.s() + t1D.t(), m_P2 * t1D.s() + t1D.t()); }
-
-		// Calculates the AABB that contains the sweeped version of the interval
-		inline interval1D GetSweeped(valuetype velocity) const
-		{  
+		// Calculates the interval that contains the sweeped version of the interval
+		inline interval1D sweep(valuetype motion) const
+		{
 			return interval1D(
-				(velocity.x() < 0) ? m_P1 + velocity.x() : m_P1,
-				(velocity.x() > 0) ? m_P2 + velocity.x() : m_P2
+				(motion.x() < 0) ? m_P1 + motion.x() : m_P1,
+				(motion.x() > 0) ? m_P2 + motion.x() : m_P2
 				);
 		}
+
+		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
+		inline interval1D GetTransformed(transform1D t1D) const { return interval1D(m_P1 * t1D.s() + t1D.t(), m_P2 * t1D.s() + t1D.t()); }
 	};
 
 	typedef interval1D<int> interval1Di;
@@ -180,19 +180,19 @@ namespace Engine
 			return c;
 		}
 
-		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
-		inline interval2D GetTransformed(transform2D t2D) const { return ((*this) * t2D.s()) + t2D.t(); }
-
-		// Calculates the AABB that contains the sweeped version of the interval
-		inline interval2D GetSweeped(vector2D<valuetype> velocity) const
+		// Calculates the interval that contains the sweeped version of the interval
+		inline interval2D sweep(vector2D<valuetype> motion) const
 		{
 			return interval2D(
-				(velocity.x() < 0) ? m_P1.x() + velocity.x() : m_P1.x(),
-				(velocity.x() > 0) ? m_P2.x() + velocity.x() : m_P2.x(),
-				(velocity.y() < 0) ? m_P1.y() + velocity.y() : m_P1.y(),
-				(velocity.y() > 0) ? m_P2.y() + velocity.y() : m_P2.y()
+				(motion.x() < 0) ? m_P1.x() + motion.x() : m_P1.x(),
+				(motion.x() > 0) ? m_P2.x() + motion.x() : m_P2.x(),
+				(motion.y() < 0) ? m_P1.y() + motion.y() : m_P1.y(),
+				(motion.y() > 0) ? m_P2.y() + motion.y() : m_P2.y()
 				);
 		}
+
+		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
+		inline interval2D GetTransformed(transform2D t2D) const { return ((*this) * t2D.s()) + t2D.t(); }
 	};
 
 	typedef interval2D<int> interval2Di;
@@ -304,21 +304,21 @@ namespace Engine
 			return c;
 		}
 
-		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
-		inline interval3D GetTransformed(transform3D t3D) const { return ((*this) * t3D.s()) + t3D.t(); }
-
-		// Calculates the AABB that contains the sweeped version of the interval
-		inline interval3D GetSweeped(vector3D<valuetype> velocity) const
+		// Calculates the interval that contains the sweeped version of the interval
+		inline interval3D sweep(vector3D<valuetype> motion) const
 		{
 			return interval3D(
-				(velocity.x() < 0) ? m_P1.x() + velocity.x() : m_P1.x(),
-				(velocity.x() > 0) ? m_P2.x() + velocity.x() : m_P2.x(),
-				(velocity.y() < 0) ? m_P1.y() + velocity.y() : m_P1.y(),
-				(velocity.y() > 0) ? m_P2.y() + velocity.y() : m_P2.y(),
-				(velocity.z() < 0) ? m_P1.z() + velocity.z() : m_P1.z(),
-				(velocity.z() > 0) ? m_P2.z() + velocity.z() : m_P2.z()
+				(motion.x() < 0) ? m_P1.x() + motion.x() : m_P1.x(),
+				(motion.x() > 0) ? m_P2.x() + motion.x() : m_P2.x(),
+				(motion.y() < 0) ? m_P1.y() + motion.y() : m_P1.y(),
+				(motion.y() > 0) ? m_P2.y() + motion.y() : m_P2.y(),
+				(motion.z() < 0) ? m_P1.z() + motion.z() : m_P1.z(),
+				(motion.z() > 0) ? m_P2.z() + motion.z() : m_P2.z()
 				);
 		}
+
+		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
+		inline interval3D GetTransformed(transform3D t3D) const { return ((*this) * t3D.s()) + t3D.t(); }
 	};
 
 	typedef interval3D<int> interval3Di;
