@@ -61,14 +61,19 @@ namespace Engine{
 		void RemoveGameObject(std::vector<GameObjectGUID> gameObjectGUIDs);	
 
 		////////////////////////////////////////////////////////////////
-		// Position-based game object retrieval                       //
+		// Game object retrieval									  //
 		////////////////////////////////////////////////////////////////
 
-		// Retrieves the game object with the specified GUID (returns whether the game object was found)
-		bool RetrieveGameObject(GameObjectGUID gameObjectGUID, GameObject*& out_GameObject);
+		// Retrieves all game objects
+		size_t RetrieveAll(GameObjectCollection& out_GameObjectCollection) const;
 
-		// Retrieves all game objects in the world (returns the number of game objects found)
-		size_t RetrieveAllGameObjects(std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		// Retrieves the game object that matches the specified GUID
+		size_t RetrieveByGUID(GameObjectGUID guid, GameObjectCollection& out_GameObjectCollection) const;
+
+		// Retrieves all game objects that matchs the specified type
+		size_t RetrieveByType(GameObjectType type, GameObjectCollection& out_GameObjectCollection) const;
+
+		///////////////////////////////////////////////////////// Legacy
 
 		// Retrieves the nearest game object to the specified position considering x and y coordinates (returns whether a game object was found)
 		bool RetrieveNearestGameObject(f2 position, GameObject*& out_GameObject, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
@@ -87,34 +92,6 @@ namespace Engine{
 
 		// Retrieves all game objects closer than the specified distance to a point considering x, y and z coordinates(returns the number of game objects found)
 		size_t RetrieveGameObjectsNearPosition(f3 position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
-
-		// Retrieves all game objects whose origin falls within the specified 2D AABB (returns the number of game objects found)
-		size_t RetrieveGameObjectsInAABB(aabb2Df aabb, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
-
-		// Retrieves all game objects whose origin falls within the specified 3D AABB (returns the number of game objects found)
-		size_t RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
-
-		////////////////////////////////////////////////////////////////
-		// Collision-based game object retrieval                      //
-		////////////////////////////////////////////////////////////////
-
-		// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
-		size_t RetrieveOverlappingAABBGameObjects2D(const aabb2Df& aabb, const transform2D& transform, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
-
-		// Retrieves all game objects whose AABBs overlap with the specified game object's AABB. Does not consider rotations (returns the number of game objects found)
-		inline size_t RetrieveOverlappingAABBGameObjects2D(const GameObject& gameObject, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY))
-		{
-			return RetrieveOverlappingAABBGameObjects2D((Engine::aabb2Df)gameObject.aabb_local(), gameObject.tf2D(), out_GameObjects, typeFilter);
-		}
-
-		// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
-		size_t RetrieveOverlappingAABBGameObjects3D(const aabb3Df& aabb, const transform3D& transform, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
-
-		// Retrieves all game objects whose AABBs overlap with the specified game object's AABB. Does not consider rotations (returns the number of game objects found)
-		inline size_t RetrieveOverlappingAABBGameObjects3D(const GameObject& gameObject, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY))
-		{
-			return RetrieveOverlappingAABBGameObjects3D(gameObject.aabb_local(), gameObject.tf(), out_GameObjects, typeFilter);
-		}
 
 		////////////////////////////////////////////////////////////////
 		// Collision-aware movement		                              //

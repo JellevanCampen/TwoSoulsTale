@@ -40,7 +40,7 @@ namespace GameContent{
 		////////////////////////////////////////////////////////////////
 
 		// Gets the type of the game object
-		virtual Engine::GameObjectType GetType() const { return ID_TYPE::OBJ_TESTOBJECT2; }
+		virtual Engine::GameObjectType type() const { return ID_TYPE::OBJ_TESTOBJECT2; }
 
 	};
 }

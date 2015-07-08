@@ -538,7 +538,7 @@ namespace Engine{
 		template<typename valuetype>
 		static bool IsIntersecting(const vector3D<valuetype>& p, const sphere<valuetype>& s)
 		{
-			valuetype d = p.GetDistanceTo(c.p());
+			valuetype d = p.distance(s.p());
 			return (d <= s.r());
 		}
 

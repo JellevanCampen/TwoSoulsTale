@@ -40,6 +40,10 @@ void Engine::WorldManager::Draw(const GameTime& gameTime)
 	}
 }
 
+////////////////////////////////////////////////////////////////
+// Game object creation and removal                           //
+////////////////////////////////////////////////////////////////
+
 // Adds a game object to the world and returns the handle
 Engine::GameObjectGUID Engine::WorldManager::AddGameObject(GameObject* gameObject)
 {
@@ -82,47 +86,42 @@ void Engine::WorldManager::RemoveGameObject(std::vector<GameObjectGUID> gameObje
 }
 
 ////////////////////////////////////////////////////////////////
-// Position-based game object retrieval                       //
+// Game object retrieval									  //
 ////////////////////////////////////////////////////////////////
 
-// Retrieves the game object with the specified GUID (returns whether the game object was found)
-bool Engine::WorldManager::RetrieveGameObject(GameObjectGUID gameObjectGUID, GameObject*& out_GameObject)
+// Retrieves all game objects
+size_t Engine::WorldManager::RetrieveAll(GameObjectCollection& out_GameObjectCollection) const
 {
-	if (m_GameObjects.count(gameObjectGUID) == 0)
-	{
-		return false;
-	}
-
-	out_GameObject = m_GameObjects[gameObjectGUID];
-	return true;
-}
-
-// Retrieves all game objects in the world (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveAllGameObjects(std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
-{
-	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
-
 	size_t count = 0;
-
-	if (typeFilter == OBJ_ANY)
-	{
-		for (auto gameObject : m_GameObjects)
-		{
-			out_GameObjects.push_back(gameObject.second);
-			count++;
-		}
-	}
-	else
-	{
-		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
-		{
-			out_GameObjects.push_back(gameObject);
-			count++;
-		}
-	}
-
+	for (auto o : m_GameObjects) { out_GameObjectCollection.list().push_back(o.second); count++; }
 	return count;
 }
+
+// Retrieves the game object that matches the specified GUID
+size_t Engine::WorldManager::RetrieveByGUID(GameObjectGUID guid, GameObjectCollection& out_GameObjectCollection) const
+{
+	auto object = m_GameObjects.find(guid);
+	if (object == m_GameObjects.end()) { return size_t(0); }
+	out_GameObjectCollection.list().push_back(object->second);
+	return size_t(1);
+}
+
+// Retrieves all game objects that matchs the specified type
+size_t Engine::WorldManager::RetrieveByType(GameObjectType type, GameObjectCollection& out_GameObjectCollection) const
+{
+	if (type == OBJ_INVALID) { return size_t(0); }
+	if (type == OBJ_ANY) { return RetrieveAll(out_GameObjectCollection); }
+
+	size_t count = 0;
+	auto objects = m_GameObjectsByType.find(type);
+	if (objects == m_GameObjectsByType.end()) { return size_t(0); }
+	for (auto o : objects->second) { out_GameObjectCollection.list().push_back(o); count++; }
+	return count;
+}
+
+////////////////////////////////////////////////////////////////
+// Position-based game object retrieval                       //
+////////////////////////////////////////////////////////////////
 
 // Retrieves the nearest game object to the specified position considering x and y coordinates (returns whether a game object was found)
 bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& out_GameObject, GameObjectType typeFilter)
@@ -424,154 +423,6 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f3 position, float 
 		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
 		{
 			if (gameObject->t().distance(position) <= maxDistance)
-			{
-				out_GameObjects.push_back(gameObject);
-				count++;
-			}
-		}
-	}
-
-	return count;
-}
-
-// Retrieves all game objects whose origin falls within the specified 2D AABB (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb2Df aabb, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
-{
-	// TODO: this is slow, accelerate this using a dedicated data structure
-	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
-
-	size_t count = 0;
-	CollisionManager& c = CollisionManager::GetInstance();
-
-	if (typeFilter == OBJ_ANY)
-	{
-		for (auto gameObject : m_GameObjects)
-		{
-			if (c.IsIntersecting(gameObject.second->t2D(), aabb))
-			{
-				out_GameObjects.push_back(gameObject.second);
-				count++;
-			}
-		}
-	}
-	else
-	{
-		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
-		{
-			if (c.IsIntersecting(gameObject->t2D(), aabb))
-			{
-				out_GameObjects.push_back(gameObject);
-				count++;
-			}
-		}
-	}
-
-	return count;
-}
-
-// Retrieves all game objects whose origin falls within the specified 3D AABB (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveGameObjectsInAABB(aabb3Df aabb, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
-{
-	// TODO: this is slow, accelerate this using a dedicated data structure
-	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
-
-	size_t count = 0;
-	CollisionManager& c = CollisionManager::GetInstance();
-
-	if (typeFilter == OBJ_ANY)
-	{
-		for (auto gameObject : m_GameObjects)
-		{
-			if (c.IsIntersecting(gameObject.second->t(), aabb))
-			{
-				out_GameObjects.push_back(gameObject.second);
-				count++;
-			}
-		}
-	}
-	else
-	{
-		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
-		{
-			if (c.IsIntersecting(gameObject->t(), aabb))
-			{
-				out_GameObjects.push_back(gameObject);
-				count++;
-			}
-		}
-	}
-
-	return count;
-}
-
-////////////////////////////////////////////////////////////////
-// Collision-based game object retrieval                      //
-////////////////////////////////////////////////////////////////
-
-// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects2D(const aabb2Df& aabb, const transform2D& transform, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
-{
-	// TODO: this is slow, accelerate this using a dedicated data structure
-	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
-
-	size_t count = 0;
-	CollisionManager& c = CollisionManager::GetInstance();
-
-	aabb2Df aabbTf = aabb.GetTransformed(transform);
-
-	if (typeFilter == OBJ_ANY)
-	{
-		for (auto gameObject : m_GameObjects)
-		{
-			if (c.IsIntersecting(gameObject.second->aabb2D_world(), aabbTf))
-			{
-				out_GameObjects.push_back(gameObject.second);
-				count++;
-			}
-		}
-	}
-	else
-	{
-		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
-		{
-			if (c.IsIntersecting(gameObject->aabb2D_world(), aabbTf))
-			{
-				out_GameObjects.push_back(gameObject);
-				count++;
-			}
-		}
-	}
-
-	return count;
-}
-
-// Retrieves all game objects whose AABBs overlap with the specified AABB and associated transform. Does not consider rotations (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveOverlappingAABBGameObjects3D(const aabb3Df& aabb, const transform3D& transform, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
-{
-	// TODO: this is slow, accelerate this using a dedicated data structure
-	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }
-
-	size_t count = 0;
-	CollisionManager& c = CollisionManager::GetInstance();
-
-	aabb3Df aabbTf = aabb.GetTransformed(transform);
-
-	if (typeFilter == OBJ_ANY)
-	{
-		for (auto gameObject : m_GameObjects)
-		{
-			if (c.IsIntersecting(gameObject.second->aabb_world(), aabbTf))
-			{
-				out_GameObjects.push_back(gameObject.second);
-				count++;
-			}
-		}
-	}
-	else
-	{
-		for (auto gameObject : m_GameObjectsByType.at(typeFilter))
-		{
-			if (c.IsIntersecting(gameObject->aabb_world(), aabbTf))
 			{
 				out_GameObjects.push_back(gameObject);
 				count++;

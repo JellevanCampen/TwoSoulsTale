@@ -22,7 +22,7 @@ void GameContent::TestObject2::Destroy()
 // Updates the game object
 void GameContent::TestObject2::Update(const Engine::GameTime& gameTime)
 {
-
+	// Engine::WorldManager::Move(*this, Engine::f2(0.1f, -0.2f), Engine::WorldManager::CollisionResponse::IGNORE, )
 }
 
 // Draws the game object

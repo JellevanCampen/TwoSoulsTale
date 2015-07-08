@@ -112,10 +112,10 @@ namespace Engine{
 		inline void s(const f3& s) { m_TransformIsDirty = true; m_Transform.s(s); }
 
 		// 2D transform getters
-		inline const transform2D& tf2D() const { return m_Transform2D; }
-		inline const f2& t2D() const { return m_Transform2D.t(); }
-		inline const float& r2D() const { return m_Transform2D.r(); }
-		inline const f2& s2D() const { return m_Transform2D.s(); }
+		inline const transform2D& tf2D() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_Transform2D; }
+		inline const f2& t2D() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_Transform2D.t(); }
+		inline const float& r2D() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_Transform2D.r(); }
+		inline const f2& s2D() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_Transform2D.s(); }
 
 		// 3D AABB getters
 		inline const aabb3Df& aabb_local() const { return m_AABB; }
