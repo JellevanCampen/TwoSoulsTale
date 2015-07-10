@@ -451,6 +451,12 @@ void Engine::WorldManager::RemoveMarkedGameObjects()
 	m_GameObjectRemoveList.clear();
 }
 
+// Maximum number of iterations in movement solver
+const unsigned char Engine::WorldManager::s_MaxMovementIterations = 8;
+
+// Minimum separation distance to keep between objects
+const float Engine::WorldManager::s_ObjectSeparationDistance = 0.001f;
+
 ////////////////////////////////////////////////////////////////
 // Debug rendering                                            //
 ////////////////////////////////////////////////////////////////

@@ -97,8 +97,10 @@ namespace Engine{
 				// The ray intersects the sphere
 				if (lambda1 <= 1 && lambda2 >= 0)
 				{
-					out_Enter = r.p1() + (slope * fmax(lambda1, 0));
-					out_Exit = r.p1() + (slope * fmin(lambda2, 1));
+					lambda1 = fmax(lambda1, 0);
+					lambda2 = fmin(lambda2, 1);
+					out_Enter = r.p1() + (slope * lambda1);
+					out_Exit = r.p1() + (slope * lambda2);
 					return true;
 				}
 			}
@@ -124,7 +126,8 @@ namespace Engine{
 				// The ray intersects the circle
 				if (out_EnterProgression <= 1 && lambda2 >= 0)
 				{
-					out_EnterPosition = r.p1() + (slope * fmax(out_EnterProgression, 0));
+					out_EnterProgression = fmax(out_EnterProgression, 0);
+					out_EnterPosition = r.p1() + (slope * out_EnterProgression);
 					out_EnterNormal = (out_EnterPosition - c.p()) / c.r();
 					return true;
 				}
@@ -149,10 +152,12 @@ namespace Engine{
 				out_ExitProgression = (-(ray.p1() * slope) + sqrt(sigma)) / (slope * slope);
 
 				// The ray intersects the circle
-				if (out_EnterProgression <= 1 && out_EnterProgression >= 0)
+				if (out_EnterProgression <= 1 && out_ExitProgression >= 0)
 				{
-					out_EnterPosition = r.p1() + (slope * fmax(out_EnterProgression, 0));
-					out_ExitPosition = r.p1() + (slope * fmin(out_ExitProgression, 1));
+					out_EnterProgression = fmax(out_EnterProgression, 0);
+					out_ExitProgression = fmin(out_ExitProgression, 1);
+					out_EnterPosition = r.p1() + (slope * out_EnterProgression);
+					out_ExitPosition = r.p1() + (slope * out_ExitProgression);
 					out_EnterNormal = (out_EnterPosition - c.p()) / c.r();
 					out_ExitNormal = (out_ExitPosition - c.p()) / c.r();
 					return true;
@@ -304,6 +309,8 @@ namespace Engine{
 			// The ray intersects the box 
 			if (lambdaEnter <= lambdaExit) 
 			{ 
+				lambdaEnter = fmin(fmax(lambdaEnter, 0), 1);
+				lambdaExit = fmin(fmax(lambdaExit, 0), 1);
 				out_Enter = r.p1() + (l_slope * lambdaEnter);
 				out_Exit = r.p1() + (l_slope * lambdaExit);
 				return true; 
@@ -331,7 +338,7 @@ namespace Engine{
 
 			// The ray might intersect the rectangle
 			out_EnterProgression = 0;
-			valuetype labmda2 = 1;
+			valuetype lambda2 = 1;
 			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
 			unsigned char enterBit = 0; // Index for looking up the normal of the plane where the ray enters the AABB
 
@@ -366,6 +373,7 @@ namespace Engine{
 			// The ray intersects the box 
 			if (out_EnterProgression <= lambda2)
 			{
+				out_EnterProgression = fmin(fmax(out_EnterProgression, 0), 1);
 				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
 				out_EnterNormal = vector2D<valuetype>(
 					-((enterBit >> 0) & 0x01) + ((enterBit >> 1) & 0x01),
@@ -431,9 +439,11 @@ namespace Engine{
 
 			// The ray intersects the box 
 			if (out_EnterProgression <= out_ExitProgression)
-			{				
+			{
+				out_EnterProgression = fmin(fmax(out_EnterProgression, 0), 1);
+				out_ExitProgression = fmin(fmax(out_ExitProgression, 0), 1);
 				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
-				out_ExitPosition = r.p1() + (l_slope * out_ExitProgression);	
+				out_ExitPosition = r.p1() + (l_slope * out_ExitProgression);
 				out_EnterNormal = vector2D<valuetype>(
 					-((enterBit >> 0) & 0x01) + ((enterBit >> 1) & 0x01),
 					-((enterBit >> 2) & 0x01) + ((enterBit >> 3) & 0x01)
@@ -605,8 +615,38 @@ namespace Engine{
 				// The ray intersects the sphere
 				if (lambda1 <= 1 && lambda2 >= 0)
 				{
-					out_Enter = r.p1() + (slope * fmax(lambda1, 0));
-					out_Exit = r.p1() + (slope * fmin(lambda2, 1));
+					lambda1 = fmax(lambda1, 0);
+					lambda2 = fmin(lambda2, 1);
+					out_Enter = r.p1() + (slope * lambda1);
+					out_Exit = r.p1() + (slope * lambda2);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		// Finds the point, normal and path progression where a ray enters a sphere
+		template<typename valuetype>
+		static bool IsIntersecting(const ray3D<valuetype>& r, const sphere<valuetype>& s, vector3D<valuetype>& out_EnterPosition, vector3D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression)
+		{
+			// Ray in local coordinates of the sphere
+			ray3D<valuetype> ray(r - s.p());
+			vector3D<valuetype> slope(ray.slope());
+			valuetype sigma = pow(ray.p1() * slope, 2) - (slope * slope) * ((ray.p1() * ray.p1()) - pow(s.r(), 2));
+
+			// The infinite extension of the ray intersects the sphere
+			if (sigma >= 0)
+			{
+				out_EnterProgression = (-(ray.p1() * slope) - sqrt(sigma)) / (slope * slope);
+				valuetype lambda2 = (-(ray.p1() * slope) + sqrt(sigma)) / (slope * slope);
+
+				// The ray intersects the sphere
+				if (out_EnterProgression <= 1 && lambda2 >= 0)
+				{
+					out_EnterProgression = fmax(out_EnterProgression, 0);
+					out_EnterPosition = r.p1() + (slope * out_EnterProgression);
+					out_EnterNormal = (out_EnterPosition - s.p()) / s.r();
 					return true;
 				}
 			}
@@ -632,8 +672,10 @@ namespace Engine{
 				// The ray intersects the sphere
 				if (out_EnterProgression <= 1 && out_EnterProgression >= 0)
 				{
-					out_EnterPosition = r.p1() + (slope * fmax(out_EnterProgression, 0));
-					out_ExitPosition = r.p1() + (slope * fmin(out_ExitProgression, 1));
+					out_EnterProgression = fmax(out_EnterProgression, 0);
+					out_ExitProgression = fmin(out_ExitProgression, 1);
+					out_EnterPosition = r.p1() + (slope * out_EnterProgression);
+					out_ExitPosition = r.p1() + (slope * out_ExitProgression);
 					out_EnterNormal = (out_EnterPosition - s.p()) / s.r();
 					out_ExitNormal = (out_ExitPosition - s.p()) / s.r();
 					return true;
@@ -773,8 +815,78 @@ namespace Engine{
 			// The ray intersects the AABB 
 			if (lambdaEnter <= lambdaExit)
 			{
+				lambdaEnter = fmin(fmax(lambdaEnter, 0), 1);
+				lambdaExit = fmin(fmax(lambdaExit, 0), 1);
 				out_Enter = r.p1() + (l_slope * lambdaEnter);
 				out_Exit = r.p1() + (l_slope * lambdaExit);
+				return true;
+			}
+
+			return false;
+		}
+
+		// Finds the point, normal and path progressions where a ray enters an AABB
+		template<typename valuetype>
+		static bool IsIntersecting(const ray3D<valuetype>& r, const aabb3D<valuetype>& aabb, vector3D<valuetype>& out_EnterPosition, vector3D<valuetype>& out_EnterNormal, valuetype& out_EnterProgression)
+		{
+			// Ray in local coordinates of the AABB
+			ray3D<valuetype> l_ray(r - aabb.center());
+			vector3D<valuetype> l_slope(r.slope());
+			vector3D<valuetype> l_ext(aabb.extent());
+			pointOutcode p1_pc = aabb.outcode(r.p1());
+			pointOutcode p2_pc = aabb.outcode(r.p2());
+
+			// Ray lies completely to one side of the AABB
+			pointOutcode test = p1_pc & p2_pc;
+			if ((p1_pc & p2_pc) != 0) {
+				return false;
+			}
+
+			// The ray might intersect the AABB
+			out_EnterProgression = 0;
+			lambda2 = 1;
+			unsigned char bit = 0x01; // Mask for checking individual bits (shifts at the end of each iteration)
+			unsigned char enterBit = 0; // Index for looking up the normal of the plane where the ray enters the AABB
+			unsigned char exitBit = 0; // Index for looking up the normal of the plane where the ray exits the AABB
+
+			// For all interval boundaries (2 per dimension), check intersection points
+			for (int i = 0; i < 2; i++)
+			{
+				if ((p1_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] - l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < lambda2) { lambda2 = lambda; exitBit = bit; }
+				}
+				bit <<= 1;
+
+				if ((p1_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda > out_EnterProgression) { out_EnterProgression = lambda; enterBit = bit; }
+				}
+				else if ((p2_pc & bit) != 0)
+				{
+					valuetype lambda = (-l_ray.p1()[i] + l_ext[i]) / (l_ray.p2()[i] - l_ray.p1()[i]);
+					if (lambda < lambda2) { lambda2 = lambda; exitBit = bit; }
+				}
+				bit <<= 1;
+			}
+
+			// The ray intersects the AABB
+			if (out_EnterProgression <= lambda2)
+			{
+				out_EnterProgression = fmin(fmax(out_EnterProgression, 0), 1);
+				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
+				out_EnterNormal = vector3D<valuetype>(
+					-((enterBit >> 0) & 0x01) + ((enterBit >> 1) & 0x01),
+					-((enterBit >> 2) & 0x01) + ((enterBit >> 3) & 0x01)
+					- ((enterBit >> 4) & 0x01) + ((enterBit >> 5) & 0x01)
+					);
 				return true;
 			}
 
@@ -836,6 +948,8 @@ namespace Engine{
 			// The ray intersects the AABB
 			if (out_EnterProgression <= out_ExitProgression)
 			{
+				out_EnterProgression = fmin(fmax(out_EnterProgression, 0), 1);
+				out_ExitProgression = fmin(fmax(out_ExitProgression, 0), 1);
 				out_EnterPosition = r.p1() + (l_slope * out_EnterProgression);
 				out_ExitPosition = r.p1() + (l_slope * out_ExitProgression);
 				out_EnterNormal = vector3D<valuetype>(

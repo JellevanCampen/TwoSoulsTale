@@ -8,6 +8,7 @@
 #include "../common/utility/GameTime.hpp" // For representing timing information on the game loop
 #include "../common/utility/VectorTypes.hpp" // For representing 2D and 3D positions
 #include "../common/utility/ShapeTypes.hpp" // For representing shapes
+#include "CollisionManager.hpp" // For collision checking
 
 #include <unordered_map> // For holding the game objects in the game world
 #include <list> // For holding the game objects that are marked for removal, and for indexing game objects
@@ -110,16 +111,31 @@ namespace Engine{
 	private:
 
 		// Maximum number of iterations in movement solver
-		static const unsigned char s_MaxMovementIterations = 8;
+		static const unsigned char s_MaxMovementIterations;
+
+		// Minimum separation distance to keep between objects
+		//		NOTE: when a collision occurs, the moving object is pushed back out 
+		//		of the colliding object by this distance. Placing objects next to 
+		//		each other with a separation of 0 units is not compatible with the 
+		//		ray-casting approach used for collision detection as an inter-distance 
+		//		of 0 units is registered as a collision.
+		static const float s_ObjectSeparationDistance;
 
 		///////////////////////////////////////////////////////////// 2D
 
+		// Pushes an object out of a colliding object along the motion vector
+		template<typename valuetype>
+		inline void PushOut(GameObject& gameObject, vector2D<valuetype> motion)
+		{
+			gameObject.t() -= (motion * s_ObjectSeparationDistance) / motion.length();
+		}
+
 		// Finds the nearest collision along a specified motion vector
 		template<typename valuetype>
-		inline bool FindFirstCollision(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other, vector2D<valuetype>& out_Position, vector2D<valuetype>& out_Normal, valuetype& out_Progression)
+		inline bool FindFirstCollision(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, vector2D<valuetype>& out_Position, vector2D<valuetype>& out_Normal, valuetype& out_Progression)
 		{
 			// Initialize to full motion (1.0 progression)
-			out_Position = gameObject.m_Transform.t() + motion;
+			out_Position = gameObject.t2D() + motion;
 			out_Progression = 1.0f;
 
 			vector2D<valuetype> currentPosition;
@@ -131,16 +147,17 @@ namespace Engine{
 			// Ray cast all other objects to find the nearest collision
 			CollisionManager c = CollisionManager::GetInstance();
 
-			for (GameObject* g : other) {
-				if (gameObject.GetGUID() == g->GetGUID()) { continue; }
-				if (c.IsIntersecting(gameObject.m_AABB, g->m_AABB, motion, currentPosition, currentNormal, currentProgression))
+			for (GameObject* g : other.list()) {
+				if (gameObject.guid() == g->guid()) { continue; }
+				if (c.IsIntersecting(gameObject.aabb2D_world(), g->aabb2D_world(), motion, currentPosition, currentNormal, currentProgression))
 				{
-					if (currentProgression < minProgression)
+					if (currentProgression < out_Progression)
 					{
-						minProgression = currentProgression;
-						minPosition = currentPosition;
-						minNormal = currentNormal;
+						out_Progression = currentProgression;
+						out_Position = currentPosition;
+						out_Normal = currentNormal;
 						collision = true;
+						if (currentProgression == 0.0f) { return true; }
 					}
 				}
 			}
@@ -152,84 +169,116 @@ namespace Engine{
 		template<typename valuetype>
 		inline void MoveIgnore(GameObject& gameObject, vector2D<valuetype> motion)
 		{
-			gameObject.m_Transform.t() += motion;
+			gameObject.t() += motion;
 		}
 
 		// Move a game object along the specified motion vector, stopping at the first collision
 		template<typename valuetype>
-		inline bool MoveStop(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		inline bool MoveStop(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
 
-			FindFirstCollision(gameObject, motion, other, position, normal, progression);
-			gameObject.m_Transform.t(position);
+			// Move the object and push it out of colliding objects
+			bool collision = FindFirstCollision(gameObject, motion, other, position, normal, progression);
+			gameObject.t() += motion * progression;
+			if (collision) { PushOut(gameObject, motion); }
+			
+			return collision;
 		}
 
 		// Move a game object along the specified motion vector, sliding along colliding objects
 		template<typename valuetype>
-		inline bool MoveSlide(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		inline bool MoveSlide(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
 
 			unsigned char iteration = 0;
+			bool collision = false;
 
 			do
 			{
-				FindFirstCollision(gameObject, motion, other, position, normal, progression);
-				gameObject.m_Transform.t(position);
+				// Move the object and push it out of colliding objects
+				bool collisionCurrent = FindFirstCollision(gameObject, motion, other, position, normal, progression);
+				if (progression == 0.0f) { return true; }
+				gameObject.t() += motion * progression;
+				collision |= collisionCurrent;
+				if (!collisionCurrent) {  return collision; }
+				PushOut(gameObject, motion);
 
-				motion = (motion) * (1.0f - progression);
-				motion -= motion.project(normal);
+				// Calculate the new motion vector to have sliding behavior
+				motion = motion * (1.0f - progression);
+				motion = motion - motion.project(normal);
 				iteration++;
 
-			} while (progression < 1.0f && iteration < s_MaxMovementIterations);
+			} while (iteration < s_MaxMovementIterations);
+
+			return collision;
 		}
 
 		// Move a game object along the specified motion vector, redirecting motion along colliding objects
 		template<typename valuetype>
-		inline bool MoveRedirect(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		inline bool MoveRedirect(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
 
 			unsigned char iteration = 0;
+			bool collision = false;
 
 			do
 			{
-				FindFirstCollision(gameObject, motion, other, position, normal, progression);
-				gameObject.m_Transform.t(position);
+				// Move the object and push it out of colliding objects
+				bool collisionCurrent = FindFirstCollision(gameObject, motion, other, position, normal, progression);
+				if (progression == 0.0f) { return true; }
+				gameObject.t() += motion * progression;
+				collision |= collisionCurrent;
+				if (!collisionCurrent) { return collision; }
+				PushOut(gameObject, motion);
 
-				motion = (motion)* (1.0f - progression);
+				// Calculate the new motion vector to have redirecting behavior
+				motion = motion * (1.0f - progression);
 				vector2D<valuetype> direction = motion - motion.project(normal);
 				motion = motion.align(direction);
 				iteration++;
 
-			} while (progression < 1.0f && iteration < s_MaxMovementIterations);
+			} while (iteration < s_MaxMovementIterations);
+
+			return collision;
 		}
 
 		// Move a game object along the specified motion vector, reflecting of colliding objects
 		template<typename valuetype>
-		inline bool MoveReflect(GameObject& gameObject, vector2D<valuetype> motion, const std::vector<GameObject*>& other)
+		inline bool MoveReflect(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
 
 			unsigned char iteration = 0;
+			bool collision = false;
 
 			do
 			{
-				FindFirstCollision(gameObject, motion, other, position, normal, progression);
-				gameObject.m_Transform.t(position);
+				// Move the object and push it out of colliding objects
+				bool collisionCurrent = FindFirstCollision(gameObject, motion, other, position, normal, progression);
+				if (progression == 0.0f) { return true; }
+				gameObject.t() += motion * progression;
+				collision |= collisionCurrent;
+				if (!collisionCurrent) { return collision; }
+				PushOut(gameObject, motion);
+
+				// Calculate the new motion vector to have redirecting behavior
 				motion = (motion.reflect(normal)) * (1.0f - progression);
 				iteration++;
 
-			} while (progression < 1.0f && iteration < s_MaxMovementIterations);
+			} while (iteration < s_MaxMovementIterations);
+
+			return collision;
 		}
 
 	public:

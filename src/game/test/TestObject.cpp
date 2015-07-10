@@ -247,6 +247,7 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 
 	// AABB-AABB
 	Engine::aabb2Df collRectangle(-8.0f, 8.0f, -8.0f, 8.0f);
+	// Engine::aabb2Df collRectangle(0.0f, 16.0f, 0.0f, 16.0f);
 	if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_AABBRect, m_Ray.p2(), enterPosition, enterNormal, enterProgression, exitPosition, exitNormal, exitProgression))
 	// if (Engine::CollisionManager::GetInstance().IsIntersecting(collRectangle, m_AABBRect, m_Ray.p2(), enterPosition, exitPosition))
 	{

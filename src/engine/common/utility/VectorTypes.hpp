@@ -47,11 +47,19 @@ namespace Engine
 		inline bool operator< (const vector2D& other) const { return m_X < other.m_X && m_Y < other.m_Y; }
 		inline vector2D operator+ () const { return vector2D(*this); }
 		inline vector2D operator- () const { return vector2D(-m_X, -m_Y); }
+		inline vector2D operator+ (const valuetype& scalar) const { return vector2D(m_X + scalar, m_Y); }
+		inline vector2D operator- (const valuetype& scalar) const { return vector2D(m_X - scalar, m_Y); }
 		inline vector2D operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
 		inline vector2D operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
 		inline vector2D operator* (valuetype scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
 		inline valuetype operator* (vector2D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y); }
 		inline vector2D operator/ (valuetype scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
+		inline vector2D& operator+= (const valuetype& scalar) { m_X += scalar; return *this; }
+		inline vector2D& operator-= (const valuetype& scalar) { m_X -= scalar; return *this; }
+		inline vector2D& operator+= (const vector2D& other) { m_X += other.m_X; m_Y += other.m_Y; return *this; }
+		inline vector2D& operator-= (const vector2D& other) { m_X -= other.m_X; m_Y -= other.m_Y; return *this; }
+		inline vector2D& operator*= (const valuetype& scalar) { m_X *= scalar; m_Y *= scalar; return *this; }
+		inline vector2D& operator/= (const valuetype& scalar) { m_X /= scalar; m_Y /= scalar; return *this; }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -94,7 +102,7 @@ namespace Engine
 		inline void Zero() { m_X = 0; m_Y = 0; }									
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector2D& Normalize() { valuetype l = Length(); m_X /= l; m_Y /= l; return *this; }
+		inline vector2D& Normalize() { valuetype l = length(); m_X /= l; m_Y /= l; return *this; }
 	};
 
 	typedef vector2D<int> vector2Di, int2, i2;
@@ -147,11 +155,23 @@ namespace Engine
 		inline bool operator< (const vector3D& other) const { return m_X < other.m_X && m_Y < other.m_Y && m_Z < other.m_Z; }
 		inline vector3D operator+ () const { return vector3D(*this); }
 		inline vector3D operator- () const { return vector3D(-m_X, -m_Y, -m_Z); }
+		inline vector3D operator+ (const valuetype& scalar) const { return vector3D(m_X + scalar, m_Y, m_Z); }
+		inline vector3D operator- (const valuetype& scalar) const { return vector3D(m_X - scalar, m_Y, m_Z); }
+		inline vector3D operator+ (const vector2D<valuetype>& other) const { return vector3D(m_X + other.m_X, m_X + other.m_Y, m_Z); }
+		inline vector3D operator- (const vector2D<valuetype>& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z); }
 		inline vector3D operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
 		inline vector3D operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
 		inline vector3D operator* (valuetype scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
 		inline valuetype operator* (vector3D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z); }
 		inline vector3D operator/ (valuetype scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
+		inline vector3D& operator+= (const valuetype& scalar) { m_X += scalar; return *this; }
+		inline vector3D& operator-= (const valuetype& scalar) { m_X -= scalar; return *this; }
+		inline vector3D& operator+= (const vector2D<valuetype>& other) { m_X += other.x(); m_Y += other.y(); return *this; }
+		inline vector3D& operator-= (const vector2D<valuetype>& other) { m_X -= other.x(); m_Y -= other.y(); return *this; }
+		inline vector3D& operator+= (const vector3D& other) { m_X += other.m_X; m_Y += other.m_Y; m_Z += other.m_Z; return *this; }
+		inline vector3D& operator-= (const vector3D& other) { m_X -= other.m_X; m_Y -= other.m_Y; m_Z -= other.m_Z; return *this; }
+		inline vector3D& operator*= (const valuetype& scalar) { m_X *= scalar; m_Y *= scalar; m_Z *= scalar; return *this; }
+		inline vector3D& operator/= (const valuetype& scalar) { m_X /= scalar; m_Y /= scalar; m_Z /= scalar; return *this; }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -207,7 +227,7 @@ namespace Engine
 		inline void Zero() { m_X = 0; m_Y = 0; m_Z = 0; }								
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector3D& Normalize() { valuetype l = Length(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
+		inline vector3D& Normalize() { valuetype l = length(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
 
 		// Calculates the cross product of this vector with another vector
 		inline vector3D CrossProduct(const vector3D& other) const { return vector3D(m_Y * other.m_Z - m_Z * other.m_Y, m_Z * other.m_X - m_X * other.m_Z, m_X * other.m_Y - m_Y * other.m_X); }
@@ -266,11 +286,27 @@ namespace Engine
 		inline bool operator< (const vector4D& other) const { return m_X < other.m_X && m_Y < other.m_Y && m_Z < other.m_Z && m_W < other.m_W; }
 		inline vector4D operator+ () const { return vector4D(*this); }
 		inline vector4D operator- () const { return vector4D(-m_X, -m_Y, -m_Z, -m_W); }
+		inline vector4D operator+ (const valuetype& scalar) const { return vector4D(m_X + scalar, m_Y, m_Z, m_W); }
+		inline vector4D operator- (const valuetype& scalar) const { return vector4D(m_X - scalar, m_Y, m_Z, m_W); }
+		inline vector4D operator+ (const vector2D<valuetype>& other) const { return vector3D(m_X + other.m_X, m_X + other.m_Y, m_Z, m_W); }
+		inline vector4D operator- (const vector2D<valuetype>& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z, m_W); }
+		inline vector4D operator+ (const vector3D<valuetype>& other) const { return vector3D(m_X + other.m_X, m_X + other.m_Y, m_Z + other.m_W, m_W); }
+		inline vector4D operator- (const vector3D<valuetype>& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_W, m_W); }
 		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
 		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
 		inline vector4D operator* (valuetype scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
 		inline valuetype operator* (vector4D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z) + (m_W * other.m_W); }
 		inline vector4D operator/ (valuetype scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W / scalar); }
+		inline vector4D& operator+= (const valuetype& scalar) { m_X += scalar; return *this; }
+		inline vector4D& operator-= (const valuetype& scalar) { m_X -= scalar; return *this; }
+		inline vector4D& operator+= (const vector2D<valuetype>& other) { m_X += other.x(); m_Y += other.y(); return *this; }
+		inline vector4D& operator-= (const vector2D<valuetype>& other) { m_X -= other.x(); m_Y -= other.y(); return *this; }
+		inline vector4D& operator+= (const vector3D<valuetype>& other) { m_X += other.x(); m_Y += other.y(); m_Z += other.z(); return *this; }
+		inline vector4D& operator-= (const vector3D<valuetype>& other) { m_X -= other.x(); m_Y -= other.y(); m_Z -= other.z(); return *this; }
+		inline vector4D& operator+= (const vector4D& other) { m_X += other.m_X; m_Y += other.m_Y; m_Z += other.m_Z; m_W += other.m_W; return *this; }
+		inline vector4D& operator-= (const vector4D& other) { m_X -= other.m_X; m_Y -= other.m_Y; m_Z -= other.m_Z; m_W -= other.m_W; return *this; }
+		inline vector4D& operator*= (const valuetype& scalar) { m_X *= scalar; m_Y *= scalar; m_Z *= scalar; m_W *= scalar; return *this; }
+		inline vector4D& operator/= (const valuetype& scalar) { m_X /= scalar; m_Y /= scalar; m_Z /= scalar; m_W /= scalar; return *this; }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -383,7 +419,7 @@ namespace Engine
 		inline vector4D& Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 0; return *this; }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vector4D& Normalize() { valuetype l = Length(); m_X /= l; m_Y /= l; m_Z /= l; m_W /= l; return *this; }
+		inline vector4D& Normalize() { valuetype l = length(); m_X /= l; m_Y /= l; m_Z /= l; m_W /= l; return *this; }
 	};
 
 	typedef vector4D<int> vector4Di, int4, i4;
@@ -555,7 +591,7 @@ namespace Engine
 		inline vectorH4D& Zero() { m_X = 0; m_Y = 0; m_Z = 0; m_W = 1; return *this; }
 
 		// Normalizes the vector (to have Euclidean unit length)
-		inline vectorH4D& Normalize() { valuetype l = LengthHomogeneous(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
+		inline vectorH4D& Normalize() { valuetype l = length(); m_X /= l; m_Y /= l; m_Z /= l; return *this; }
 	};
 
 	typedef vectorH4D<int> vectorH4Di;
