@@ -215,7 +215,7 @@ namespace Engine
 		inline vector3D reflect(const vector3D<valuetype>& other) const { return operator-(project(other) * 2); }
 
 		// Rotates the vector to have its direction align with another vector
-		inline vector3D align(const vector2D<valuetype>& other) const { return (other * sqrt(((*this) * (*this)) / (other * other))); }
+		inline vector3D align(const vector3D<valuetype>& other) const { return (other * sqrt(((*this) * (*this)) / (other * other))); }
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
 		inline valuetype length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z)); }

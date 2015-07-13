@@ -93,20 +93,23 @@ namespace Engine{
 		// Calculates the AABB in world coordinates
 		void CalculateAABBs();
 
+		// Velocity vector of the game object
+		f3 m_Velocity;
+
 	public:
 
 		// 3D transform getters
-		const transform3D& tf() const { return m_Transform; }
+		inline const transform3D& tf() const { return m_Transform; }
 		inline const f3& t() const { return m_Transform.t(); }
 		inline const f3& r() const { return m_Transform.r(); }
 		inline const f3& s() const { return m_Transform.s(); }
-		transform3D& tf() { m_TransformIsDirty = true; return m_Transform; }
+		inline transform3D& tf() { m_TransformIsDirty = true; return m_Transform; }
 		inline f3& t() { m_TransformIsDirty = true; return m_Transform.t(); }
 		inline f3& r() { m_TransformIsDirty = true; return m_Transform.r(); }
 		inline f3& s() { m_TransformIsDirty = true; return m_Transform.s(); }
 
 		// 3D transform setters
-		transform3D& tf(const transform3D& transform) { m_TransformIsDirty = true; m_Transform = transform; }
+		inline void tf(const transform3D& transform) { m_TransformIsDirty = true; m_Transform = transform; }
 		inline void t(const f3& t) { m_TransformIsDirty = true; m_Transform.t(t); }
 		inline void r(const f3& r) { m_TransformIsDirty = true; m_Transform.r(r); }
 		inline void s(const f3& s) { m_TransformIsDirty = true; m_Transform.s(s); }
@@ -117,6 +120,12 @@ namespace Engine{
 		inline const float& r2D() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_Transform2D.r(); }
 		inline const f2& s2D() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_Transform2D.s(); }
 
+		// 2D transform setters
+		inline void tf(const transform2D& transform) { m_TransformIsDirty = true; m_Transform = transform; }
+		inline void t(const f2& t) { m_TransformIsDirty = true; m_Transform.t().x(t.x()); m_Transform.t().y(t.y()); }
+		inline void r(const float& r) { m_TransformIsDirty = true; m_Transform.r().x(r); }
+		inline void s(const f2& s) { m_TransformIsDirty = true; m_Transform.s().x(s.x()); m_Transform.s().y(s.y()); }
+
 		// 3D AABB getters
 		inline const aabb3Df& aabb_local() const { return m_AABB; }
 		inline const aabb3Df& aabb_world() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABBWorld; }
@@ -124,6 +133,15 @@ namespace Engine{
 		// 2D AABB getters
 		inline const aabb2Df& aabb2D_local() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABB2D; }
 		inline const aabb2Df& aabb2D_world() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABB2DWorld; }
+
+		// Velocity getters
+		inline const f3& velocity() const { return m_Velocity; }
+		inline f3& velocity() { return m_Velocity; }
+		inline f2 velocity2D() const { return m_Velocity.xy(); }
+
+		// Velocity setters
+		inline void velocity(const f3& v) { m_Velocity = v; }
+		inline void velocity(const f2& v) { m_Velocity.x(v.x()); m_Velocity.y(v.y()); }
 	};
 }
 

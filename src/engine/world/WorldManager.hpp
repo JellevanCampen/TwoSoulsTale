@@ -174,7 +174,7 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, stopping at the first collision
 		template<typename valuetype>
-		inline bool MoveStop(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
+		inline bool MoveStop(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
@@ -182,8 +182,9 @@ namespace Engine{
 
 			// Move the object and push it out of colliding objects
 			bool collision = FindFirstCollision(gameObject, motion, other, position, normal, progression);
+			if (progression == 0.0f) { gameObject.velocity(f3(0.0)); return true; }
 			gameObject.t() += motion * progression;
-			if (collision) { PushOut(gameObject, motion); }
+			if (collision) { PushOut(gameObject, motion); if (updateVelocity) { gameObject.velocity(f3(0.0)); } }
 			
 			return collision;
 		}
@@ -221,7 +222,7 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, redirecting motion along colliding objects
 		template<typename valuetype>
-		inline bool MoveRedirect(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
+		inline bool MoveRedirect(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
@@ -244,6 +245,7 @@ namespace Engine{
 				motion = motion * (1.0f - progression);
 				vector2D<valuetype> direction = motion - motion.project(normal);
 				motion = motion.align(direction);
+				if (updateVelocity) { gameObject.velocity(gameObject.velocity2D().align(motion)); }
 				iteration++;
 
 			} while (iteration < s_MaxMovementIterations);
@@ -253,7 +255,7 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, reflecting of colliding objects
 		template<typename valuetype>
-		inline bool MoveReflect(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
+		inline bool MoveReflect(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
 		{
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
@@ -274,6 +276,7 @@ namespace Engine{
 
 				// Calculate the new motion vector to have redirecting behavior
 				motion = (motion.reflect(normal)) * (1.0f - progression);
+				if (updateVelocity) { gameObject.velocity(gameObject.velocity2D().align(motion)); }
 				iteration++;
 
 			} while (iteration < s_MaxMovementIterations);
@@ -285,7 +288,7 @@ namespace Engine{
 
 		// Moves a game object along the specified motion vector, resolving collisions on the way
 		template<typename valuetype>
-		inline bool Move(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const GameObjectCollection& other)
+		inline bool Move2D(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const GameObjectCollection& other, bool updateVelocity = false)
 		{
 			// If collisions should be ignored, skip broadphase filtering
 			if (response == CollisionResponse::IGNORE) { MoveIgnore(gameObject, motion); return false; }
@@ -300,14 +303,20 @@ namespace Engine{
 			switch (response)
 			{
 			case CollisionResponse::STOP:
-				return MoveStop(gameObject, motion, g);	
+				return MoveStop(gameObject, motion, g, updateVelocity);	
 			case CollisionResponse::SLIDE:
 				return MoveSlide(gameObject, motion, g); 
 			case CollisionResponse::REDIRECT:
-				return MoveRedirect(gameObject, motion, g);
+				return MoveRedirect(gameObject, motion, g, updateVelocity);
 			case CollisionResponse::REFLECT:
-				return MoveReflect(gameObject, motion, g);
+				return MoveReflect(gameObject, motion, g, updateVelocity);
 			}
+		}
+
+		// Moves the game object based on its velocity, resolving collisions on the way
+		inline bool Move2D(GameObject& gameObject, CollisionResponse response, const GameObjectCollection& other, bool updateVelocity = true)
+		{
+			return Move2D(gameObject, gameObject.velocity2D(), response, other, updateVelocity);
 		}
 
 		////////////////////////////////////////////////////////////////
