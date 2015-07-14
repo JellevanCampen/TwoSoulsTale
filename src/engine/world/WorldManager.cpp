@@ -55,34 +55,28 @@ Engine::GameObjectGUID Engine::WorldManager::AddGameObject(GameObject* gameObjec
 	return gameObject->guid();
 }
 
+// Adds a group of game objects to the world 
+void Engine::WorldManager::AddGameObjects(const GameObjectCollection& gameObjects)
+{
+	for (GameObject* object : gameObjects.objects()) 
+	{ 
+		object->Create();
+		m_GameObjects.insert(std::pair<GameObjectGUID, GameObject*>(object->guid(), object));
+		AddToByTypeMap(object);
+	}
+}
+
 // Removes a game object from the world (based on its pointer)
 void Engine::WorldManager::RemoveGameObject(GameObject* gameObject)
 {
 	m_GameObjectRemoveList.push_back(gameObject->guid());
 }
 
-// Removes a game object from the world (based on its GUID)
-void Engine::WorldManager::RemoveGameObject(GameObjectGUID gameObjectGUID)
-{
-	// Add the game object GUID to the remove list
-	m_GameObjectRemoveList.push_back(gameObjectGUID);
-}
-
-// Removes a group of game objects from the world (based on their pointers)
-void Engine::WorldManager::RemoveGameObject(std::vector<GameObject*> gameObjects)
+// Removes a group of game objects from the world
+void Engine::WorldManager::RemoveGameObjects(const GameObjectCollection& gameObjects)
 {
 	// Add the game object GUIDs to the remove list
-	for (auto gameObject : gameObjects) 
-	{ 
-		m_GameObjectRemoveList.push_back(gameObject->guid()); 
-	}
-}
-
-// Removes a group of game objects from the world (based on their GUIDs)
-void Engine::WorldManager::RemoveGameObject(std::vector<GameObjectGUID> gameObjectGUIDs)
-{
-	// Add the game object GUIDs to the remove list
-	m_GameObjectRemoveList.insert(m_GameObjectRemoveList.end(), gameObjectGUIDs.begin(), gameObjectGUIDs.end());
+	for (GameObject* object : gameObjects.objects()) { m_GameObjectRemoveList.push_back(object->guid()); }
 }
 
 ////////////////////////////////////////////////////////////////

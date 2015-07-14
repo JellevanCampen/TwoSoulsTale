@@ -49,17 +49,14 @@ namespace Engine{
 		// Adds a game object to the world and returns the handle
 		GameObjectGUID AddGameObject(GameObject* gameObject);
 
-		// Removes a game object from the world (based on its pointer)
+		// Adds a group of game objects to the world 
+		void AddGameObjects(const GameObjectCollection& gameObjects);
+
+		// Removes a game object from the world
 		void RemoveGameObject(GameObject* gameObject);
-		
-		// Removes a game object from the world (based on its GUID)
-		void RemoveGameObject(GameObjectGUID gameObjectGUID);
 
-		// Removes a group of game objects from the world (based on their pointers)
-		void RemoveGameObject(std::vector<GameObject*> gameObjects);
-
-		// Removes a group of game objects from the world (based on their GUIDs)
-		void RemoveGameObject(std::vector<GameObjectGUID> gameObjectGUIDs);	
+		// Removes a group of game objects from the world
+		void RemoveGameObjects(const GameObjectCollection& gameObjects);
 
 		////////////////////////////////////////////////////////////////
 		// Game object retrieval									  //
