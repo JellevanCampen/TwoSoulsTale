@@ -93,7 +93,7 @@ void Engine::WorldManager::RemoveGameObject(std::vector<GameObjectGUID> gameObje
 size_t Engine::WorldManager::RetrieveAll(GameObjectCollection& out_GameObjectCollection) const
 {
 	size_t count = 0;
-	for (auto o : m_GameObjects) { out_GameObjectCollection.list().push_back(o.second); count++; }
+	for (auto o : m_GameObjects) { out_GameObjectCollection.objects().insert(o.second); count++; }
 	return count;
 }
 
@@ -102,7 +102,7 @@ size_t Engine::WorldManager::RetrieveByGUID(GameObjectGUID guid, GameObjectColle
 {
 	auto object = m_GameObjects.find(guid);
 	if (object == m_GameObjects.end()) { return size_t(0); }
-	out_GameObjectCollection.list().push_back(object->second);
+	out_GameObjectCollection.objects().insert(object->second);
 	return size_t(1);
 }
 
@@ -115,7 +115,7 @@ size_t Engine::WorldManager::RetrieveByType(GameObjectType type, GameObjectColle
 	size_t count = 0;
 	auto objects = m_GameObjectsByType.find(type);
 	if (objects == m_GameObjectsByType.end()) { return size_t(0); }
-	for (auto o : objects->second) { out_GameObjectCollection.list().push_back(o); count++; }
+	for (auto o : objects->second) { out_GameObjectCollection.objects().insert(o); count++; }
 	return count;
 }
 

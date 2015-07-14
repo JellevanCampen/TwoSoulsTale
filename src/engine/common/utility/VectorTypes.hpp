@@ -127,6 +127,7 @@ namespace Engine
 		vector3D() : m_X(0), m_Y(0), m_Z(0) { }
 		vector3D(valuetype v) : m_X(v), m_Y(v), m_Z(v) { }
 		vector3D(vector2D<valuetype> v, valuetype z) : m_X(v.x()), m_Y(v.y()), m_Z(z) { }
+		vector3D(vector2D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(0) { }
 		vector3D(valuetype x, valuetype y, valuetype z) : m_X(x), m_Y(y), m_Z(z) { }
 		vector3D(const glm::vec3& v) : m_X(v.x), m_Y(v.y), m_Z(v.z) { }
 		
@@ -255,6 +256,8 @@ namespace Engine
 		vector4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
 		vector4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
 		vector4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
+		vector4D(vector3D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(0) { }
+		vector4D(vector2D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(0), m_W(0) { }
 		vector4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
 		vector4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		
@@ -440,6 +443,8 @@ namespace Engine
 		vectorH4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
 		vectorH4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
 		vectorH4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
+		vectorH4D(vector3D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(1) { }
+		vectorH4D(vector2D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(0), m_W(1) { }
 		vectorH4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
 		vectorH4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		vectorH4D(const vector4D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(v.w()) { }

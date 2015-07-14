@@ -126,13 +126,15 @@ namespace Engine{
 		inline void r(const float& r) { m_TransformIsDirty = true; m_Transform.r().x(r); }
 		inline void s(const f2& s) { m_TransformIsDirty = true; m_Transform.s().x(s.x()); m_Transform.s().y(s.y()); }
 
-		// 3D AABB getters
+		// AABB getters
 		inline const aabb3Df& aabb_local() const { return m_AABB; }
 		inline const aabb3Df& aabb_world() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABBWorld; }
-
-		// 2D AABB getters
 		inline const aabb2Df& aabb2D_local() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABB2D; }
 		inline const aabb2Df& aabb2D_world() { if (m_TransformIsDirty) { CalculateAABBs(); } return m_AABB2DWorld; }
+
+		// AABB setters
+		inline void aabb_local(const aabb3Df& aabb) { m_AABB = aabb; m_TransformIsDirty = true; }
+		inline void aabb_local(const aabb2Df& aabb) { m_AABB = aabb3Df(aabb); m_TransformIsDirty = true; }
 
 		// Velocity getters
 		inline const f3& velocity() const { return m_Velocity; }

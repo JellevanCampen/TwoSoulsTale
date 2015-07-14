@@ -5,7 +5,8 @@
 #include "GameObject.hpp" // For representing game objects
 #include "../common/utility/IntervalTypes.hpp" // For representing location intervals
 
-#include <list> // For representing a collection of game objects (with fast random removal)
+#include <unordered_set> // For representing a collection of game objects (with fast random removal)
+#include <set> // For constructing a game object collection from a set of game objects
 
 namespace Engine{
 
@@ -14,22 +15,42 @@ namespace Engine{
 	private:
 
 		// List of game objects
-		std::list<GameObject*> m_GameObjects;
+		std::unordered_set<GameObject*> m_GameObjects;
 
 	public:
 
 		// Constructors
 		GameObjectCollection() { }
+		GameObjectCollection(std::unordered_set<GameObject*>& objects) { m_GameObjects = std::unordered_set<GameObject*>(objects.begin(), objects.end()); }
+		GameObjectCollection(std::set<GameObject*>& objects) { m_GameObjects = std::unordered_set<GameObject*>(objects.begin(), objects.end()); }
 
 		////////////////////////////////////////////////////////////////
 		// Collection access										  //
 		////////////////////////////////////////////////////////////////
 
-		// Returns the list of game objects
-		inline std::list<GameObject*>& list() { return m_GameObjects; }
+		// Returns all game objects in the collection
+		inline std::unordered_set<GameObject*>& objects() { return m_GameObjects; }
 
-		// Returns the list of game objects
-		inline const std::list<GameObject*>& list() const { return m_GameObjects; }
+		// Returns all game objects in the collection
+		inline const std::unordered_set<GameObject*>& objects() const { return m_GameObjects; }
+
+		////////////////////////////////////////////////////////////////
+		// Collection manipulation									  //
+		////////////////////////////////////////////////////////////////
+
+		// Moves all elements of another game object collection to this one (removes elements from the other list)
+		GameObjectCollection& merge(GameObjectCollection& other);
+
+		// Operators
+		inline GameObjectCollection operator+ (const GameObjectCollection& other) const 
+		{ 
+			// Filter out duplicate elements using a set
+			std::unordered_set<GameObject*> s(m_GameObjects);
+			for (GameObject* g : other.objects()) { s.insert(g); }
+
+			// Add the merged collection to the list
+			return GameObjectCollection(s);
+		}
 
 		////////////////////////////////////////////////////////////////
 		// Filtering												  //

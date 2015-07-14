@@ -1,6 +1,19 @@
 #include "GameObjectCollection.hpp"
 
 #include "CollisionManager.hpp" // For checking collisions
+#include <set> // For removing duplicate elements while merging game object collections
+
+////////////////////////////////////////////////////////////////
+// Collection manipulation									  //
+////////////////////////////////////////////////////////////////
+
+// Moves all elements of another game object collection to this one (removes elements from the other list)
+Engine::GameObjectCollection& Engine::GameObjectCollection::merge(GameObjectCollection& other)
+{
+	// Filter out duplicate elements using a set
+	for (GameObject* g : other.objects()) { m_GameObjects.insert(g); }
+	return *this;
+}
 
 ////////////////////////////////////////////////////////////////
 // Filtering												  //

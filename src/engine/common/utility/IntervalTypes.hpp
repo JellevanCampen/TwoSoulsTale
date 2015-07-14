@@ -28,16 +28,22 @@ namespace Engine
 		interval1D(valuetype x1, valuetype x2) : m_P1(x1), m_P2(x2) { }
 
 		// Getters
+		inline valuetype& p1() { return m_P1; }
+		inline valuetype& p2() { return m_P2; }
 		inline valuetype& x1() { return m_P1; }
 		inline valuetype& x2() { return m_P2; }
 		inline valuetype& x() { return m_P1; }
 		inline valuetype& w() { return m_P2 - m_P1; }
+		inline const valuetype& p1() const { return m_P1; }
+		inline const valuetype& p2() const { return m_P2; }
 		inline const valuetype& x1() const { return m_P1; }
 		inline const valuetype& x2() const { return m_P2; }
 		inline const valuetype& x() const { return m_P1; }
 		inline const valuetype& w() const { return m_P2 - m_P1; }
 
 		// Setters
+		inline interval1D& p1(valuetype p1) { m_P1 = p1; return *this; }
+		inline interval1D& p2(valuetype p2) { m_P2 = p2; return *this; }
 		inline interval1D& x1(valuetype x1) { m_P1 = x1; return *this; }
 		inline interval1D& x2(valuetype x2) { m_P2 = x2; return *this; }
 		inline interval1D& x(valuetype x) { m_P1 = x; return *this; }
@@ -106,6 +112,7 @@ namespace Engine
 		interval2D() { }
 		interval2D(valuetype x1, valuetype x2, valuetype y1, valuetype y2) : m_P1(x1, y1), m_P2(x2, y2) { }
 		interval2D(vector2D<valuetype> p1, vector2D<valuetype> p2) : m_P1(p1), m_P2(p2) { }
+		interval2D(interval1D<valuetype> i) : m_P1(i.p1()), m_P2(i.p2()) { }
 
 		// Casts
 		inline operator interval1D<valuetype>() const { return interval1D<valuetype>(m_P1.x(), m_P2.x()); }
@@ -216,6 +223,8 @@ namespace Engine
 		interval3D() { }
 		interval3D(valuetype x1, valuetype x2, valuetype y1, valuetype y2, valuetype z1, valuetype z2) : m_P1(x1, y1, z1), m_P2(x2, y2, z2) { }
 		interval3D(vector3D<valuetype> p1, vector3D<valuetype> p2) : m_P1(p1), m_P2(p2) { }
+		interval3D(interval1D<valuetype> i) : m_P1(i.p1()), m_P2(i.p2()) { }
+		interval3D(interval2D<valuetype> i) : m_P1(i.p1()), m_P2(i.p2()) { }
 
 		// Casts
 		inline operator interval2D<valuetype>() const { return interval2D<valuetype>(m_P1.xy(), m_P2.xy()); }
