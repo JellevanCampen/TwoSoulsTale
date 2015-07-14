@@ -162,12 +162,14 @@ void GameContent::TestObject::Destroy()
 // Updates the game object
 void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 {
-	// Update the position
-	m_PosX += m_SpeedX * ((float)gameTime.deltaTimeMicros / 10000.f);
-	m_PosY += m_SpeedY * ((float)gameTime.deltaTimeMicros / 10000.f);
+	if (gameTime.GetFrameCount() % 100 == 99)
+	{
+		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::Warning, std::to_string(Engine::TimingManager::GetInstance().GetFrameRate()));
+	}
 
 	// TESTING
-	world.Step(timestep, velocityIterations, positionIterations);
+	// world.Step(timestep, velocityIterations, positionIterations);
+	world.Step(gameTime.GetDeltaTimeSeconds(), velocityIterations, positionIterations);
 	world.ClearForces(); // Needed to reset forces if they were applied during the previous update
 
 	Engine::f2 bodyPos = Engine::f2(body->GetPosition().x * scale, body->GetPosition().y * scale);
@@ -178,14 +180,8 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(temp);
 	t(Engine::f3(bodyPos, 0.0f));
 	// TESTING
-	
-	if ((gameTime.frameCount % 500) == 499)
-	{
-		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(gameTime.frameCount * 1000000 / (gameTime.totalTimeMicros)));
-		// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "FPS: " + std::to_string(1000000.f / gameTime.deltaTimeMicros));
-	}
 
-	m_Ray.p2().x(fmod(gameTime.totalTimeMicros / 25000.0, 480.0));
+	m_Ray.p2().x(fmod(gameTime.GetTotalTimeSeconds() * 25.0, 480.0));
 	m_Ray.p2().y(480.0f - m_Ray.p2().x());
 }
 
@@ -196,8 +192,8 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
-	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (gameTime.totalTimeMicros / 100000) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
-	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (gameTime.totalTimeMicros / 100000) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
+	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (unsigned int)(gameTime.GetTotalTimeSeconds() * 10.0) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
+	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (unsigned int)(gameTime.GetTotalTimeSeconds() * 10.0) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
 	g.DrawLine(Engine::ray2Df(Engine::f2(128.0f, 240.0f), Engine::f2(bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale)));
 
 	// Collision testing rendering

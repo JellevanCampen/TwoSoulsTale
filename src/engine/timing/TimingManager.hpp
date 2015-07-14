@@ -9,6 +9,7 @@
 #include <map> // For storing alarms by timestamp, sorted from nearest to furthest timestamp
 #include <unordered_map> // For storing alarms by ID
 #include <list> // For storing all listeners to an alarms
+#include <deque> // For storing past frame durations to calculate the framerate
 
 namespace Engine{
 
@@ -33,10 +34,19 @@ namespace Engine{
 		// Gets the current game time
 		const GameTime& GetGameTime() const;
 
+		// Gets the current framerate
+		float GetFrameRate() const;
+
 	private:
 
 		// Cached version of the game time information for the current frame
 		GameTime m_GameTime;
+
+		// Number of frames durations to average to obtain the framerate
+		static const size_t s_FramerateWindowSize = 500;
+
+		// Queue for storing past frame durations to calculate the frame rate
+		std::deque<unsigned int> m_FrameDurationsMicros;
 
 	public:
 

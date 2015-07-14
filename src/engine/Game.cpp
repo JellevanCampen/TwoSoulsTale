@@ -40,8 +40,8 @@ void Engine::Game::Initialize()
 void Engine::Game::Start()
 {
 	m_Running = true;
-	// RunVariableFramerate();
-	RunFixedFramerate();
+	RunVariableFramerate();
+	// RunFixedFramerate();
 }
 
 // Stops the game loop
@@ -82,17 +82,9 @@ void Engine::Game::ToggleBoundingBoxRendering(bool enabled)
 // Executes the game loop in fixed framerate mode
 void Engine::Game::RunFixedFramerate()
 {
-	// Holds the desired duration between two updates
-	std::chrono::microseconds frameDuration(m_FrameDurationMicros);
-
 	// Holds the desired time point for the next update
 	std::chrono::time_point<std::chrono::high_resolution_clock> nextUpdate;
 	nextUpdate = std::chrono::high_resolution_clock::now();
-
-	// Reset the timing information
-	m_GameTime.deltaTimeMicros = m_FrameDurationMicros;
-	m_GameTime.frameCount = 0;
-	m_GameTime.totalTimeMicros = 0;
 
 	while (m_Running)
 	{
@@ -100,12 +92,7 @@ void Engine::Game::RunFixedFramerate()
 		Draw(m_GameTime);
 
 		// Update the timing information
-		m_GameTime.frameCount++;
-		m_GameTime.totalTimeMicros += m_FrameDurationMicros;
-
-		// Schedule the next update
-		nextUpdate += frameDuration;
-		std::this_thread::sleep_until(nextUpdate);
+		m_GameTime.updateAndSleep(m_FrameDurationMicros);
 	}
 }
 
@@ -115,21 +102,14 @@ void Engine::Game::RunVariableFramerate()
 	// Timer for measuring delta times (in microseconds)
 	std::chrono::time_point<std::chrono::high_resolution_clock> previousTime(std::chrono::high_resolution_clock::now());
 
-	// Reset the timing information
-	m_GameTime.deltaTimeMicros = 0;
-	m_GameTime.frameCount = 0;
-	m_GameTime.totalTimeMicros = 0;
-
 	while (m_Running)
 	{
+		// Update and draw the game
 		Update(m_GameTime);
 		Draw(m_GameTime);
 
 		// Update the timing information
-		m_GameTime.deltaTimeMicros = (unsigned int)std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - previousTime).count();
-		m_GameTime.frameCount++;
-		m_GameTime.totalTimeMicros += m_GameTime.deltaTimeMicros;
-		previousTime = std::chrono::high_resolution_clock::now();
+		m_GameTime.update();
 	}
 }
 

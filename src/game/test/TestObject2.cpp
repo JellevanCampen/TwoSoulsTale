@@ -4,7 +4,7 @@
 GameContent::TestObject2::TestObject2(Engine::transform3D transform, Engine::aabb3Df aabb)
 	: GameObject(transform, aabb)
 {
-	velocity(Engine::f2(0.1f, -0.2f));
+	velocity(Engine::f2(4.0f, -8.0f));
 }
 
 // Creates the game object
@@ -26,8 +26,7 @@ void GameContent::TestObject2::Update(const Engine::GameTime& gameTime)
 
 	Engine::GameObjectCollection g;
 	Engine::WorldManager::GetInstance().RetrieveAll(g);
-	Engine::WorldManager::GetInstance().Move2D((*this), Engine::WorldManager::CollisionResponse::STOP, g); 
-	Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::Status, "Velocity: [" + std::to_string(velocity2D().x()) + ", " + std::to_string(velocity2D().y()) + "] ");
+	Engine::WorldManager::GetInstance().Move2D((*this), gameTime.GetDeltaTimeSeconds(), Engine::WorldManager::CollisionResponse::STOP, g); 
 }
 
 // Draws the game object

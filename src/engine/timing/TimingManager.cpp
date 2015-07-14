@@ -22,11 +22,15 @@ void Engine::TimingManager::Update(const GameTime& gameTime)
 	// Cache the game time
 	m_GameTime = gameTime;
 
+	// Queue the frame duration for frame-rate calculation
+	m_FrameDurationsMicros.push_back(gameTime.GetDeltaTimeMicros());
+	if (m_FrameDurationsMicros.size() > s_FramerateWindowSize) { m_FrameDurationsMicros.pop_front(); }
+
 	// Launch alarm events for expired alarms
 	for (auto i_Timestamp = m_AlarmsByTimestamp.begin(); i_Timestamp != m_AlarmsByTimestamp.end();)
 	{
 		// If the current timestamp is not expired, break as all following timestamps won't have expired either (ordered map)
-		if (i_Timestamp->first > m_GameTime.totalTimeMicros) { break; }
+		if (i_Timestamp->first > m_GameTime.GetTotalTimeMicros()) { break; }
 
 		// Trigger alarms that have expired timestamps
 		std::list<Alarm*> alarmsToReschedule;
@@ -58,6 +62,16 @@ const Engine::GameTime& Engine::TimingManager::GetGameTime() const
 	return m_GameTime;
 }
 
+// Gets the current framerate
+float Engine::TimingManager::GetFrameRate() const
+{
+	unsigned long cumulativeFrameDuration = 0;
+	for (unsigned int fd : m_FrameDurationsMicros) { cumulativeFrameDuration += fd; }
+	float temp = (float)m_FrameDurationsMicros.size() / (float)(cumulativeFrameDuration / 1000000.0f);
+
+	return (float)m_FrameDurationsMicros.size() / (float)(cumulativeFrameDuration / 1000000.0f);
+}
+
 ////////////////////////////////////////////////////////////////
 // Timing-based events										  //
 ////////////////////////////////////////////////////////////////
@@ -65,7 +79,7 @@ const Engine::GameTime& Engine::TimingManager::GetGameTime() const
 // Sets an alarm that (periodically) launches timing-based events
 Engine::AlarmID Engine::TimingManager::SetAlarm(TimeDelta timeDelta, unsigned int repetitions)
 {
-	Timestamp timestamp = m_GameTime.totalTimeMicros + timeDelta;
+	Timestamp timestamp = m_GameTime.GetTotalTimeMicros() + timeDelta;
 	Alarm* alarm(new Alarm(s_AlarmIDCounter++, timestamp, timeDelta, repetitions));
 	m_AlarmsByID.insert(std::pair<AlarmID, Alarm*>(alarm->m_AlarmID, alarm));
 	if (m_AlarmsByTimestamp.count(timestamp) == 0)

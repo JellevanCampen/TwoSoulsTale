@@ -314,9 +314,13 @@ namespace Engine{
 		}
 
 		// Moves the game object based on its velocity, resolving collisions on the way
-		inline bool Move2D(GameObject& gameObject, CollisionResponse response, const GameObjectCollection& other, bool updateVelocity = true)
+		template<typename valuetype>
+		inline bool Move2D(GameObject& gameObject, valuetype deltaTimeSeconds, CollisionResponse response, const GameObjectCollection& other, bool updateVelocity = true)
 		{
-			return Move2D(gameObject, gameObject.velocity2D(), response, other, updateVelocity);
+			// Calculate the motion vector from the velocity and delta time
+			vector2D<valuetype> motion = gameObject.velocity2D() * deltaTimeSeconds;
+
+			return Move2D(gameObject, motion, response, other, updateVelocity);
 		}
 
 		////////////////////////////////////////////////////////////////
