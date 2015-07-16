@@ -1,25 +1,26 @@
 #include "SpriteSheetResource.hpp"
 
-#include "..\common\utility\ImageReader.hpp" // For generating OpenGL textures from image files
+#include "..\resources\ResourceManager.hpp" // For reserving the image associated to this sprite sheet
 #include "..\common\utility\XMLFileIO.hpp" // For reading and writing metadata from and to metadata files
 #include "..\common\utility\PathConfig.hpp" // For retrieving the sprite sheet path
 
 // Constructor, stores the filename of the sprite sheet
 Engine::SpriteSheetResource::SpriteSheetResource(std::string filename)
+	: m_Filename(filename)
 {
-	m_Filename = filename;
+	
 }
 
 // Loads the resource
 bool Engine::SpriteSheetResource::Load()
 {
-	// Load the sprite sheet texture
-	InitializeTexture();
+	// Load the image associated to the sprite sheet
+	m_Image = ResourceManager::GetInstance().ReserveImage(m_Filename);
 
-	// Load sprite sheet metadata
+	// Load the sprite sheet metadata
 	std::string spriteSheetPath;
 	Engine::PathConfig::GetPath("spritesheets", spriteSheetPath);
-	std::string filenameMetadata = m_Filename.substr(0, m_Filename.find('.')) + ".meta";
+	std::string filenameMetadata = m_Filename.substr(0, m_Filename.find('.')) + ".spritesheet";
 	ReadMetadataFromFile(spriteSheetPath + filenameMetadata);
 
 	// Initialize OpenGL buffers
@@ -31,31 +32,11 @@ bool Engine::SpriteSheetResource::Load()
 // Unloads the resource
 bool Engine::SpriteSheetResource::Unload()
 {
-	// Unload the sprite sheet texture
-	DestroyTexture();
+	// Unload the image associated to the sprite sheet
+	ResourceManager::GetInstance().FreeImage(m_Image);
 
 	// Destroy OpenGL buffers
 	DestroyBuffers();
-
-	return true;
-}
-
-// Initializes and loads the sprite sheet texture
-bool Engine::SpriteSheetResource::InitializeTexture()
-{
-	// Generate and bind the texture
-	std::string spriteSheetPath;
-	Engine::PathConfig::GetPath("spritesheets", spriteSheetPath);
-	m_Texture = Engine::ImageReader::ReadPNG(spriteSheetPath + m_Filename); // TODO: make generic Read function that finds file format from extension
-
-	return true;
-}
-
-// Destroys the sprite sheet texture
-bool Engine::SpriteSheetResource::DestroyTexture()
-{
-	// Delete the texture
-	glDeleteTextures(1, &m_Texture);
 
 	return true;
 }
@@ -74,10 +55,10 @@ bool Engine::SpriteSheetResource::InitializeBuffers()
 	// Buffer vertex data
 	// -- 6 (x,y) positions representing triangles that form the quad
 	// -- 6 (u,v) UVs representing the sprite's location on the sprite sheet
-	float left = -m_Descriptor.m_SpriteOriginX;
-	float right = -m_Descriptor.m_SpriteOriginX + m_Descriptor.m_SpriteWidth;
-	float bottom = -m_Descriptor.m_SpriteOriginY;
-	float top = -m_Descriptor.m_SpriteOriginY + m_Descriptor.m_SpriteHeight;
+	float left = -m_Metadata.m_SpriteOriginX;
+	float right = -m_Metadata.m_SpriteOriginX + m_Metadata.m_SpriteWidth;
+	float bottom = -m_Metadata.m_SpriteOriginY;
+	float top = -m_Metadata.m_SpriteOriginY + m_Metadata.m_SpriteHeight;
 	GLfloat vertexData[2 * 6][2] = 
 	{
 		{ left, bottom },
@@ -129,22 +110,22 @@ void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
 	// Write sheet layout metadata
 	XMLElement elementSheet = XMLFileIO::AddElement(file, "SpriteSheet");
 	XMLElement elementLayout = XMLFileIO::AddElement(elementSheet, "SheetLayout");
-	XMLFileIO::SetAttributeValue(elementLayout, "SpriteWidth", std::to_string(m_Descriptor.m_SpriteWidth));
-	XMLFileIO::SetAttributeValue(elementLayout, "SpriteHeight", std::to_string(m_Descriptor.m_SpriteHeight));
-	XMLFileIO::SetAttributeValue(elementLayout, "SpriteOriginX", std::to_string(m_Descriptor.m_SpriteOriginX));
-	XMLFileIO::SetAttributeValue(elementLayout, "SpriteOriginY", std::to_string(m_Descriptor.m_SpriteOriginY));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetWidth", std::to_string(m_Descriptor.m_SheetWidth));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetHeight", std::to_string(m_Descriptor.m_SheetHeight));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetRows", std::to_string(m_Descriptor.m_SheetRows));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetColumns", std::to_string(m_Descriptor.m_SheetColumns));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetSeparationX", std::to_string(m_Descriptor.m_SheetSeparationX));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetSeparationY", std::to_string(m_Descriptor.m_SheetSeparationY));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetLeft", std::to_string(m_Descriptor.m_SheetLeft));
-	XMLFileIO::SetAttributeValue(elementLayout, "SheetTop", std::to_string(m_Descriptor.m_SheetTop));
-	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyRed", std::to_string(m_Descriptor.m_ColorTransparancyRed));
-	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyGreen", std::to_string(m_Descriptor.m_ColorTransparancyGreen));
-	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyBlue", std::to_string(m_Descriptor.m_ColorTransparancyBlue));
-	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyAlpha", std::to_string(m_Descriptor.m_ColorTransparancyAlpha));
+	XMLFileIO::SetAttributeValue(elementLayout, "SpriteWidth", std::to_string(m_Metadata.m_SpriteWidth));
+	XMLFileIO::SetAttributeValue(elementLayout, "SpriteHeight", std::to_string(m_Metadata.m_SpriteHeight));
+	XMLFileIO::SetAttributeValue(elementLayout, "SpriteOriginX", std::to_string(m_Metadata.m_SpriteOriginX));
+	XMLFileIO::SetAttributeValue(elementLayout, "SpriteOriginY", std::to_string(m_Metadata.m_SpriteOriginY));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetWidth", std::to_string(m_Metadata.m_SheetWidth));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetHeight", std::to_string(m_Metadata.m_SheetHeight));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetRows", std::to_string(m_Metadata.m_SheetRows));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetColumns", std::to_string(m_Metadata.m_SheetColumns));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetSeparationX", std::to_string(m_Metadata.m_SheetSeparationX));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetSeparationY", std::to_string(m_Metadata.m_SheetSeparationY));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetLeft", std::to_string(m_Metadata.m_SheetLeft));
+	XMLFileIO::SetAttributeValue(elementLayout, "SheetTop", std::to_string(m_Metadata.m_SheetTop));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyRed", std::to_string(m_Metadata.m_ColorTransparancyRed));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyGreen", std::to_string(m_Metadata.m_ColorTransparancyGreen));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyBlue", std::to_string(m_Metadata.m_ColorTransparancyBlue));
+	XMLFileIO::SetAttributeValue(elementLayout, "ColorTransparancyAlpha", std::to_string(m_Metadata.m_ColorTransparancyAlpha));
 
 	// Save the file and close it
 	XMLFileIO::SaveFile(filename, file);
@@ -161,22 +142,22 @@ void Engine::SpriteSheetResource::ReadMetadataFromFile(std::string filename)
 	// Write sheet layout metadata
 	XMLElement elementSheet = XMLFileIO::GetElement(file, "SpriteSheet");
 	XMLElement elementLayout = XMLFileIO::GetElement(elementSheet, "SheetLayout");
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SpriteWidth", m_Descriptor.m_SpriteWidth);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SpriteHeight", m_Descriptor.m_SpriteHeight);
-	XMLFileIO::GetAttributeAsInteger(elementLayout, "SpriteOriginX", m_Descriptor.m_SpriteOriginX);
-	XMLFileIO::GetAttributeAsInteger(elementLayout, "SpriteOriginY", m_Descriptor.m_SpriteOriginY);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetWidth", m_Descriptor.m_SheetWidth);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetHeight", m_Descriptor.m_SheetHeight);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetRows", m_Descriptor.m_SheetRows);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetColumns", m_Descriptor.m_SheetColumns);
-	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetSeparationX", m_Descriptor.m_SheetSeparationX);
-	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetSeparationY", m_Descriptor.m_SheetSeparationY);
-	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetLeft", m_Descriptor.m_SheetLeft);
-	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetTop", m_Descriptor.m_SheetTop);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyRed", m_Descriptor.m_ColorTransparancyRed);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyGreen", m_Descriptor.m_ColorTransparancyGreen);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyBlue", m_Descriptor.m_ColorTransparancyBlue);
-	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyAlpha", m_Descriptor.m_ColorTransparancyAlpha);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SpriteWidth", m_Metadata.m_SpriteWidth);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SpriteHeight", m_Metadata.m_SpriteHeight);
+	XMLFileIO::GetAttributeAsInteger(elementLayout, "SpriteOriginX", m_Metadata.m_SpriteOriginX);
+	XMLFileIO::GetAttributeAsInteger(elementLayout, "SpriteOriginY", m_Metadata.m_SpriteOriginY);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetWidth", m_Metadata.m_SheetWidth);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetHeight", m_Metadata.m_SheetHeight);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetRows", m_Metadata.m_SheetRows);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SheetColumns", m_Metadata.m_SheetColumns);
+	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetSeparationX", m_Metadata.m_SheetSeparationX);
+	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetSeparationY", m_Metadata.m_SheetSeparationY);
+	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetLeft", m_Metadata.m_SheetLeft);
+	XMLFileIO::GetAttributeAsInteger(elementLayout, "SheetTop", m_Metadata.m_SheetTop);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyRed", m_Metadata.m_ColorTransparancyRed);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyGreen", m_Metadata.m_ColorTransparancyGreen);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyBlue", m_Metadata.m_ColorTransparancyBlue);
+	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "ColorTransparancyAlpha", m_Metadata.m_ColorTransparancyAlpha);
 
 	// Close the file
 	XMLFileIO::CloseFile(file);

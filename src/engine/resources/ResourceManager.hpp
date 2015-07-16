@@ -8,10 +8,8 @@
 #include <unordered_map> // For storing resources by ID
 
 // Resources class includes
+#include "../graphics/ImageResource.hpp"
 #include "../graphics/SpriteSheetResource.hpp"
-
-// Typedefs for resources
-typedef std::string SpriteSheet;
 
 namespace Engine{
 
@@ -27,11 +25,29 @@ namespace Engine{
 		// Terminates the resource manager
 		void Terminate();
 
-		/**************************************************************/
-		/* Graphics                                                   */
-		/**************************************************************/
+		////////////////////////////////////////////////////////////////
+		// Graphics                                                   //
+		////////////////////////////////////////////////////////////////
 
-		// Sprite sheet resources //////////////////////////////////////
+		//////////////////////////////////////////////// Image resources
+
+	public:
+
+		// Reserves an image, returning a handle to the resource
+		Image ReserveImage(std::string filename);
+
+		// Frees an image, freeing up memory if no more reservations exist
+		void FreeImage(Image image);
+
+	private:
+
+		// Holds all image resources
+		std::unordered_map<Image, ImageResource*> m_ImageResources;
+
+		// Gets the image resource by its handle
+		ImageResource& GetImageResource(Image image);
+
+		///////////////////////////////////////// Sprite sheet resources
 
 	public:
 
@@ -44,7 +60,7 @@ namespace Engine{
 	private:
 
 		// Holds all sprite sheet resources
-		std::unordered_map<std::string, SpriteSheetResource*> m_SpriteSheetResources;
+		std::unordered_map<SpriteSheet, SpriteSheetResource*> m_SpriteSheetResources;
 
 		// Gets the sprite sheet resource by its handle
 		SpriteSheetResource& GetSpriteSheetResource(SpriteSheet spriteSheet);

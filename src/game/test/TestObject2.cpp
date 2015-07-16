@@ -10,7 +10,7 @@ GameContent::TestObject2::TestObject2(Engine::transform3D transform, Engine::aab
 // Creates the game object
 void GameContent::TestObject2::Create()
 {
-	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/02goomba.png");
+	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("goomba.png");
 }
 
 // Destroys the game object

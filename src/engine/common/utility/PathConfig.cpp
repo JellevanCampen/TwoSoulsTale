@@ -79,6 +79,7 @@ bool Engine::PathConfig::SetDefaultPaths()
 {
 	bool pathsAdded = false;
 
+	pathsAdded |= SetPathIfNotExistsLocally("images", "../resources/images/");
 	pathsAdded |= SetPathIfNotExistsLocally("spritesheets", "../resources/spritesheets/");
 	pathsAdded |= SetPathIfNotExistsLocally("shaders", "../shaders/");
 

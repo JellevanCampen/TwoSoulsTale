@@ -17,9 +17,9 @@ namespace Engine
 		// Unloads the resource
 		virtual bool Unload() = 0;
 
-		/**************************************************************/
-		/* Reference counting                                         */
-		/**************************************************************/
+		////////////////////////////////////////////////////////////////
+		// Reference counting                                         //
+		////////////////////////////////////////////////////////////////
 
 		// Gets the number of reservations of this resource
 		unsigned int GetNumReservations();

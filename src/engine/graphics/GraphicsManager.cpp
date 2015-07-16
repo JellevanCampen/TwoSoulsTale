@@ -409,26 +409,26 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	// Bind the sprite sheet texture
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(m_ShaderSpriteSheet, "spriteSampler"), 0);
-	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
+	glBindTexture(GL_TEXTURE_2D, ResourceManager::GetInstance().GetImageResource(spriteSheetResource.m_Image).GetTexture());
 
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = (float)(spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth));
-	float right = (float)(left + spriteSheetResource.m_Descriptor.m_SpriteWidth);
-	float top = (float)(spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight));
-	float bottom = (float)(top + spriteSheetResource.m_Descriptor.m_SpriteHeight);
-	left /= spriteSheetResource.m_Descriptor.m_SheetWidth;
-	right /= spriteSheetResource.m_Descriptor.m_SheetWidth;
-	top /= spriteSheetResource.m_Descriptor.m_SheetHeight;
-	bottom /= spriteSheetResource.m_Descriptor.m_SheetHeight;
+	float left = (float)(spriteSheetResource.m_Metadata.m_SheetLeft + (frame % spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationX + spriteSheetResource.m_Metadata.m_SpriteWidth));
+	float right = (float)(left + spriteSheetResource.m_Metadata.m_SpriteWidth);
+	float top = (float)(spriteSheetResource.m_Metadata.m_SheetTop + (int)(frame / spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationY + spriteSheetResource.m_Metadata.m_SpriteHeight));
+	float bottom = (float)(top + spriteSheetResource.m_Metadata.m_SpriteHeight);
+	left /= spriteSheetResource.m_Metadata.m_SheetWidth;
+	right /= spriteSheetResource.m_Metadata.m_SheetWidth;
+	top /= spriteSheetResource.m_Metadata.m_SheetHeight;
+	bottom /= spriteSheetResource.m_Metadata.m_SheetHeight;
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
 	// Pass the transparancy color information
 	glUniform4f(m_ShaderSpriteSheet_uTransparancyColor,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyRed / 255.0f,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyGreen / 255.0f,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyBlue / 255.0f,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyAlpha / 255.0f);
+		spriteSheetResource.m_Metadata.m_ColorTransparancyRed / 255.0f,
+		spriteSheetResource.m_Metadata.m_ColorTransparancyGreen / 255.0f,
+		spriteSheetResource.m_Metadata.m_ColorTransparancyBlue / 255.0f,
+		spriteSheetResource.m_Metadata.m_ColorTransparancyAlpha / 255.0f);
 
 	// Pass the transformation matrices
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
@@ -454,26 +454,26 @@ void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet sprite
 	// Bind the sprite sheet texture
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(m_ShaderSpriteSheet, "spriteSampler"), 0);
-	glBindTexture(GL_TEXTURE_2D, spriteSheetResource.m_Texture);
+	glBindTexture(GL_TEXTURE_2D, ResourceManager::GetInstance().GetImageResource(spriteSheetResource.m_Image).GetTexture());
 
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = (float)(spriteSheetResource.m_Descriptor.m_SheetLeft + (frame % spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationX + spriteSheetResource.m_Descriptor.m_SpriteWidth));
-	float right = (float)(left + spriteSheetResource.m_Descriptor.m_SpriteWidth);
-	float top = (float)(spriteSheetResource.m_Descriptor.m_SheetTop + (int)(frame / spriteSheetResource.m_Descriptor.m_SheetColumns) * (spriteSheetResource.m_Descriptor.m_SheetSeparationY + spriteSheetResource.m_Descriptor.m_SpriteHeight));
-	float bottom = (float)(top + spriteSheetResource.m_Descriptor.m_SpriteHeight);
-	left /= spriteSheetResource.m_Descriptor.m_SheetWidth;
-	right /= spriteSheetResource.m_Descriptor.m_SheetWidth;
-	top /= spriteSheetResource.m_Descriptor.m_SheetHeight;
-	bottom /= spriteSheetResource.m_Descriptor.m_SheetHeight;
+	float left = (float)(spriteSheetResource.m_Metadata.m_SheetLeft + (frame % spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationX + spriteSheetResource.m_Metadata.m_SpriteWidth));
+	float right = (float)(left + spriteSheetResource.m_Metadata.m_SpriteWidth);
+	float top = (float)(spriteSheetResource.m_Metadata.m_SheetTop + (int)(frame / spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationY + spriteSheetResource.m_Metadata.m_SpriteHeight));
+	float bottom = (float)(top + spriteSheetResource.m_Metadata.m_SpriteHeight);
+	left /= spriteSheetResource.m_Metadata.m_SheetWidth;
+	right /= spriteSheetResource.m_Metadata.m_SheetWidth;
+	top /= spriteSheetResource.m_Metadata.m_SheetHeight;
+	bottom /= spriteSheetResource.m_Metadata.m_SheetHeight;
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
 	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
 
 	// Pass the transparancy color information
 	glUniform4f(m_ShaderSpriteSheet_uTransparancyColor,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyRed / 255.0f,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyGreen / 255.0f,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyBlue / 255.0f,
-		spriteSheetResource.m_Descriptor.m_ColorTransparancyAlpha / 255.0f);
+		spriteSheetResource.m_Metadata.m_ColorTransparancyRed / 255.0f,
+		spriteSheetResource.m_Metadata.m_ColorTransparancyGreen / 255.0f,
+		spriteSheetResource.m_Metadata.m_ColorTransparancyBlue / 255.0f,
+		spriteSheetResource.m_Metadata.m_ColorTransparancyAlpha / 255.0f);
 
 	// Pass the transformation matrices
 	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));

@@ -14,14 +14,68 @@ void Engine::ResourceManager::Terminate()
 
 }
 
-/**************************************************************/
-/* Graphics                                                   */
-/**************************************************************/
+////////////////////////////////////////////////////////////////
+// Graphics                                                   //
+////////////////////////////////////////////////////////////////
 
-// Sprite sheet resources //////////////////////////////////////
+//////////////////////////////////////////////// Image resources
+
+// Reserves an image, returning a handle to the resource
+Engine::Image Engine::ResourceManager::ReserveImage(std::string filename)
+{
+	if (m_ImageResources.count(filename) == 0)
+	{
+		// Resource is not loaded yet
+		ImageResource* imageResource = new ImageResource(filename);
+		if (!imageResource->Load())
+		{
+			LoggingManager::GetInstance().Log(LoggingManager::LogType::Error, "Failed to load image resource <" + filename + ">");
+		}
+		imageResource->AddReservation();
+		m_ImageResources.insert(std::pair<Image, ImageResource*>(filename, imageResource));
+	}
+	else
+	{
+		// Resource is already loaded
+		m_ImageResources.at(filename)->AddReservation();
+	}
+
+	return filename;
+}
+
+// Frees an image, freeing up memory if no more reservations exist
+void Engine::ResourceManager::FreeImage(Image image)
+{
+	if (m_ImageResources.count(image) != 0)
+	{
+		ImageResource* imageResource = m_ImageResources.at(image);
+		imageResource->RemoveReservation();
+		if (imageResource->GetNumReservations() <= 0)
+		{
+			if (!imageResource->Unload())
+			{
+				LoggingManager::GetInstance().Log(LoggingManager::LogType::Error, "Failed to unload image resource <" + image + ">");
+			}
+			delete imageResource;
+			m_ImageResources.erase(image);
+		}
+	}
+	else
+	{
+		LoggingManager::GetInstance().Log(LoggingManager::LogType::Warning, "Tried to free image resource <" + image + ">, while the resource is not loaded anymore");
+	}
+}
+
+// Gets the image resource by its handle
+Engine::ImageResource& Engine::ResourceManager::GetImageResource(Image image)
+{
+	return (*m_ImageResources[image]);
+}
+
+///////////////////////////////////////// Sprite sheet resources
 
 // Reserves a sprite sheet, returning a handle to the resource
-SpriteSheet Engine::ResourceManager::ReserveSpriteSheet(std::string filename)
+Engine::SpriteSheet Engine::ResourceManager::ReserveSpriteSheet(std::string filename)
 {
 	if (m_SpriteSheetResources.count(filename) == 0)
 	{
@@ -69,5 +123,5 @@ void Engine::ResourceManager::FreeSpriteSheet(SpriteSheet spriteSheet)
 // Gets the sprite sheet resource by its handle
 Engine::SpriteSheetResource& Engine::ResourceManager::GetSpriteSheetResource(SpriteSheet spriteSheet)
 {
-	return (*m_SpriteSheetResources.at(spriteSheet));
+	return (*m_SpriteSheetResources[spriteSheet]);
 }

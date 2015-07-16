@@ -33,8 +33,8 @@ void GameContent::TestObject::Create()
 	Engine::InputManager::GetInstance().RegisterGamepadButtonListener(this);
 
 	// Reserve a sprite sheet
-	m_SpriteSheetSpiny = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/9CEvO.png");
-	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("02 - Super Mario Bros/02goomba.png");
+	m_SpriteSheetSpiny = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("spiny.png");
+	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("goomba.png");
 
 	// TESTING
 	// Generate a physics world
@@ -126,14 +126,14 @@ void GameContent::TestObject::Create()
 	distanceJointDef.dampingRatio = 1.0f;
 	b2DistanceJoint* distanceJoint = (b2DistanceJoint*)world.CreateJoint(&distanceJointDef);
 	
-	m_AlarmSlow = Engine::TimingManager::GetInstance().SetAlarm(500000, 20);
+	/*m_AlarmSlow = Engine::TimingManager::GetInstance().SetAlarm(500000, 20);
 	m_AlarmFast = Engine::TimingManager::GetInstance().SetAlarm(5000, 20);
 	m_AlarmOnce = Engine::TimingManager::GetInstance().SetAlarm(1234000);
 	m_AlarmInfinite = Engine::TimingManager::GetInstance().SetAlarm(500000, (unsigned int)(-1));
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmSlow, this);
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmFast, this);
 	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmOnce, this);
-	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmInfinite, this);
+	Engine::TimingManager::GetInstance().RegisterAlarmListener(m_AlarmInfinite, this);*/
 
 	m_Circle = Engine::circlef(64.0, 96.0, 24.0);
 	m_Ray = Engine::ray2Df(0.0, 480.0, 0.0, 480.0);

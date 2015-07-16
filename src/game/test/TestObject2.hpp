@@ -45,7 +45,7 @@ namespace GameContent{
 	private:
 
 		// Spritesheet
-		SpriteSheet m_SpriteSheetGoomba;
+		Engine::SpriteSheet m_SpriteSheetGoomba;
 
 	};
 }

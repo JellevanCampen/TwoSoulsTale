@@ -136,6 +136,8 @@ source_group(Engine\\Audio FILES ${SRC_ENGINE_AUDIO})
 set(SRC_ENGINE_GRAPHICS 
 	"src/engine/graphics/GraphicsManager.hpp"
 	"src/engine/graphics/GraphicsManager.cpp"
+	"src/engine/graphics/ImageResource.hpp"
+	"src/engine/graphics/ImageResource.cpp"
 	"src/engine/graphics/SpriteSheetResource.hpp"
 	"src/engine/graphics/SpriteSheetResource.cpp"
 	
@@ -184,8 +186,6 @@ source_group(Engine\\World FILES ${SRC_ENGINE_WORLD})
 
 # Common Components
 set(SRC_ENGINE_COMMON_UTILITY 
-	"src/engine/common/utility/ImageReader.hpp"
-	"src/engine/common/utility/ImageReader.cpp"
 	# "src/engine/common/utility/BinaryFileIO.hpp"
 	# "src/engine/common/utility/BinaryFileIO.cpp"
 	"src/engine/common/utility/XMLFileIO.hpp"
