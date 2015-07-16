@@ -7,6 +7,8 @@
 #include "VectorTypes.hpp" // For representing vectors
 #include "MatrixTypes.hpp" // For representing the transformation matrix
 
+#include "Box2D.h" // For constructing transforms from Box2D transforms
+
 namespace Engine
 {
 	////////////////////////////////////////////////////////////////
@@ -76,6 +78,7 @@ namespace Engine
 		transform2D(f2 t = f2(0.0f, 0.0f), float r = 0.0f, f2 s = f2(1.0f, 1.0f)) : m_T(t), m_R(r), m_S(s), m_Dirty(true) { }
 		transform2D(float tX, float tY, float r = 0.0f, float sX = 1.0f, float sY = 1.0f) : m_T(tX, tY), m_R(r), m_S(sX, sY), m_Dirty(true) { }
 		transform2D(const transform1D& t1D) : m_T(f2(t1D.t(), 0.0f)), m_R(0.0f), m_S(f2(t1D.s(), 1.0f)), m_Dirty(true) { }
+		transform2D(const b2Transform& tf) : m_T(f2(tf.p.x, tf.p.y)), m_R(tf.q.GetAngle()), m_S(f2(1.0f, 1.0f)) { }
 
 		// Casts
 		inline operator transform1D() const { transform1D t1D; t1D.t(m_T.x()); t1D.s(m_S.x()); return t1D; }

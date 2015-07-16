@@ -81,11 +81,23 @@ namespace Engine
 		// Destroys associated OpenGL attributes and buffers
 		bool DestroyBuffers();
 
-	public:
+	private:
 
 		////////////////////////////////////////////////////////////////
 		// Metadata manipulation									  //
 		////////////////////////////////////////////////////////////////
+
+		// Calculates the bottom-left and top-right positions of the sprite in local coordinates to the sprite origin
+		inline void CalculatePositions(f2& out_P1, f2& out_P2) const 
+		{
+			out_P1.x(- m_Metadata.m_SpriteOriginX);
+			out_P1.y(-m_Metadata.m_SpriteOriginY);
+			out_P2.x(m_Metadata.m_SpriteWidth - m_Metadata.m_SpriteOriginX);
+			out_P2.y(m_Metadata.m_SpriteHeight - m_Metadata.m_SpriteOriginY);
+		}
+
+		// Calculates the bottom-left and top-right UVs based on the frame number
+		void CalculateUVs(unsigned int frame, f2& out_UV1, f2& out_UV2) const;
 
 		// Writes the sprite sheet metadata to a file
 		void WriteMetadataToFile(std::string filename);

@@ -32,6 +32,6 @@ void GameContent::TestObject2::Update(const Engine::GameTime& gameTime)
 // Draws the game object
 void GameContent::TestObject2::Draw(const Engine::GameTime& gameTime)
 {
-	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0, tf());
+	Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheetGoomba, 0, tf());
 	Engine::GraphicsManager::GetInstance().DrawRectangle(aabb2D_world());
 }

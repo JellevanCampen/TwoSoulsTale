@@ -100,6 +100,26 @@ bool Engine::SpriteSheetResource::DestroyBuffers()
 	return true;
 }
 
+////////////////////////////////////////////////////////////////
+// Metadata manipulation									  //
+////////////////////////////////////////////////////////////////
+
+// Calculates the bottom-left and top-right UVs based on the frame number
+void Engine::SpriteSheetResource::CalculateUVs(unsigned int frame, f2& out_UV1, f2& out_UV2) const
+{	
+	// Calculate the coordinates in pixel space (y-axis pointing down, values in range [0, width] x [0, height])
+	out_UV1.x((float)(m_Metadata.m_SheetLeft + (frame % m_Metadata.m_SheetColumns) * (m_Metadata.m_SheetSeparationX + m_Metadata.m_SpriteWidth)));
+	out_UV2.x((float)(out_UV1.x() + m_Metadata.m_SpriteWidth));
+	out_UV1.y((float)(m_Metadata.m_SheetTop + (int)(frame / m_Metadata.m_SheetColumns) * (m_Metadata.m_SheetSeparationY + m_Metadata.m_SpriteHeight)));
+	out_UV2.y((float)(out_UV1.y() + m_Metadata.m_SpriteHeight));
+
+	// Convert the coordinates to UV-space (y-axis pointing up, values in range [0, 1] x [0, 1])
+	out_UV1.x() /= m_Metadata.m_SheetWidth;
+	out_UV2.x() /= m_Metadata.m_SheetWidth;
+	out_UV1.y(1.0f - (out_UV1.y() / m_Metadata.m_SheetHeight));
+	out_UV2.y(1.0f - (out_UV2.y() / m_Metadata.m_SheetHeight));
+}
+
 // Writes the sprite sheet metadata to a file
 void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
 {

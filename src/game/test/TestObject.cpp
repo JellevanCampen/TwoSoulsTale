@@ -190,10 +190,15 @@ void GameContent::TestObject::Draw(const Engine::GameTime& gameTime)
 {
 	Engine::GraphicsManager& g(Engine::GraphicsManager::GetInstance());
 
+	Engine::transform2D tfBody = Engine::transform2D(body->GetTransform());
+	Engine::transform2D tfBodyDistance = Engine::transform2D(bodyDistance->GetTransform());
+	tfBody.t() *= scale;
+	tfBodyDistance.t() *= scale;
+
 	// Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::LogType::Status, "Drawing TestObject.");
 	// Engine::GraphicsManager::GetInstance().DrawSpriteSheetFrame(m_SpriteSheet, 6 + (gameTime.totalTimeMicros / 100000) % 5, m_PosX, m_PosY, 0);
-	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetSpiny, 6 + (unsigned int)(gameTime.GetTotalTimeSeconds() * 10.0) % 5, body->GetPosition().x * scale, body->GetPosition().y * scale, 0, body->GetAngle(), 1.0f, 1.0f);
-	g.DrawSpriteSheetFrameTransformed(m_SpriteSheetGoomba, 0 + (unsigned int)(gameTime.GetTotalTimeSeconds() * 10.0) % 4, bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale, 0, bodyDistance->GetAngle(), 1.0f, 1.0f);
+	g.DrawSpriteSheetFrame(m_SpriteSheetSpiny, 6 + (unsigned int)(gameTime.GetTotalTimeSeconds() * 10.0) % 5, tfBody);
+	g.DrawSpriteSheetFrame(m_SpriteSheetGoomba, 0 + (unsigned int)(gameTime.GetTotalTimeSeconds() * 10.0) % 4, tfBodyDistance);
 	g.DrawLine(Engine::ray2Df(Engine::f2(128.0f, 240.0f), Engine::f2(bodyDistance->GetPosition().x * scale, bodyDistance->GetPosition().y * scale)));
 
 	// Collision testing rendering

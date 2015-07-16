@@ -124,16 +124,6 @@ void Engine::GraphicsManager::GLFWErrorCallback(int error, const char* descripti
 // Initializes standard shader programs
 void Engine::GraphicsManager::InitializeShaderPrograms()
 {
-	//////////////////////////////////////////// Sprite Sheet Shader
-
-	m_ShaderSpriteSheet = LoadShaderProgram("spritesheet", "spritesheet");
-	m_ShaderSpriteSheet_uTransparancyColor = glGetUniformLocation(m_ShaderSpriteSheet, "uTransparancyColor");
-	m_ShaderSpriteSheet_uSpriteUV1 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV1");
-	m_ShaderSpriteSheet_uSpriteUV2 = glGetUniformLocation(m_ShaderSpriteSheet, "spriteUV2");
-	m_ShaderSpriteSheet_uMatModel = glGetUniformLocation(m_ShaderSpriteSheet, "matModel");
-	m_ShaderSpriteSheet_uMatView = glGetUniformLocation(m_ShaderSpriteSheet, "matView");
-	m_ShaderSpriteSheet_uMatProjection = glGetUniformLocation(m_ShaderSpriteSheet, "matProjection");
-
 	//////////////////////////////////////////////////// Line Shader
 
 	m_ShaderLine = LoadShaderProgram("line", "flatColor");
@@ -160,15 +150,27 @@ void Engine::GraphicsManager::InitializeShaderPrograms()
 	m_ShaderCircle_uRadius = glGetUniformLocation(m_ShaderCircle, "uRadius");
 	m_ShaderCircle_uMatView = glGetUniformLocation(m_ShaderCircle, "matView");
 	m_ShaderCircle_uMatProjection = glGetUniformLocation(m_ShaderCircle, "matProjection");
+
+	//////////////////////////////////////////// Sprite Sheet Shader
+
+	m_ShaderSpriteSheet = LoadShaderProgram("spritesheet", "spritesheet");
+	m_ShaderSpriteSheet_uTransparancyColor = glGetUniformLocation(m_ShaderSpriteSheet, "uTransparancyColor");
+	m_ShaderSpriteSheet_uPosBottomLeft = glGetUniformLocation(m_ShaderSpriteSheet, "uPosBottomLeft");
+	m_ShaderSpriteSheet_uPosTopRight = glGetUniformLocation(m_ShaderSpriteSheet, "uPosTopRight");
+	m_ShaderSpriteSheet_uUVBottomLeft = glGetUniformLocation(m_ShaderSpriteSheet, "uUVBottomLeft");
+	m_ShaderSpriteSheet_uUVTopRight = glGetUniformLocation(m_ShaderSpriteSheet, "uUVTopRight");
+	m_ShaderSpriteSheet_uMatModel = glGetUniformLocation(m_ShaderSpriteSheet, "matModel");
+	m_ShaderSpriteSheet_uMatView = glGetUniformLocation(m_ShaderSpriteSheet, "matView");
+	m_ShaderSpriteSheet_uMatProjection = glGetUniformLocation(m_ShaderSpriteSheet, "matProjection");
 }
 
 // Destroys standard shader programs
 void Engine::GraphicsManager::TerminateShaderPrograms()
 {
-	glDeleteProgram(m_ShaderSpriteSheet);
 	glDeleteProgram(m_ShaderLine);
 	glDeleteProgram(m_ShaderRectangle);
 	glDeleteProgram(m_ShaderCircle);
+	glDeleteProgram(m_ShaderSpriteSheet);
 }
 
 // Initializes standard buffers
@@ -226,6 +228,40 @@ void Engine::GraphicsManager::InitializeBuffers()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
 
+	//////////////////////////////////////////// Sprite sheet shader
+
+	glGenVertexArrays(1, &m_ShaderSpriteSheet_VAO);
+	glBindVertexArray(m_ShaderSpriteSheet_VAO);
+
+	// Generate and bind the vertex buffer
+	glGenBuffers(1, &m_ShaderSpriteSheet_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderSpriteSheet_VBO);
+
+	// Buffer vertex data (positions and UVs)
+	GLfloat vertexDataSpriteSheet[2 * 6 + 2 * 6] =
+	{
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f
+	};
+	glBufferData(GL_ARRAY_BUFFER, ((2 * 6) + (2 * 6)) * sizeof(GLfloat), &vertexDataSpriteSheet[0], GL_STATIC_DRAW);
+
+	// Specify the vertex attributes (position and UVs)
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(2 * 6 * sizeof(GLfloat))); // UVs
+
 	////////////////////////////////////////////////////////////////
 
 	// Unbind buffers
@@ -244,6 +280,9 @@ void Engine::GraphicsManager::TerminateBuffers()
 
 	glDeleteBuffers(1, &m_ShaderCircle_VBO);
 	glDeleteVertexArrays(1, &m_ShaderCircle_VAO);
+
+	glDeleteBuffers(1, &m_ShaderSpriteSheet_VBO);
+	glDeleteVertexArrays(1, &m_ShaderSpriteSheet_VAO);
 }
 
 // Loads and compiles a shader program
@@ -398,7 +437,7 @@ const Engine::mat4f& Engine::GraphicsManager::GetCameraProjectionMatrix()
 ////////////////////////////////////////////////////////////////
 
 // Draws a frame of the specified sprite sheet
-void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z)
+void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, f3 translation, float rotation, f2 scale)
 {
 	// Retrieve the sprite sheet resource from the ResourceManager
 	SpriteSheetResource& spriteSheetResource = ResourceManager::GetInstance().GetSpriteSheetResource(spriteSheet);
@@ -411,17 +450,17 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 	glUniform1i(glGetUniformLocation(m_ShaderSpriteSheet, "spriteSampler"), 0);
 	glBindTexture(GL_TEXTURE_2D, ResourceManager::GetInstance().GetImageResource(spriteSheetResource.m_Image).GetTexture());
 
+	// Calculate and pass the local coordinates of the sprite
+	f2 posBottomLeft, posTopRight;
+	spriteSheetResource.CalculatePositions(posBottomLeft, posTopRight);
+	glUniform2f(m_ShaderSpriteSheet_uPosBottomLeft, posBottomLeft.x(), posBottomLeft.y());
+	glUniform2f(m_ShaderSpriteSheet_uPosTopRight, posTopRight.x(), posTopRight.y());
+
 	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = (float)(spriteSheetResource.m_Metadata.m_SheetLeft + (frame % spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationX + spriteSheetResource.m_Metadata.m_SpriteWidth));
-	float right = (float)(left + spriteSheetResource.m_Metadata.m_SpriteWidth);
-	float top = (float)(spriteSheetResource.m_Metadata.m_SheetTop + (int)(frame / spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationY + spriteSheetResource.m_Metadata.m_SpriteHeight));
-	float bottom = (float)(top + spriteSheetResource.m_Metadata.m_SpriteHeight);
-	left /= spriteSheetResource.m_Metadata.m_SheetWidth;
-	right /= spriteSheetResource.m_Metadata.m_SheetWidth;
-	top /= spriteSheetResource.m_Metadata.m_SheetHeight;
-	bottom /= spriteSheetResource.m_Metadata.m_SheetHeight;
-	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
-	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
+	f2 uvBottomLeft, uvTopRight;
+	spriteSheetResource.CalculateUVs(frame, uvBottomLeft, uvTopRight);
+	glUniform2f(m_ShaderSpriteSheet_uUVBottomLeft, uvBottomLeft.x(), uvBottomLeft.y());
+	glUniform2f(m_ShaderSpriteSheet_uUVTopRight, uvTopRight.x(), uvTopRight.y());
 
 	// Pass the transparancy color information
 	glUniform4f(m_ShaderSpriteSheet_uTransparancyColor,
@@ -431,60 +470,16 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 		spriteSheetResource.m_Metadata.m_ColorTransparancyAlpha / 255.0f);
 
 	// Pass the transformation matrices
-	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
+	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), (glm::vec3)translation);
+	if (rotation != 0.0f) { matModel = glm::rotate(matModel, (float)rotation, glm::vec3(0.0f, 0.0f, 1.0f)); }
+	if (scale != f2(1.0f, 1.0f)) { matModel = glm::scale(matModel, glm::vec3(scale.x(), scale.y(), 1.0f)); }
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
 	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
 
 	// Draw the sprite sheet frame
-	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
-}
-
-// Draws a frame of the specified sprite sheet using the specified transformation
-void Engine::GraphicsManager::DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z, double rotation, double scaleX, double scaleY)
-{
-	// Retrieve the sprite sheet resource from the ResourceManager
-	SpriteSheetResource& spriteSheetResource = ResourceManager::GetInstance().GetSpriteSheetResource(spriteSheet);
-
-	// Use the sprite sheet shader program
-	glUseProgram(m_ShaderSpriteSheet);
-
-	// Bind the sprite sheet texture
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(m_ShaderSpriteSheet, "spriteSampler"), 0);
-	glBindTexture(GL_TEXTURE_2D, ResourceManager::GetInstance().GetImageResource(spriteSheetResource.m_Image).GetTexture());
-
-	// Calculate and pass the UVs of the sprite within the sprite sheet
-	float left = (float)(spriteSheetResource.m_Metadata.m_SheetLeft + (frame % spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationX + spriteSheetResource.m_Metadata.m_SpriteWidth));
-	float right = (float)(left + spriteSheetResource.m_Metadata.m_SpriteWidth);
-	float top = (float)(spriteSheetResource.m_Metadata.m_SheetTop + (int)(frame / spriteSheetResource.m_Metadata.m_SheetColumns) * (spriteSheetResource.m_Metadata.m_SheetSeparationY + spriteSheetResource.m_Metadata.m_SpriteHeight));
-	float bottom = (float)(top + spriteSheetResource.m_Metadata.m_SpriteHeight);
-	left /= spriteSheetResource.m_Metadata.m_SheetWidth;
-	right /= spriteSheetResource.m_Metadata.m_SheetWidth;
-	top /= spriteSheetResource.m_Metadata.m_SheetHeight;
-	bottom /= spriteSheetResource.m_Metadata.m_SheetHeight;
-	glUniform2f(m_ShaderSpriteSheet_uSpriteUV1, left, top);
-	glUniform2f(m_ShaderSpriteSheet_uSpriteUV2, right, bottom);
-
-	// Pass the transparancy color information
-	glUniform4f(m_ShaderSpriteSheet_uTransparancyColor,
-		spriteSheetResource.m_Metadata.m_ColorTransparancyRed / 255.0f,
-		spriteSheetResource.m_Metadata.m_ColorTransparancyGreen / 255.0f,
-		spriteSheetResource.m_Metadata.m_ColorTransparancyBlue / 255.0f,
-		spriteSheetResource.m_Metadata.m_ColorTransparancyAlpha / 255.0f);
-
-	// Pass the transformation matrices
-	glm::mat4x4 matModel = glm::translate(glm::mat4x4(), glm::vec3(x, y, z));
-	matModel = glm::rotate(matModel, (float)rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-	matModel = glm::scale(matModel, glm::vec3(scaleX, scaleY, 1.0f));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatModel, 1, GL_FALSE, glm::value_ptr(matModel));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
-	glUniformMatrix4fv(m_ShaderSpriteSheet_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
-
-	// Draw the sprite sheet frame
-	glBindVertexArray(spriteSheetResource.m_VertexAttributes);
+	// glBindVertexArray(spriteSheetResource.m_VertexAttributes);
+	glBindVertexArray(m_ShaderSpriteSheet_VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindVertexArray(0);
 }

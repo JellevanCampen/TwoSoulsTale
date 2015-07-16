@@ -43,42 +43,6 @@ namespace Engine{
 		// Settings for primitives
 		static const size_t s_NumCircleSegments = 32;
 
-		// Shaders
-		GLuint m_ShaderSpriteSheet;
-		GLuint m_ShaderSpriteSheet_uTransparancyColor;
-		GLuint m_ShaderSpriteSheet_uSpriteUV1;
-		GLuint m_ShaderSpriteSheet_uSpriteUV2;
-		GLuint m_ShaderSpriteSheet_uMatModel;
-		GLuint m_ShaderSpriteSheet_uMatView;
-		GLuint m_ShaderSpriteSheet_uMatProjection;
-
-		GLuint m_ShaderLine;
-		GLuint m_ShaderLine_uColor;
-		GLuint m_ShaderLine_uStart;
-		GLuint m_ShaderLine_uEnd;
-		GLuint m_ShaderLine_uMatView;
-		GLuint m_ShaderLine_uMatProjection;
-		GLuint m_ShaderLine_VAO;
-		GLuint m_ShaderLine_VBO;
-
-		GLuint m_ShaderRectangle;
-		GLuint m_ShaderRectangle_uColor;
-		GLuint m_ShaderRectangle_uBottomLeft;
-		GLuint m_ShaderRectangle_uTopRight;
-		GLuint m_ShaderRectangle_uMatView;
-		GLuint m_ShaderRectangle_uMatProjection;
-		GLuint m_ShaderRectangle_VAO;
-		GLuint m_ShaderRectangle_VBO;
-
-		GLuint m_ShaderCircle;
-		GLuint m_ShaderCircle_uColor;
-		GLuint m_ShaderCircle_uPosition;
-		GLuint m_ShaderCircle_uRadius;
-		GLuint m_ShaderCircle_uMatView;
-		GLuint m_ShaderCircle_uMatProjection;
-		GLuint m_ShaderCircle_VAO;
-		GLuint m_ShaderCircle_VBO;
-
 		// Initializes GLFW
 		bool InitializeGLFW();
 
@@ -114,6 +78,53 @@ namespace Engine{
 
 		// Path to the shaders
 		std::string m_ShaderPath;
+
+		////////////////////////////////////////////////////////////////
+		// Shaders, uniform locations and buffers					  //
+		////////////////////////////////////////////////////////////////
+
+		//////////////////////////////////////////////////// Line Shader
+		GLuint m_ShaderLine;
+		GLuint m_ShaderLine_uColor;
+		GLuint m_ShaderLine_uStart;
+		GLuint m_ShaderLine_uEnd;
+		GLuint m_ShaderLine_uMatView;
+		GLuint m_ShaderLine_uMatProjection;
+		GLuint m_ShaderLine_VAO;
+		GLuint m_ShaderLine_VBO;
+
+		/////////////////////////////////////////////// Rectangle Shader
+		GLuint m_ShaderRectangle;
+		GLuint m_ShaderRectangle_uColor;
+		GLuint m_ShaderRectangle_uBottomLeft;
+		GLuint m_ShaderRectangle_uTopRight;
+		GLuint m_ShaderRectangle_uMatView;
+		GLuint m_ShaderRectangle_uMatProjection;
+		GLuint m_ShaderRectangle_VAO;
+		GLuint m_ShaderRectangle_VBO;
+
+		////////////////////////////////////////////////// Circle Shader
+		GLuint m_ShaderCircle;
+		GLuint m_ShaderCircle_uColor;
+		GLuint m_ShaderCircle_uPosition;
+		GLuint m_ShaderCircle_uRadius;
+		GLuint m_ShaderCircle_uMatView;
+		GLuint m_ShaderCircle_uMatProjection;
+		GLuint m_ShaderCircle_VAO;
+		GLuint m_ShaderCircle_VBO;
+
+		//////////////////////////////////////////// Sprite Sheet Shader
+		GLuint m_ShaderSpriteSheet;
+		GLuint m_ShaderSpriteSheet_uTransparancyColor;
+		GLuint m_ShaderSpriteSheet_uPosBottomLeft;
+		GLuint m_ShaderSpriteSheet_uPosTopRight;
+		GLuint m_ShaderSpriteSheet_uUVBottomLeft;
+		GLuint m_ShaderSpriteSheet_uUVTopRight;
+		GLuint m_ShaderSpriteSheet_uMatModel;
+		GLuint m_ShaderSpriteSheet_uMatView;
+		GLuint m_ShaderSpriteSheet_uMatProjection;
+		GLuint m_ShaderSpriteSheet_VAO;
+		GLuint m_ShaderSpriteSheet_VBO;
 
 		////////////////////////////////////////////////////////////////
 		// Camera													  //
@@ -166,7 +177,7 @@ namespace Engine{
 	public:
 
 		////////////////////////////////////////////////////////////////
-		// Primitives                                                 //
+		// Primitive drawing                                          //
 		////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////// Lines
@@ -271,25 +282,16 @@ namespace Engine{
 		inline void DrawCircle(valuetype x, valuetype y, valuetype r, colorRGBA color = colorRGBA()) { DrawCircle(circle<valuetype>(x, y, r), color); }
 
 		////////////////////////////////////////////////////////////////
-		// Sprite sheets                                              //
+		// Sprite sheet drawing                                       //
 		////////////////////////////////////////////////////////////////
 
 		// Draws a frame of the specified sprite sheet
-		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z);
+		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, f3 translation, float rotation = 0.0f, f2 scale = f2(1.0f, 1.0f));
 
-		// Draws a frame of the specified sprite sheet using the specified transformation
-		void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, double x, double y, double z, double rotation, double scaleX, double scaleY);
-
-		// Draws a frame of the specified sprite sheet using the specified transformation (transform 2D)
-		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z = 0.0f)
+		// Draws a frame of the specified sprite sheet
+		inline void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z = 0.0f)
 		{
-			DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), z, transform.r(), transform.s().x(), transform.s().y());
-		}
-
-		// Draws a frame of the specified sprite sheet using the specified transformation (transform 3D)
-		inline void DrawSpriteSheetFrameTransformed(SpriteSheet spriteSheet, unsigned int frame, transform3D transform)
-		{
-			DrawSpriteSheetFrameTransformed(spriteSheet, frame, transform.t().x(), transform.t().y(), transform.t().z(), transform.r().z(), transform.s().x(), transform.s().y());
+			DrawSpriteSheetFrame(spriteSheet, frame, f3(transform.t().xy(), z), transform.r(), transform.s());
 		}
 
 		friend class InputManager;
