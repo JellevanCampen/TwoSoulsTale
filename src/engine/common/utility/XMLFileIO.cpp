@@ -42,6 +42,19 @@ Engine::XMLElement Engine::XMLFileIO::GetElement(XMLElement element, std::string
 	return element->FirstChildElement(childElement.c_str());
 }
 
+// Gets all child elements of the specified type of the specified element
+size_t Engine::XMLFileIO::GetElements(XMLElement element, std::string childElement, std::vector<XMLElement>& out_Elements)
+{
+	size_t count = 0;	
+	for (auto e = element->FirstChildElement(childElement.c_str()); e; e = e->NextSiblingElement())
+	{
+		out_Elements.push_back(e);
+		count++;
+	}
+
+	return count;
+}
+
 ////////////////////////////////////////////////////////////////
 // XML file reading											  //
 ////////////////////////////////////////////////////////////////

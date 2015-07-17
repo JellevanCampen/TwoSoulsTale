@@ -140,6 +140,8 @@ set(SRC_ENGINE_GRAPHICS
 	"src/engine/graphics/ImageResource.cpp"
 	"src/engine/graphics/SpriteSheetResource.hpp"
 	"src/engine/graphics/SpriteSheetResource.cpp"
+	"src/engine/graphics/BitmapFontResource.hpp"
+	"src/engine/graphics/BitmapFontResource.cpp"
 	
 )
 source_group(Engine\\Graphics FILES ${SRC_ENGINE_GRAPHICS})

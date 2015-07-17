@@ -1,8 +1,8 @@
 #include "SpriteSheetResource.hpp"
 
 #include "..\resources\ResourceManager.hpp" // For reserving the image associated to this sprite sheet
-#include "..\common\utility\XMLFileIO.hpp" // For reading and writing metadata from and to metadata files
-#include "..\common\utility\PathConfig.hpp" // For retrieving the sprite sheet path
+#include "..\common\utility\XMLFileIO.hpp" // For reading and writing metadata from and to spritesheet files
+#include "..\common\utility\PathConfig.hpp" // For retrieving the spritesheets path
 
 // Constructor, stores the filename of the sprite sheet
 Engine::SpriteSheetResource::SpriteSheetResource(std::string filename)

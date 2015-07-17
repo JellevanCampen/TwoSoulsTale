@@ -5,6 +5,7 @@
 #include "tinyxml2\tinyxml2.h" // For reading and writing XML files
 
 #include <string> // For representing file names
+#include <vector> // For representing a group of elements
 
 namespace Engine{
 
@@ -38,6 +39,9 @@ namespace Engine{
 
 		// Gets a child element of the specified element
 		static XMLElement GetElement(XMLElement element, std::string childElement);
+
+		// Gets all child elements of the specified type of the specified element
+		static size_t GetElements(XMLElement element, std::string childElement, std::vector<XMLElement>& out_Elements);
 
 		////////////////////////////////////////////////////////////////
 		// XML file reading											  //

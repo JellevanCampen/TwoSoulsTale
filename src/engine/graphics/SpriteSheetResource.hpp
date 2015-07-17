@@ -5,9 +5,6 @@
 #include "../resources/Resource.hpp" // Interface for resources (implements reference counting)
 #include "../graphics/ImageResource.hpp" // For storing the image associated to the sprite sheet
 
-#include "glew\glew.h" // For representing OpenGL buffers
-#include "glfw\glfw3.h" // For representing OpenGL buffers
-
 #include <string> // For representing a sprite sheet filename
 
 namespace Engine
@@ -41,7 +38,7 @@ namespace Engine
 		// Filename of the sprite sheet resource
 		std::string m_Filename;
 
-		// Image associated to the sprite sheet
+		// Image associated with the sprite sheet
 		Image m_Image;
 
 		// Struct describing the metadata of the sprite sheet

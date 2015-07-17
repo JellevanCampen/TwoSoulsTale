@@ -47,6 +47,9 @@ namespace GameContent{
 		// Spritesheet
 		Engine::SpriteSheet m_SpriteSheetGoomba;
 
+		// Bitmapfont
+		Engine::BitmapFont m_Font;
+
 	};
 }
 

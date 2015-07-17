@@ -11,6 +11,7 @@ GameContent::TestObject2::TestObject2(Engine::transform3D transform, Engine::aab
 void GameContent::TestObject2::Create()
 {
 	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("goomba.png");
+	m_Font = Engine::ResourceManager::GetInstance().ReserveBitmapFont("nesfont.bitmapfont");
 }
 
 // Destroys the game object

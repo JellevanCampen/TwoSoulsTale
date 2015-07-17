@@ -10,10 +10,9 @@
 // Resources class includes
 #include "../graphics/ImageResource.hpp"
 #include "../graphics/SpriteSheetResource.hpp"
+#include "../graphics/BitmapFontResource.hpp"
 
 namespace Engine{
-
-	class GraphicsManager;
 
 	class ResourceManager : public Singleton<ResourceManager>{
 
@@ -65,9 +64,23 @@ namespace Engine{
 		// Holds all sprite sheet resources
 		std::unordered_map<SpriteSheet, SpriteSheetResource*> m_SpriteSheetResources;
 
+		////////////////////////////////////////// Bitmap font resources
+
 	public:
 
-		friend class GraphicsManager;
+		// Reserves a bitmap font, returning a handle to the resource
+		BitmapFont ReserveBitmapFont(std::string filename);
+
+		// Frees a bitmap font, freeing up memory if no more reservations exist
+		void FreeBitmapFont(BitmapFont bitmapFont);
+
+		// Gets the bitmap font resource by its handle
+		BitmapFontResource& GetBitmapFontResource(BitmapFont bitmapFont);
+
+	private:
+
+		// Holds all bitmap font resources
+		std::unordered_map<BitmapFont, BitmapFontResource*> m_BitmapFontResources;
 
 	};
 }

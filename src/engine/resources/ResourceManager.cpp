@@ -125,3 +125,57 @@ Engine::SpriteSheetResource& Engine::ResourceManager::GetSpriteSheetResource(Spr
 {
 	return (*m_SpriteSheetResources[spriteSheet]);
 }
+
+////////////////////////////////////////// Bitmap font resources
+
+// Reserves a bitmap font, returning a handle to the resource
+Engine::BitmapFont Engine::ResourceManager::ReserveBitmapFont(std::string filename)
+{
+	if (m_BitmapFontResources.count(filename) == 0)
+	{
+		// Resource is not loaded yet
+		BitmapFontResource* bitmapFontResource = new BitmapFontResource(filename);
+		if (!bitmapFontResource->Load())
+		{
+			LoggingManager::GetInstance().Log(LoggingManager::LogType::Error, "Failed to load bitmap font resource <" + filename + ">");
+		}
+		bitmapFontResource->AddReservation();
+		m_BitmapFontResources.insert(std::pair<BitmapFont, BitmapFontResource*>(filename, bitmapFontResource));
+	}
+	else
+	{
+		// Resource is already loaded
+		m_BitmapFontResources.at(filename)->AddReservation();
+	}
+
+	return filename;
+}
+
+// Frees a bitmap font, freeing up memory if no more reservations exist
+void Engine::ResourceManager::FreeBitmapFont(BitmapFont bitmapFont)
+{
+	if (m_BitmapFontResources.count(bitmapFont) != 0)
+	{
+		BitmapFontResource* bitmapFontResource = m_BitmapFontResources.at(bitmapFont);
+		bitmapFontResource->RemoveReservation();
+		if (bitmapFontResource->GetNumReservations() <= 0)
+		{
+			if (!bitmapFontResource->Unload())
+			{
+				LoggingManager::GetInstance().Log(LoggingManager::LogType::Error, "Failed to unload bitmap font resource <" + bitmapFont + ">");
+			}
+			delete bitmapFontResource;
+			m_BitmapFontResources.erase(bitmapFont);
+		}
+	}
+	else
+	{
+		LoggingManager::GetInstance().Log(LoggingManager::LogType::Warning, "Tried to free bitmap font resource <" + bitmapFont + ">, while the resource is not loaded anymore");
+	}
+}
+
+// Gets the bitmap font resource by its handle
+Engine::BitmapFontResource& Engine::ResourceManager::GetBitmapFontResource(BitmapFont bitmapFont)
+{
+	return (*m_BitmapFontResources[bitmapFont]);
+}
