@@ -69,17 +69,14 @@ namespace Engine
 		// Sprite sheet specifications
 		Metadata m_Metadata;
 
-		// Vertex attribute object for this sprite sheet
-		GLuint m_VertexAttributes;
+	public:
 
-		// Vertex buffer object for this sprite sheet
-		GLuint m_Vertices;
+		////////////////////////////////////////////////////////////////
+		// Image manipulation										  //
+		////////////////////////////////////////////////////////////////
 
-		// Initializes associated OpenGL attributes and buffers
-		bool InitializeBuffers();
-
-		// Destroys associated OpenGL attributes and buffers
-		bool DestroyBuffers();
+		// Gets the ID of the associated image to this sprite sheet
+		inline Image& GetImage() { return m_Image; }
 
 	private:
 

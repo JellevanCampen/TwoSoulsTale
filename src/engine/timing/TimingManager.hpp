@@ -58,7 +58,7 @@ namespace Engine{
 		AlarmID SetAlarm(TimeDelta timeDelta, unsigned int repetitions = 1);
 
 		// Sets an alarm that infinitely, periodically launches timing-based events
-		inline AlarmID SetInfinitePeriodicAlarm(TimeDelta timeDelta) { SetAlarm(timeDelta, (unsigned int)(-1)); }
+		inline AlarmID SetInfinitePeriodicAlarm(TimeDelta timeDelta) { return SetAlarm(timeDelta, (unsigned int)(-1)); }
 
 		// Unsets the alarm
 		void UnsetAlarm(AlarmID alarmID);

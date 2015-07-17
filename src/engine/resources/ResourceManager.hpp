@@ -39,13 +39,13 @@ namespace Engine{
 		// Frees an image, freeing up memory if no more reservations exist
 		void FreeImage(Image image);
 
+		// Gets the image resource by its handle
+		ImageResource& GetImageResource(Image image);
+
 	private:
 
 		// Holds all image resources
 		std::unordered_map<Image, ImageResource*> m_ImageResources;
-
-		// Gets the image resource by its handle
-		ImageResource& GetImageResource(Image image);
 
 		///////////////////////////////////////// Sprite sheet resources
 
@@ -57,13 +57,13 @@ namespace Engine{
 		// Frees a sprite sheet, freeing up memory if no more reservations exist
 		void FreeSpriteSheet(SpriteSheet spriteSheet);
 
+		// Gets the sprite sheet resource by its handle
+		SpriteSheetResource& GetSpriteSheetResource(SpriteSheet spriteSheet);
+
 	private:
 
 		// Holds all sprite sheet resources
 		std::unordered_map<SpriteSheet, SpriteSheetResource*> m_SpriteSheetResources;
-
-		// Gets the sprite sheet resource by its handle
-		SpriteSheetResource& GetSpriteSheetResource(SpriteSheet spriteSheet);
 
 	public:
 

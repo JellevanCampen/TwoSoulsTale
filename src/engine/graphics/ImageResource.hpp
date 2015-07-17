@@ -73,6 +73,9 @@ namespace Engine
 		// Gets the internal ImageFormat from the FreeImage image format
 		ImageFormat GetImageFormat(FREE_IMAGE_FORMAT freeImageImageFormat);
 
+		// Converts the image to a suitable format for internal use
+		void ConvertImageFormat();
+
 	public:
 
 		////////////////////////////////////////////////////////////////

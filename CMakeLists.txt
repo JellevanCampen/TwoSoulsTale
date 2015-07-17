@@ -234,13 +234,25 @@ target_link_libraries(TwoSoulsTale Engine)
 ################################################################
 
 # Test components
-set(SRC_GAME_TEST 
+set(SRC_GAME_TEST_MAIN 
 	"src/game/test/TestObject.hpp"
 	"src/game/test/TestObject.cpp"
 	"src/game/test/TestObject2.hpp"
 	"src/game/test/TestObject2.cpp"
 )
-source_group(Game\\Test FILES ${SRC_GAME_TEST})
+source_group(Game\\Test FILES ${SRC_GAME_TEST_MAIN})
+
+# Unit tests
+set(SRC_GAME_TEST_UNITTESTS 
+	"src/game/test/unit-tests/TestImageResource.hpp"
+	"src/game/test/unit-tests/TestImageResource.cpp"
+)
+source_group(Game\\Test\\Unit-tests FILES ${SRC_GAME_TEST_UNITTESTS})
+
+set(SRC_GAME_TEST_ALL
+	${SRC_GAME_TEST_MAIN}
+	${SRC_GAME_TEST_UNITTESTS}
+)
 
 # Identifiers
 set(SRC_GAME_IDENTIFIERS
@@ -249,7 +261,7 @@ set(SRC_GAME_IDENTIFIERS
 source_group(Game\\Identifiers FILES ${SRC_GAME_IDENTIFIERS})
 
 set(SRC_GAME_ALL 
-	${SRC_GAME_TEST}
+	${SRC_GAME_TEST_ALL}
 	${SRC_GAME_IDENTIFIERS}
 )
 

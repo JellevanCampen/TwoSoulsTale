@@ -33,16 +33,9 @@ bool Engine::ImageResource::Load()
 	if (m_ImageFormat == ImageFormat::INVALID) { LoggingManager::GetInstance().Log(LoggingManager::Error, "Failed to load image resource <" + m_Filename + ">. File format is not supported or could not be determined. "); }
 	
 	// Load the file and convert it to a usable format
-	FIBITMAP* image = FreeImage_Load(format, file.c_str(), 0);
-	if (image == NULL) { LoggingManager::GetInstance().Log(LoggingManager::Error, "Failed to load image resource <" + m_Filename + ">. File could not be read or could not be found. "); }
-	switch (m_ImageFormat)
-	{
-	case ImageFormat::MONOCHROME: m_Image = FreeImage_ConvertToGreyscale(image); break; // Note: 1 bit is stored as 8 bits in memory, could be 8 times more efficient if optimized
-	case ImageFormat::GRAYSCALE: m_Image = FreeImage_ConvertToGreyscale(image); break;
-	case ImageFormat::RGB: m_Image = FreeImage_ConvertTo24Bits(image); break;
-	case ImageFormat::RGBA: m_Image = FreeImage_ConvertTo32Bits(image); break;
-	}
-	FreeImage_Unload(image);
+	m_Image = FreeImage_Load(format, file.c_str(), 0);
+	if (m_Image == NULL) { LoggingManager::GetInstance().Log(LoggingManager::Error, "Failed to load image resource <" + m_Filename + ">. File could not be read or could not be found. "); }
+	ConvertImageFormat();
 	
 	// Generate an OpenGL texture and upload the image to the GPU
 	glGenTextures(1, &m_TextureID);
@@ -80,6 +73,20 @@ Engine::ImageResource::ImageFormat Engine::ImageResource::GetImageFormat(FREE_IM
 	case FREE_IMAGE_FORMAT::FIF_TIFF: return ImageFormat::RGB;
 	default: return ImageFormat::INVALID;
 	}
+}
+
+// Converts the image to a suitable format for internal use
+void Engine::ImageResource::ConvertImageFormat()
+{
+	FIBITMAP* image = m_Image;
+	switch (m_ImageFormat)
+	{
+	case ImageFormat::MONOCHROME: m_Image = FreeImage_ConvertToGreyscale(image); break; // Note: 1 bit is stored as 8 bits in memory, could be 8 times more efficient if optimized
+	case ImageFormat::GRAYSCALE: m_Image = FreeImage_ConvertToGreyscale(image); break;
+	case ImageFormat::RGB: m_Image = FreeImage_ConvertTo24Bits(image); break;
+	case ImageFormat::RGBA: m_Image = FreeImage_ConvertTo32Bits(image); break;
+	}
+	FreeImage_Unload(image);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -128,11 +135,11 @@ void Engine::ImageResource::UploadTexture()
 		if (m_Dirty == DirtyType::DIRTY_SIZE_AND_VALUES) { glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, dim.x(), dim.y(), 0, GL_RED, GL_UNSIGNED_BYTE, imageData); }
 		break;
 	case ImageFormat::RGB: 
-		if (m_Dirty == DirtyType::DIRTY_VALUES) { glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, dim.x(), dim.y(), GL_RED, GL_UNSIGNED_BYTE, imageData); }
+		if (m_Dirty == DirtyType::DIRTY_VALUES) { glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, dim.x(), dim.y(), GL_BGR, GL_UNSIGNED_BYTE, imageData); }
 		if (m_Dirty == DirtyType::DIRTY_SIZE_AND_VALUES) { glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, dim.x(), dim.y(), 0, GL_BGR, GL_UNSIGNED_BYTE, imageData); }
 		break;
 	case ImageFormat::RGBA: 
-		if (m_Dirty == DirtyType::DIRTY_VALUES) { glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, dim.x(), dim.y(), GL_RED, GL_UNSIGNED_BYTE, imageData); }
+		if (m_Dirty == DirtyType::DIRTY_VALUES) { glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, dim.x(), dim.y(), GL_BGRA, GL_UNSIGNED_BYTE, imageData); }
 		if (m_Dirty == DirtyType::DIRTY_SIZE_AND_VALUES) { glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, dim.x(), dim.y(), 0, GL_BGRA, GL_UNSIGNED_BYTE, imageData); }
 		break;
 	}
@@ -153,12 +160,12 @@ Engine::ImageResource& Engine::ImageResource::Rotate(RotationAngle angle)
 	double angleDegrees;
 	switch (angle)
 	{
-	case RotationAngle::CW_90: angleDegrees = 90.0; break;
-	case RotationAngle::CW_180: angleDegrees = 180.0; break;
-	case RotationAngle::CW_270: angleDegrees = 270.0; break;
-	case RotationAngle::CCW_90: angleDegrees = -90.0; break;
-	case RotationAngle::CCW_180: angleDegrees = -180.0; break;
-	case RotationAngle::CCW_270: angleDegrees = -270.0; break;
+	case RotationAngle::CW_90: angleDegrees = -90.0; break;
+	case RotationAngle::CW_180: angleDegrees = -180.0; break;
+	case RotationAngle::CW_270: angleDegrees = -270.0; break;
+	case RotationAngle::CCW_90: angleDegrees = 90.0; break;
+	case RotationAngle::CCW_180: angleDegrees = 180.0; break;
+	case RotationAngle::CCW_270: angleDegrees = 270.0; break;
 	default: angleDegrees = 0.0; 
 	}
 	FIBITMAP* newImage = FreeImage_Rotate(m_Image, angleDegrees);
@@ -174,12 +181,7 @@ Engine::ImageResource& Engine::ImageResource::Rotate(RotationAngle angle)
 Engine::ImageResource& Engine::ImageResource::Rotate(double angle)
 {
 	f2 dim = GetDimensions();
-	FIBITMAP* newImage = FreeImage_RotateEx(m_Image, angle, 0, 0, dim.x() / 2.0, dim.y() / 2.0, true);
-	FreeImage_Unload(m_Image);
-	m_Image = newImage;
-
-	m_Dirty = DirtyType::DIRTY_SIZE_AND_VALUES;
-	return *this;
+	return Rotate(angle, Engine::f2(dim.x() / 2, dim.y() / 2));
 }
 
 // Rotates the image (and resizes the image)
@@ -239,6 +241,9 @@ Engine::ImageResource& Engine::ImageResource::Rescale(i2 dstDimensions, RescaleP
 	}
 		break;
 	}
+
+	FreeImage_Unload(m_Image);
+	m_Image = newImage;
 
 	m_Dirty = DirtyType::DIRTY_SIZE_AND_VALUES;
 	return *this;

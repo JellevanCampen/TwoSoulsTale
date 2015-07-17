@@ -11,6 +11,7 @@ namespace ID_TYPE{
 #define AUTOID_ID_TYPE Engine::OBJ_OFFSET + __LINE__ - (ID_TYPE::OFFSET+2)
 	static const Engine::GameObjectType OBJ_TESTOBJECT = Engine::GameObjectType(AUTOID_ID_TYPE);
 	static const Engine::GameObjectType OBJ_TESTOBJECT2 = Engine::GameObjectType(AUTOID_ID_TYPE);
+	static const Engine::GameObjectType OBJ_TESTIMAGERESOURCE = Engine::GameObjectType(AUTOID_ID_TYPE);
 
 }
 

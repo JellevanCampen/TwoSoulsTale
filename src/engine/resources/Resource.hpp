@@ -9,6 +9,11 @@ namespace Engine
 	class Resource
 	{
 
+	protected:
+
+		// Constructor
+		Resource() : m_NumReservations(0) { }
+
 	private:
 
 		// Loads the resource
