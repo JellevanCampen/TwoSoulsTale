@@ -25,7 +25,7 @@ void GameContent::TestObject2::Update(const Engine::GameTime& gameTime)
 	TestObject2 bla(Engine::transform3D(), Engine::aabb3Df);
 
 	Engine::GameObjectCollection g;
-	Engine::WorldManager::GetInstance().RetrieveAll(g);
+	Engine::WorldManager::GetInstance().RetrieveByType(ID_TYPE::OBJ_TESTOBJECT, g);
 	Engine::WorldManager::GetInstance().Move2D((*this), gameTime.GetDeltaTimeSeconds(), Engine::WorldManager::CollisionResponse::STOP, g); 
 }
 

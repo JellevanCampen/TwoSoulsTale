@@ -173,12 +173,19 @@ namespace Engine{
 		template<typename valuetype>
 		inline bool MoveStop2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
 		{
+			// Broadphase filtering based on AABB sweep
+			CollisionManager& c(CollisionManager::GetInstance());
+			aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+			GameObjectCollection otherBP(other);
+			otherBP.FilterByOverlap(sweep);
+
+			// Output variables for collision finder
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
 
 			// Move the object and push it out of colliding objects
-			bool collision = FindFirstCollision2D(gameObject, motion, other, position, normal, progression);
+			bool collision = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
 			if (progression == 0.0f) { gameObject.velocity(f3(0.0)); return true; }
 			gameObject.t() += motion * progression;
 			if (collision) { PushOut2D(gameObject, motion); if (updateVelocity) { gameObject.velocity(f3(0.0)); } }
@@ -190,6 +197,13 @@ namespace Engine{
 		template<typename valuetype>
 		inline bool MoveSlide2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
 		{
+			// Broadphase filtering based on AABB sweep
+			CollisionManager& c(CollisionManager::GetInstance());
+			aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+			GameObjectCollection otherBP(other);
+			otherBP.FilterByOverlap(sweep);
+
+			// Output variables for collision finder
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
@@ -200,7 +214,7 @@ namespace Engine{
 			do
 			{
 				// Move the object and push it out of colliding objects
-				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, other, position, normal, progression);
+				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
 				if (progression == 0.0f) { return true; }
 				gameObject.t() += motion * progression;
 				collision |= collisionCurrent;
@@ -221,6 +235,7 @@ namespace Engine{
 		template<typename valuetype>
 		inline bool MoveRedirect2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
 		{
+			// Output variables for collision finder
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
@@ -230,8 +245,14 @@ namespace Engine{
 
 			do
 			{
+				// Broadphase filtering based on AABB sweep
+				CollisionManager& c(CollisionManager::GetInstance());
+				aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+				GameObjectCollection otherBP(other);
+				otherBP.FilterByOverlap(sweep);
+
 				// Move the object and push it out of colliding objects
-				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, other, position, normal, progression);
+				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
 				if (progression == 0.0f) { return true; }
 				gameObject.t() += motion * progression;
 				collision |= collisionCurrent;
@@ -254,6 +275,7 @@ namespace Engine{
 		template<typename valuetype>
 		inline bool MoveReflect2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
 		{
+			// Output variables for collision finder
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
@@ -263,8 +285,14 @@ namespace Engine{
 
 			do
 			{
+				// Broadphase filtering based on AABB sweep
+				CollisionManager& c(CollisionManager::GetInstance());
+				aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+				GameObjectCollection otherBP(other);
+				otherBP.FilterByOverlap(sweep);
+
 				// Move the object and push it out of colliding objects
-				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, other, position, normal, progression);
+				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
 				if (progression == 0.0f) { return true; }
 				gameObject.t() += motion * progression;
 				collision |= collisionCurrent;
@@ -290,23 +318,17 @@ namespace Engine{
 			// If collisions should be ignored, skip broadphase filtering
 			if (response == CollisionResponse::IGNORE) { MoveIgnore2D(gameObject, motion); return false; }
 
-			// Broadphase filtering based on AABB sweep
-			CollisionManager& c(CollisionManager::GetInstance());
-			aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
-			GameObjectCollection g(other);
-			g.FilterByOverlap(sweep);
-
 			// Move the object based on the specified collision response
 			switch (response)
 			{
 			case CollisionResponse::STOP:
-				return MoveStop2D(gameObject, motion, g, updateVelocity);
+				return MoveStop2D(gameObject, motion, other, updateVelocity);
 			case CollisionResponse::SLIDE:
-				return MoveSlide2D(gameObject, motion, g);
+				return MoveSlide2D(gameObject, motion, other);
 			case CollisionResponse::REDIRECT:
-				return MoveRedirect2D(gameObject, motion, g, updateVelocity);
+				return MoveRedirect2D(gameObject, motion, other, updateVelocity);
 			case CollisionResponse::REFLECT:
-				return MoveReflect2D(gameObject, motion, g, updateVelocity);
+				return MoveReflect2D(gameObject, motion, other, updateVelocity);
 			}
 		}
 
