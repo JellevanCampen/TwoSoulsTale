@@ -23,7 +23,7 @@ void Engine::TimingManager::Update(const GameTime& gameTime)
 	m_GameTime = gameTime;
 
 	// Queue the frame duration for frame-rate calculation
-	m_FrameDurationsMicros.push_back(gameTime.GetDeltaTimeMicros());
+	m_FrameDurationsMicros.push_back(gameTime.GetMeasuredDeltaTimeMicros());
 	if (m_FrameDurationsMicros.size() > s_FramerateWindowSize) { m_FrameDurationsMicros.pop_front(); }
 
 	// Launch alarm events for expired alarms

@@ -164,7 +164,9 @@ void GameContent::TestObject::Update(const Engine::GameTime& gameTime)
 {
 	if (gameTime.GetFrameCount() % 100 == 99)
 	{
-		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::Warning, std::to_string(Engine::TimingManager::GetInstance().GetFrameRate()));
+		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::Warning, "Framerate: " + std::to_string(Engine::TimingManager::GetInstance().GetFrameRate()));
+		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::Warning, "Total time: " + std::to_string(Engine::TimingManager::GetInstance().GetGameTime().GetTotalTimeSeconds()));
+		Engine::LoggingManager::GetInstance().Log(Engine::LoggingManager::Warning, "Total time (measured): " + std::to_string(Engine::TimingManager::GetInstance().GetGameTime().GetMeasuredTotalTimeSeconds()));
 	}
 
 	// TESTING
