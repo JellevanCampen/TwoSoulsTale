@@ -14,14 +14,13 @@ Engine::SpriteSheetResource::SpriteSheetResource(std::string filename)
 // Loads the resource
 bool Engine::SpriteSheetResource::Load()
 {
-	// Load the image associated to the sprite sheet
-	m_Image = ResourceManager::GetInstance().ReserveImage(m_Filename);
-
-	// Load the sprite sheet metadata
+	// Load the bitmap font data
 	std::string spriteSheetPath;
 	Engine::PathConfig::GetPath("spritesheets", spriteSheetPath);
-	std::string filenameMetadata = m_Filename.substr(0, m_Filename.find('.')) + ".spritesheet";
-	ReadMetadataFromFile(spriteSheetPath + filenameMetadata);
+	LoadFile(spriteSheetPath + m_Filename);
+
+	// Load the associated image
+	m_Image = ResourceManager::GetInstance().ReserveImage(m_FilenameImage);
 
 	return true;
 }
@@ -56,7 +55,7 @@ void Engine::SpriteSheetResource::CalculateUVs(unsigned int frame, f2& out_UV1, 
 }
 
 // Writes the sprite sheet metadata to a file
-void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
+void Engine::SpriteSheetResource::SaveFile(std::string filename)
 {
 	// Create the file and open it
 	XMLFile file;
@@ -64,6 +63,7 @@ void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
 
 	// Write sheet layout metadata
 	XMLElement elementSheet = XMLFileIO::AddElement(file, "SpriteSheet");
+	XMLFileIO::SetAttributeValue(elementSheet, "ImageResource", m_FilenameImage);
 	XMLElement elementLayout = XMLFileIO::AddElement(elementSheet, "SheetLayout");
 	XMLFileIO::SetAttributeValue(elementLayout, "SpriteWidth", std::to_string(m_Metadata.m_SpriteWidth));
 	XMLFileIO::SetAttributeValue(elementLayout, "SpriteHeight", std::to_string(m_Metadata.m_SpriteHeight));
@@ -88,7 +88,7 @@ void Engine::SpriteSheetResource::WriteMetadataToFile(std::string filename)
 }
 
 // Reads the sprite sheet metadata from a file
-void Engine::SpriteSheetResource::ReadMetadataFromFile(std::string filename)
+void Engine::SpriteSheetResource::LoadFile(std::string filename)
 {
 	// Open the file
 	XMLFile file;
@@ -96,6 +96,7 @@ void Engine::SpriteSheetResource::ReadMetadataFromFile(std::string filename)
 
 	// Write sheet layout metadata
 	XMLElement elementSheet = XMLFileIO::GetElement(file, "SpriteSheet");
+	XMLFileIO::GetAttribute(elementSheet, "ImageResource", m_FilenameImage);
 	XMLElement elementLayout = XMLFileIO::GetElement(elementSheet, "SheetLayout");
 	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SpriteWidth", m_Metadata.m_SpriteWidth);
 	XMLFileIO::GetAttributeAsUnsignedInteger(elementLayout, "SpriteHeight", m_Metadata.m_SpriteHeight);

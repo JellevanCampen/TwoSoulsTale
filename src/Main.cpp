@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	Engine::GraphicsManager::GetInstance().SetCameraZoom(4.0f);
 	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject(Engine::transform3D(0.0f, 0.0f, 0.0f), Engine::aabb3Df(-12.0f, 12.0f, 0.0f, 24.0f, 0.0f, 0.0f)));
 	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestObject2(Engine::transform3D(128.0f, 120.0f, 0.0f), Engine::aabb3Df(-12.0f, 12.0f, 0.0f, 24.0f, 0.0f, 0.0f)));
-	Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestImageResource(Engine::transform3D(128.0f, 120.0f, 0.0f)));
+	// Engine::WorldManager::GetInstance().AddGameObject(new GameContent::TestImageResource(Engine::transform3D(128.0f, 120.0f, 0.0f)));
 	// TESTING
 
 	game.Start();

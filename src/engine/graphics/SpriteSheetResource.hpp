@@ -38,6 +38,9 @@ namespace Engine
 		// Filename of the sprite sheet resource
 		std::string m_Filename;
 
+		// Filename of the associated image resource
+		std::string m_FilenameImage;
+
 		// Image associated with the sprite sheet
 		Image m_Image;
 
@@ -94,10 +97,10 @@ namespace Engine
 		void CalculateUVs(unsigned int frame, f2& out_UV1, f2& out_UV2) const;
 
 		// Writes the sprite sheet metadata to a file
-		void WriteMetadataToFile(std::string filename);
+		void SaveFile(std::string filename);
 
 		// Reads the sprite sheet metadata from a file
-		void ReadMetadataFromFile(std::string filename);
+		void LoadFile(std::string filename);
 
 		friend class ResourceManager;
 		friend class GraphicsManager;

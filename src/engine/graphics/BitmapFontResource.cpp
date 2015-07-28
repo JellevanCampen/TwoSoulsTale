@@ -91,3 +91,26 @@ void Engine::BitmapFontResource::LoadFile(const std::string& filename)
 	// Close the file
 	XMLFileIO::CloseFile(file);
 }
+
+////////////////////////////////////////////////////////////////
+// Character mapping										  //
+////////////////////////////////////////////////////////////////
+
+// Gets the character data for a text message
+void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors)
+{
+	int x = 0;
+	int y = 0;
+	colorRGBA color = colorRGBA(0.25f, 0.25f, 1.0f, 1.0f);
+
+	for (auto c : text)
+	{
+		// Start a new line on a newline character
+		if (c == '\n') { y++; x = 0; continue; }
+
+		out_CharacterPositions.push_back(f2(x, y));
+		out_GlyphIndices.push_back(GetFrame(c));
+		out_GlyphColors.push_back(color);
+		x++;
+	}
+}

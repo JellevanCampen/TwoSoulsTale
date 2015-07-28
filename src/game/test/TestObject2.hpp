@@ -12,6 +12,7 @@
 #include "..\src\engine\audio\AudioManager.hpp" // [AUDIO] Audio Manager
 #include "..\src\engine\world\WorldManager.hpp" // [WORLD] World Manager
 #include "..\src\engine\resources\ResourceManager.hpp" // [RESOURCE] Resource Manager
+#include "..\src\engine\timing\TimingManager.hpp" // [TIMING] Timing Manager
 
 #include "Box2D.h"
 

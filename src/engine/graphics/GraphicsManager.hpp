@@ -126,6 +126,24 @@ namespace Engine{
 		GLuint m_ShaderSpriteSheet_VAO;
 		GLuint m_ShaderSpriteSheet_VBO;
 
+		//////////////////////////////////////// Bitmap Font Text Shader
+		GLuint m_ShaderTextBitmapFont;
+		GLuint m_ShaderTextBitmapFont_uGlyphSize;
+		GLuint m_ShaderTextBitmapFont_uGlyphOrigin;
+		GLuint m_ShaderTextBitmapFont_uSpriteSheetSize;
+		GLuint m_ShaderTextBitmapFont_uSpriteSheetGridSize;
+		GLuint m_ShaderTextBitmapFont_uSpriteSheetSeparation;
+		GLuint m_ShaderTextBitmapFont_uSpriteSheetOrigin;
+		GLuint m_ShaderTextBitmapFont_uMatModel;
+		GLuint m_ShaderTextBitmapFont_uMatView;
+		GLuint m_ShaderTextBitmapFont_uMatProjection;
+		GLuint m_ShaderTextBitmapFont_uSpriteSampler;
+		GLuint m_ShaderTextBitmapFont_VAO;
+		GLuint m_ShaderTextBitmapFont_VBO;
+		GLuint m_ShaderTextBitmapFont_VBO_CharacterPosition;
+		GLuint m_ShaderTextBitmapFont_VBO_GlyphIndex;
+		GLuint m_ShaderTextBitmapFont_VBO_GlyphColor;
+
 		////////////////////////////////////////////////////////////////
 		// Camera													  //
 		////////////////////////////////////////////////////////////////
@@ -293,6 +311,13 @@ namespace Engine{
 		{
 			DrawSpriteSheetFrame(spriteSheet, frame, f3(transform.t().xy(), z), transform.r(), transform.s());
 		}
+
+		////////////////////////////////////////////////////////////////
+		// Text drawing												  //
+		////////////////////////////////////////////////////////////////
+
+		// Draws a text message using the specified bitmap font
+		void DrawText(std::string text, BitmapFont font, transform2D transform, float z = 0.0f);
 
 		friend class InputManager;
 

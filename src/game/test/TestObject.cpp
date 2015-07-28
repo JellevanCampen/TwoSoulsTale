@@ -33,8 +33,8 @@ void GameContent::TestObject::Create()
 	Engine::InputManager::GetInstance().RegisterGamepadButtonListener(this);
 
 	// Reserve a sprite sheet
-	m_SpriteSheetSpiny = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("spiny.png");
-	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("goomba.png");
+	m_SpriteSheetSpiny = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("spiny.spritesheet");
+	m_SpriteSheetGoomba = Engine::ResourceManager::GetInstance().ReserveSpriteSheet("goomba.spritesheet");
 
 	// TESTING
 	// Generate a physics world

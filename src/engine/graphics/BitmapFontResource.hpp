@@ -5,6 +5,7 @@
 #include "../resources/Resource.hpp" // Interface for resources (implements reference counting)
 #include "../graphics/SpriteSheetResource.hpp" // For storing the sprite sheet associated to the bitmap font
 #include "../debugging/LoggingManager.hpp" // For reporting errors during character retrieval
+#include "../common/utility/ColorTypes.hpp" // For representing an RGBA color
 
 #include <string> // For representing a sprite sheet filename
 #include <unordered_map> // For storing the mapping of characters to sprite sheet frames
@@ -61,6 +62,9 @@ namespace Engine
 			if (i == m_CharacterMapping.end()) { LoggingManager::GetInstance().Log(LoggingManager::Warning, "[BitmapFont] Character <" + std::to_string(c) + "> is not available in the bitmap font"); return 0; }
 			return i->second;
 		}
+
+		// Gets the character data for a text message
+		void GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors);
 
 		////////////////////////////////////////////////////////////////
 		// Resource saving and loading								  //
