@@ -2,6 +2,7 @@
 
 #include "../debugging/LoggingManager.hpp" // Logging manager for reporting statuses
 #include "SpriteSheetResource.hpp" // Sprite sheet resources
+#include "../timing/TimingManager.hpp" // For sending the time to shaders for animation
 
 #include <glm.hpp> // For vector and matrix data types
 #include <glm\gtc\matrix_transform.hpp> // For matrix transforms
@@ -185,6 +186,18 @@ void Engine::GraphicsManager::InitializeShaderPrograms()
 	m_ShaderTextBitmapFontAdvanced_uSpriteSheetGridSize = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetGridSize");
 	m_ShaderTextBitmapFontAdvanced_uSpriteSheetSeparation = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetSeparation");
 	m_ShaderTextBitmapFontAdvanced_uSpriteSheetOrigin = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetOrigin");
+	m_ShaderTextBitmapFontAdvanced_uTimeSeconds = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uTimeSeconds");
+	m_ShaderTextBitmapFontAdvanced_uAnimWaveXYOffset = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimWaveOffset");
+	m_ShaderTextBitmapFontAdvanced_uAnimWaveLength = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimWaveLength");
+	m_ShaderTextBitmapFontAdvanced_uAnimWaveFrequency = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimWaveFrequency");
+	m_ShaderTextBitmapFontAdvanced_uAnimShakeWaveLength = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimShakeWaveLength");
+	m_ShaderTextBitmapFontAdvanced_uAnimShakeFrequency = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimShakeFrequency");
+	m_ShaderTextBitmapFontAdvanced_uAnimHueCycleWaveLength = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimHueCycleWaveLength");
+	m_ShaderTextBitmapFontAdvanced_uAnimHueCycleFrequency = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimHueCycleFrequency");
+	m_ShaderTextBitmapFontAdvanced_uAnimIntensityPulseWaveLength = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimIntensityPulseWaveLength");
+	m_ShaderTextBitmapFontAdvanced_uAnimIntensityPulseFrequency = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimIntensityPulseFrequency");
+	m_ShaderTextBitmapFontAdvanced_uAnimAlphaPulseWaveLength = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimAlphaPulseWaveLength");
+	m_ShaderTextBitmapFontAdvanced_uAnimAlphaPulseFrequency = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uAnimAlphaPulseFrequency");
 	m_ShaderTextBitmapFontAdvanced_uMatModel = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "matModel");
 	m_ShaderTextBitmapFontAdvanced_uMatView = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "matView");
 	m_ShaderTextBitmapFontAdvanced_uMatProjection = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "matProjection");
@@ -398,6 +411,27 @@ void Engine::GraphicsManager::InitializeBuffers()
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Glyph color
 	glVertexAttribDivisor(4, 1);
 
+	// Generate and bind the animation parameters buffer (wave amplitude + shake amplitude)
+	glGenBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_AnimationParameters);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_AnimationParameters);
+	
+	// Specify the animation parameter attributes (wave amplitude + shake amplitude)
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(BitmapFontResource::AnimationParameters), (void*)(0)); // Wave amplitude
+	glVertexAttribDivisor(5, 1);
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, sizeof(BitmapFontResource::AnimationParameters), (void*)(2 * sizeof(GLfloat))); // Shake amplitude
+	glVertexAttribDivisor(6, 1);
+	glEnableVertexAttribArray(7);
+	glVertexAttribPointer(7, 1, GL_FLOAT, GL_FALSE, sizeof(BitmapFontResource::AnimationParameters), (void*)(4 * sizeof(GLfloat))); // Hue cycle amplitude
+	glVertexAttribDivisor(7, 1);
+	glEnableVertexAttribArray(8);
+	glVertexAttribPointer(8, 1, GL_FLOAT, GL_FALSE, sizeof(BitmapFontResource::AnimationParameters), (void*)(5 * sizeof(GLfloat))); // Intensity pulse amplitude
+	glVertexAttribDivisor(8, 1);
+	glEnableVertexAttribArray(9);
+	glVertexAttribPointer(9, 1, GL_FLOAT, GL_FALSE, sizeof(BitmapFontResource::AnimationParameters), (void*)(6 * sizeof(GLfloat))); // Alpha pulse amplitude
+	glVertexAttribDivisor(9, 1);
+
 	////////////////////////////////////////////////////////////////
 
 	// Unbind buffers
@@ -429,6 +463,7 @@ void Engine::GraphicsManager::TerminateBuffers()
 	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition);
 	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex);
 	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor);
+	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_AnimationParameters);
 	glDeleteVertexArrays(1, &m_ShaderTextBitmapFontAdvanced_VBO);
 }
 
@@ -710,6 +745,34 @@ void Engine::GraphicsManager::DrawTextAdvanced(std::string text, BitmapFont font
 	glUniform2i(m_ShaderTextBitmapFontAdvanced_uSpriteSheetSeparation, spriteSheetResource.m_Metadata.m_SheetSeparationX, spriteSheetResource.m_Metadata.m_SheetSeparationY);
 	glUniform2i(m_ShaderTextBitmapFontAdvanced_uSpriteSheetOrigin, spriteSheetResource.m_Metadata.m_SheetLeft, spriteSheetResource.m_Metadata.m_SheetTop);
 
+	// TEMP HARDCODED
+	float m_TextAnimWaveXYOffset = 0.25f;
+	f2 m_TextAnimWaveLength(16.0f, 8.0f);
+	f2 m_TextAnimWaveFrequency(1.5f, 1.0f);
+	f2 m_TextAnimShakeWaveLength(1.3f, 1.2f);
+	f2 m_TextAnimShakeFrequency(9.0f, 11.0f);
+	f2 m_TextAnimHueCycleWaveLength(64.0f, 16.0f);
+	float m_TextAnimHueCycleFrequency(1.0f);
+	f2 m_TextAnimIntensityPulseWaveLength(128.0f, 32.0f);
+	float m_TextAnimIntensityPulseFrequency(1.5f);
+	f2 m_TextAnimAlphaPulseWaveLength(16.0f, 8.0f);
+	float m_TextAnimAlphaPulseFrequency(1.0f);
+	// TEMP HARDCODED
+
+	// Pass the animation parameters
+	glUniform1f(m_ShaderTextBitmapFontAdvanced_uTimeSeconds, Engine::TimingManager::GetInstance().GetGameTime().GetTotalTimeSeconds());
+	glUniform1f(m_ShaderTextBitmapFontAdvanced_uAnimWaveXYOffset, m_TextAnimWaveXYOffset);
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimWaveLength, m_TextAnimWaveLength.x(), m_TextAnimWaveLength.y());
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimWaveFrequency, m_TextAnimWaveFrequency.x(), m_TextAnimWaveFrequency.y());
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimShakeWaveLength, m_TextAnimShakeWaveLength.x(), m_TextAnimShakeWaveLength.y());
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimShakeFrequency, m_TextAnimShakeFrequency.x(), m_TextAnimShakeFrequency.y());
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimHueCycleWaveLength, m_TextAnimHueCycleWaveLength.x(), m_TextAnimHueCycleWaveLength.y());
+	glUniform1f(m_ShaderTextBitmapFontAdvanced_uAnimHueCycleFrequency, m_TextAnimHueCycleFrequency);
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimIntensityPulseWaveLength, m_TextAnimIntensityPulseWaveLength.x(), m_TextAnimIntensityPulseWaveLength.y());
+	glUniform1f(m_ShaderTextBitmapFontAdvanced_uAnimIntensityPulseFrequency, m_TextAnimIntensityPulseFrequency);
+	glUniform2f(m_ShaderTextBitmapFontAdvanced_uAnimAlphaPulseWaveLength, m_TextAnimAlphaPulseWaveLength.x(), m_TextAnimAlphaPulseWaveLength.y());
+	glUniform1f(m_ShaderTextBitmapFontAdvanced_uAnimAlphaPulseFrequency, m_TextAnimAlphaPulseFrequency);
+
 	// Calculate and pass the transformation matrices
 	glUniformMatrix4fv(m_ShaderTextBitmapFontAdvanced_uMatModel, 1, GL_FALSE, (GLfloat*)(&transform.GetTransformationMatrix()));
 	glUniformMatrix4fv(m_ShaderTextBitmapFontAdvanced_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
@@ -719,15 +782,18 @@ void Engine::GraphicsManager::DrawTextAdvanced(std::string text, BitmapFont font
 	std::vector<f2> characterPositions;
 	std::vector<unsigned int> glyphIndices;
 	std::vector<colorRGBA> glyphColors;
-	bitmapFontResource.GetCharacterDataAdvanced(text, characterPositions, glyphIndices, glyphColors, defaultColor);
+	std::vector<BitmapFontResource::AnimationParameters> animParameters;
+	bitmapFontResource.GetCharacterDataAdvanced(text, characterPositions, glyphIndices, glyphColors, animParameters, defaultColor);
 	size_t numCharacters = characterPositions.size();
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition);
-	glBufferData(GL_ARRAY_BUFFER, numCharacters * 2 * sizeof(GLfloat), &characterPositions[0], GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * sizeof(f2), &characterPositions[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex);
-	glBufferData(GL_ARRAY_BUFFER, numCharacters * 1 * sizeof(GLuint), &glyphIndices[0], GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * sizeof(unsigned int), &glyphIndices[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor);
-	glBufferData(GL_ARRAY_BUFFER, numCharacters * 4 * sizeof(GLfloat), &glyphColors[0], GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * sizeof(colorRGBA), &glyphColors[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_AnimationParameters);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * sizeof(BitmapFontResource::AnimationParameters), &animParameters[0], GL_DYNAMIC_DRAW);
 
 	// Draw the text
 	glBindVertexArray(m_ShaderTextBitmapFontAdvanced_VAO);

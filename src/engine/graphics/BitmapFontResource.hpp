@@ -63,11 +63,21 @@ namespace Engine
 			return i->second;
 		}
 
+		// Struct describing the animation parameters for advanced font rendering
+		typedef struct AnimationParameters
+		{
+			f2 animWaveAmplitude;
+			f2 animShakeAmplitude;
+			float animHueCycleAmplitude;
+			float animIntensityPulseAmplitude;
+			float animAlphaPulseAmplitude;
+		};
+
 		// Gets the character data for a text message
 		void GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices);
 
 		// Gets the character data for a text message (also parses color tags)
-		void GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, const colorRGBA& defaultColor = colorRGBA());
+		void GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, std::vector<AnimationParameters>& out_AnimParameters, const colorRGBA& defaultColor = colorRGBA());
 
 		////////////////////////////////////////////////////////////////
 		// Resource saving and loading								  //

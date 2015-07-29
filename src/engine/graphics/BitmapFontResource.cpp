@@ -114,13 +114,18 @@ void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<
 	}
 }
 
-// Gets the character data for a text message
 // Gets the character data for a text message (also parses color tags)
-void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, const colorRGBA& defaultColor)
+void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, std::vector<AnimationParameters>& out_AnimParameters, const colorRGBA& defaultColor)
 {
 	int x = 0;
 	int y = 0;
 	colorRGBA color(defaultColor);
+	AnimationParameters animationParameters;
+	animationParameters.animWaveAmplitude = f2(0.0f, 0.0f);
+	animationParameters.animShakeAmplitude = f2(0.0f, 0.0f);
+	animationParameters.animHueCycleAmplitude = 0.0f;
+	animationParameters.animIntensityPulseAmplitude = 0.0f;
+	animationParameters.animAlphaPulseAmplitude = 0.0f;
 
 	for (auto it = text.begin(); it != text.end(); it++)
 	{
@@ -140,7 +145,58 @@ void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std:
 			// Color tag
 			if (*it == 'c')
 			{
-				it += 2; // Skip the opening bracket "("
+				it++;
+
+				// Default color [##cd]
+				if (*it == 'd') { color = defaultColor; continue; }
+
+				// Hue cycling [##chc(X)]
+				if (*it == 'h')
+				{
+					it+=3;
+					float a;
+					std::stringstream ss;
+					while (true)
+					{
+						if (*it == ')') { ss >> a; ss.clear(); ss.str(""); break; }
+						ss << *it; it++;
+					}
+					animationParameters.animHueCycleAmplitude = a;
+					continue;
+				}
+
+				// Intensity pulsing [##cip(X)]
+				if (*it == 'i')
+				{
+					it+=3;
+					float a;
+					std::stringstream ss;
+					while (true)
+					{
+						if (*it == ')') { ss >> a; ss.clear(); ss.str(""); break; }
+						ss << *it; it++;
+					}
+					animationParameters.animIntensityPulseAmplitude = a; 
+					continue;
+				}
+
+				// Alpha pulsing [##cap(X)]
+				if (*it == 'a')
+				{
+					it += 3;
+					float a;
+					std::stringstream ss;
+					while (true)
+					{
+						if (*it == ')') { ss >> a; ss.clear(); ss.str(""); break; }
+						ss << *it; it++;
+					}
+					animationParameters.animAlphaPulseAmplitude = a; 
+					continue;
+				}
+
+				// Color setting [##c(I) OR ##c(R,G,B) OR ##c(R,G,B,A)]
+				it++; 
 				int r, g, b, a;
 				std::stringstream ss;
 				while (true) 
@@ -170,6 +226,62 @@ void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std:
 			parseRGB: color = colorRGBA(r, g, b); continue;
 			parseRGBA: color = colorRGBA(r, g, b, a); continue;
 			}
+
+			// Wave tag [##w(X) OR ##w(X,Y)]
+			if (*it == 'w')
+			{
+				it += 2; // Skip the opening bracket "("
+				float x, y;
+				std::stringstream ss;
+				while (true)
+				{
+					if (*it == ',') { ss >> x; ss.clear(); ss.str(""); it++; break; }
+					if (*it == ')') { ss >> x; ss.clear(); ss.str(""); goto parseWaveXX; }
+					ss << *it; it++;
+				}
+				while (true)
+				{
+					if (*it == ')') { ss >> y; ss.clear(); ss.str(""); goto parseWaveXY; }
+					ss << *it; it++;
+				}
+
+			parseWaveXX: animationParameters.animWaveAmplitude = f2(x); continue;
+			parseWaveXY: animationParameters.animWaveAmplitude = f2(x, y); continue;
+			}
+
+			// Shake tag [##s(X) OR ##s(X,Y)]
+			if (*it == 's')
+			{
+				it += 2; // Skip the opening bracket "("
+				float x, y;
+				std::stringstream ss;
+				while (true)
+				{
+					if (*it == ',') { ss >> x; ss.clear(); ss.str(""); it++; break; }
+					if (*it == ')') { ss >> x; ss.clear(); ss.str(""); goto parseShakeXX; }
+					ss << *it; it++;
+				}
+				while (true)
+				{
+					if (*it == ')') { ss >> y; ss.clear(); ss.str(""); goto parseShakeXY; }
+					ss << *it; it++;
+				}
+
+			parseShakeXX: animationParameters.animShakeAmplitude = f2(x); continue;
+			parseShakeXY: animationParameters.animShakeAmplitude = f2(x, y); continue;
+			}
+
+			// Reset tag
+			if (*it == 'r')
+			{
+				color = defaultColor;
+				animationParameters.animWaveAmplitude = f2(0.0f, 0.0f);
+				animationParameters.animShakeAmplitude = f2(0.0f, 0.0f);
+				animationParameters.animHueCycleAmplitude = 0.0f;
+				animationParameters.animIntensityPulseAmplitude = 0.0f;
+				animationParameters.animAlphaPulseAmplitude = 0.0f;
+				continue;
+			}
 		}
 
 	normalChar:
@@ -177,6 +289,7 @@ void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std:
 		out_CharacterPositions.push_back(f2(x, y));
 		out_GlyphIndices.push_back(GetFrame(*it));
 		out_GlyphColors.push_back(color);
+		out_AnimParameters.push_back(animationParameters);
 		x++;
 	}
 }

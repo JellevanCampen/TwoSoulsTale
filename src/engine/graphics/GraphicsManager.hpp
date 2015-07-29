@@ -152,6 +152,18 @@ namespace Engine{
 		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetGridSize;
 		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetSeparation;
 		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetOrigin;
+		GLuint m_ShaderTextBitmapFontAdvanced_uTimeSeconds;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimWaveXYOffset;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimWaveLength;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimWaveFrequency;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimShakeWaveLength;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimShakeFrequency;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimHueCycleWaveLength;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimHueCycleFrequency;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimIntensityPulseWaveLength;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimIntensityPulseFrequency;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimAlphaPulseWaveLength;
+		GLuint m_ShaderTextBitmapFontAdvanced_uAnimAlphaPulseFrequency;
 		GLuint m_ShaderTextBitmapFontAdvanced_uMatModel;
 		GLuint m_ShaderTextBitmapFontAdvanced_uMatView;
 		GLuint m_ShaderTextBitmapFontAdvanced_uMatProjection;
@@ -161,6 +173,7 @@ namespace Engine{
 		GLuint m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition;
 		GLuint m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex;
 		GLuint m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor;
+		GLuint m_ShaderTextBitmapFontAdvanced_VBO_AnimationParameters;
 
 		////////////////////////////////////////////////////////////////
 		// Camera													  //
