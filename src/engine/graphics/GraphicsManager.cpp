@@ -175,6 +175,20 @@ void Engine::GraphicsManager::InitializeShaderPrograms()
 	m_ShaderTextBitmapFont_uMatView = glGetUniformLocation(m_ShaderTextBitmapFont, "matView");
 	m_ShaderTextBitmapFont_uMatProjection = glGetUniformLocation(m_ShaderTextBitmapFont, "matProjection");
 	m_ShaderTextBitmapFont_uSpriteSampler = glGetUniformLocation(m_ShaderTextBitmapFont, "uSpriteSampler");
+	m_ShaderTextBitmapFont_uColor = glGetUniformLocation(m_ShaderTextBitmapFont, "uColor");
+
+	////////////////////////////////Advanced Bitmap Font Text Shader
+	m_ShaderTextBitmapFontAdvanced = LoadShaderProgram("textBitmapFontAdvanced", "textBitmapFontAdvanced");
+	m_ShaderTextBitmapFontAdvanced_uGlyphSize = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uGlyphSize");
+	m_ShaderTextBitmapFontAdvanced_uGlyphOrigin = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uGlyphOrigin");
+	m_ShaderTextBitmapFontAdvanced_uSpriteSheetSize = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetSize");
+	m_ShaderTextBitmapFontAdvanced_uSpriteSheetGridSize = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetGridSize");
+	m_ShaderTextBitmapFontAdvanced_uSpriteSheetSeparation = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetSeparation");
+	m_ShaderTextBitmapFontAdvanced_uSpriteSheetOrigin = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSheetOrigin");
+	m_ShaderTextBitmapFontAdvanced_uMatModel = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "matModel");
+	m_ShaderTextBitmapFontAdvanced_uMatView = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "matView");
+	m_ShaderTextBitmapFontAdvanced_uMatProjection = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "matProjection");
+	m_ShaderTextBitmapFontAdvanced_uSpriteSampler = glGetUniformLocation(m_ShaderTextBitmapFontAdvanced, "uSpriteSampler");
 }
 
 // Destroys standard shader programs
@@ -185,6 +199,7 @@ void Engine::GraphicsManager::TerminateShaderPrograms()
 	glDeleteProgram(m_ShaderCircle);
 	glDeleteProgram(m_ShaderSpriteSheet);
 	glDeleteProgram(m_ShaderTextBitmapFont);
+	glDeleteProgram(m_ShaderTextBitmapFontAdvanced);
 }
 
 // Initializes standard buffers
@@ -277,8 +292,8 @@ void Engine::GraphicsManager::InitializeBuffers()
 	glBindVertexArray(m_ShaderTextBitmapFont_VAO);
 
 	// Generate and bind the vertex buffer (positions and UVs)
-	glGenBuffers(1, &m_ShaderSpriteSheet_VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderSpriteSheet_VBO);
+	glGenBuffers(1, &m_ShaderTextBitmapFont_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFont_VBO);
 
 	// Buffer vertex data (positions and UVs)
 	GLfloat vertexDataBitmapFont[2 * 6 + 2 * 6] =
@@ -323,9 +338,60 @@ void Engine::GraphicsManager::InitializeBuffers()
 	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, 0, (void*)(0)); // Glyph position
 	glVertexAttribDivisor(3, 1);
 
+	/////////////////////////////// Advanced bitmap font text shader
+	glGenVertexArrays(1, &m_ShaderTextBitmapFontAdvanced_VAO);
+	glBindVertexArray(m_ShaderTextBitmapFontAdvanced_VAO);
+
+	// Generate and bind the vertex buffer (positions and UVs)
+	glGenBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO);
+
+	// Buffer vertex data (positions and UVs)
+	GLfloat vertexDataBitmapFontAdvanced[2 * 6 + 2 * 6] =
+	{
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 1.0f,
+		1.0f, 0.0f,
+
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		0.0f, 0.0f,
+		1.0f, 1.0f
+	};
+	glBufferData(GL_ARRAY_BUFFER, ((2 * 6) + (2 * 6)) * sizeof(GLfloat), &vertexDataBitmapFontAdvanced[0], GL_STATIC_DRAW);
+
+	// Specify the vertex attributes (position and UVs)
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Position
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(2 * 6 * sizeof(GLfloat))); // UVs
+
+	// Generate and bind the character position buffer (character position)
+	glGenBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition);
+
+	// Specify the character position attribute (character position)
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0)); // Character position
+	glVertexAttribDivisor(2, 1);
+
+	// Generate and bind the glyph index buffer (glyph index)
+	glGenBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex);
+
+	// Specify the glyph index attribute (glyph index)
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 1, GL_UNSIGNED_INT, GL_FALSE, 0, (void*)(0)); // Glyph position
+	glVertexAttribDivisor(3, 1);
+
 	// Generate and bind the glyph color buffer (glyph color)
-	glGenBuffers(1, &m_ShaderTextBitmapFont_VBO_GlyphColor);
-	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFont_VBO_GlyphColor);
+	glGenBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor);
 
 	// Specify the glyph color attribute (glyph color)
 	glEnableVertexAttribArray(4);
@@ -357,8 +423,13 @@ void Engine::GraphicsManager::TerminateBuffers()
 	glDeleteBuffers(1, &m_ShaderTextBitmapFont_VBO);
 	glDeleteBuffers(1, &m_ShaderTextBitmapFont_VBO_CharacterPosition);
 	glDeleteBuffers(1, &m_ShaderTextBitmapFont_VBO_GlyphIndex);
-	glDeleteBuffers(1, &m_ShaderTextBitmapFont_VBO_GlyphColor);
 	glDeleteVertexArrays(1, &m_ShaderTextBitmapFont_VBO);
+
+	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO);
+	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition);
+	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex);
+	glDeleteBuffers(1, &m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor);
+	glDeleteVertexArrays(1, &m_ShaderTextBitmapFontAdvanced_VBO);
 }
 
 // Loads and compiles a shader program
@@ -565,7 +636,7 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 ////////////////////////////////////////////////////////////////
 
 // Draws a text message using the specified bitmap font
-void Engine::GraphicsManager::DrawText(std::string text, BitmapFont font, transform2D transform, float z)
+void Engine::GraphicsManager::DrawText(std::string text, BitmapFont font, transform2D transform, float z, colorRGBA color)
 {
 	// Retrieve the bitmap font resource from the ResourceManager
 	BitmapFontResource& bitmapFontResource = ResourceManager::GetInstance().GetBitmapFontResource(font);
@@ -594,22 +665,72 @@ void Engine::GraphicsManager::DrawText(std::string text, BitmapFont font, transf
 	glUniformMatrix4fv(m_ShaderTextBitmapFont_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
 	glUniformMatrix4fv(m_ShaderTextBitmapFont_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
 
+	// Pass the text color
+	glUniform4f(m_ShaderTextBitmapFont_uColor, color.r(), color.g(), color.b(), color.a());
+
 	// Calculate and pass the character data
 	std::vector<f2> characterPositions;
 	std::vector<unsigned int> glyphIndices;
-	std::vector<colorRGBA> glyphColors;
-	bitmapFontResource.GetCharacterData(text, characterPositions, glyphIndices, glyphColors);
+	bitmapFontResource.GetCharacterData(text, characterPositions, glyphIndices);
 	size_t numCharacters = characterPositions.size();
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFont_VBO_CharacterPosition);
 	glBufferData(GL_ARRAY_BUFFER, numCharacters * 2 * sizeof(GLfloat), &characterPositions[0], GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFont_VBO_GlyphIndex);
-	// glBufferData(GL_ARRAY_BUFFER, numCharacters * 1 * sizeof(GLuint), &glyphIndices[0], GL_DYNAMIC_DRAW);
-	glBufferData(GL_ARRAY_BUFFER, numCharacters * 1 * sizeof(GLfloat), &glyphIndices[0], GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFont_VBO_GlyphColor);
-	glBufferData(GL_ARRAY_BUFFER, numCharacters * 4 * sizeof(GLfloat), &glyphColors[0], GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * 1 * sizeof(GLuint), &glyphIndices[0], GL_DYNAMIC_DRAW);
+
 	// Draw the text
 	glBindVertexArray(m_ShaderTextBitmapFont_VAO);
+	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, numCharacters);
+	glBindVertexArray(0);
+}
+
+// Draws a text message using the specified bitmap font
+void Engine::GraphicsManager::DrawTextAdvanced(std::string text, BitmapFont font, transform2D transform, float z, colorRGBA defaultColor)
+{
+	// Retrieve the bitmap font resource from the ResourceManager
+	BitmapFontResource& bitmapFontResource = ResourceManager::GetInstance().GetBitmapFontResource(font);
+
+	// Retrieve the sprite sheet resource from the ResourceManager
+	SpriteSheetResource& spriteSheetResource = ResourceManager::GetInstance().GetSpriteSheetResource(bitmapFontResource.m_SpriteSheet);
+
+	// Use the sprite sheet shader program
+	glUseProgram(m_ShaderTextBitmapFontAdvanced);
+
+	// Bind the sprite sheet texture
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(m_ShaderTextBitmapFontAdvanced_uSpriteSampler, 0);
+	glBindTexture(GL_TEXTURE_2D, ResourceManager::GetInstance().GetImageResource(spriteSheetResource.m_Image).GetTexture());
+
+	// Pass the bitmap font data
+	glUniform2i(m_ShaderTextBitmapFontAdvanced_uGlyphSize, spriteSheetResource.m_Metadata.m_SpriteWidth, spriteSheetResource.m_Metadata.m_SpriteHeight);
+	glUniform2i(m_ShaderTextBitmapFontAdvanced_uGlyphOrigin, spriteSheetResource.m_Metadata.m_SpriteOriginX, spriteSheetResource.m_Metadata.m_SpriteOriginY);
+	glUniform2i(m_ShaderTextBitmapFontAdvanced_uSpriteSheetGridSize, spriteSheetResource.m_Metadata.m_SheetColumns, spriteSheetResource.m_Metadata.m_SheetRows);
+	glUniform2i(m_ShaderTextBitmapFontAdvanced_uSpriteSheetSize, spriteSheetResource.m_Metadata.m_SheetWidth, spriteSheetResource.m_Metadata.m_SheetHeight);
+	glUniform2i(m_ShaderTextBitmapFontAdvanced_uSpriteSheetSeparation, spriteSheetResource.m_Metadata.m_SheetSeparationX, spriteSheetResource.m_Metadata.m_SheetSeparationY);
+	glUniform2i(m_ShaderTextBitmapFontAdvanced_uSpriteSheetOrigin, spriteSheetResource.m_Metadata.m_SheetLeft, spriteSheetResource.m_Metadata.m_SheetTop);
+
+	// Calculate and pass the transformation matrices
+	glUniformMatrix4fv(m_ShaderTextBitmapFontAdvanced_uMatModel, 1, GL_FALSE, (GLfloat*)(&transform.GetTransformationMatrix()));
+	glUniformMatrix4fv(m_ShaderTextBitmapFontAdvanced_uMatView, 1, GL_FALSE, (GLfloat*)(&GetCameraViewMatrix()));
+	glUniformMatrix4fv(m_ShaderTextBitmapFontAdvanced_uMatProjection, 1, GL_FALSE, (GLfloat*)(&GetCameraProjectionMatrix()));
+
+	// Calculate and pass the character data
+	std::vector<f2> characterPositions;
+	std::vector<unsigned int> glyphIndices;
+	std::vector<colorRGBA> glyphColors;
+	bitmapFontResource.GetCharacterDataAdvanced(text, characterPositions, glyphIndices, glyphColors, defaultColor);
+	size_t numCharacters = characterPositions.size();
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * 2 * sizeof(GLfloat), &characterPositions[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * 1 * sizeof(GLuint), &glyphIndices[0], GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor);
+	glBufferData(GL_ARRAY_BUFFER, numCharacters * 4 * sizeof(GLfloat), &glyphColors[0], GL_DYNAMIC_DRAW);
+
+	// Draw the text
+	glBindVertexArray(m_ShaderTextBitmapFontAdvanced_VAO);
 	glDrawArraysInstanced(GL_TRIANGLES, 0, 6, numCharacters);
 	glBindVertexArray(0);
 }

@@ -47,5 +47,8 @@ void GameContent::TestObject2::Draw(const Engine::GameTime& gameTime)
 	Engine::GraphicsManager::GetInstance().DrawText(test, m_Font, Engine::transform2D(Engine::f2(128.0f, 120.0f)));*/
 	std::stringstream fps;
 	fps << "FPS: " << std::setprecision(4) << Engine::TimingManager::GetInstance().GetFrameRate() << " (" << gameTime.GetFrameCount() << ") " << std::endl;
-	Engine::GraphicsManager::GetInstance().DrawText(fps.str(), m_Font, Engine::transform2D(Engine::f2(16.0f, 240.0f - 16.0f)));
+	Engine::colorRGBA test(1.0f, 0.5f, 0.0f);
+	Engine::colorRGBA color(0.5f + 0.5f * sinf(gameTime.GetTotalTimeSeconds()), 0.5f + 0.5f * sinf(gameTime.GetTotalTimeSeconds() + (3.1415f * 2.0f / 3.0f) ), 0.5f + 0.5f * sin(gameTime.GetTotalTimeSeconds() + (3.1415f * 4.0f / 3.0f)));
+	Engine::GraphicsManager::GetInstance().DrawText(fps.str(), m_Font, Engine::transform2D(Engine::f2(16.0f, 240.0f - 16.0f), 0.0f, Engine::f2(0.5f)), 0.0f, color);
+	Engine::GraphicsManager::GetInstance().DrawTextAdvanced("Hello! ##c(255,0,0)Such ##c(0,255,0)wow!", m_Font, Engine::transform2D(Engine::f2(16.0f, 240.0f - 16.0f - 6.0f), 0.0f, Engine::f2(0.5f)), 0.0f, color);
 }

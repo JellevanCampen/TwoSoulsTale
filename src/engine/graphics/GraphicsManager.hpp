@@ -138,11 +138,29 @@ namespace Engine{
 		GLuint m_ShaderTextBitmapFont_uMatView;
 		GLuint m_ShaderTextBitmapFont_uMatProjection;
 		GLuint m_ShaderTextBitmapFont_uSpriteSampler;
+		GLuint m_ShaderTextBitmapFont_uColor;
 		GLuint m_ShaderTextBitmapFont_VAO;
 		GLuint m_ShaderTextBitmapFont_VBO;
 		GLuint m_ShaderTextBitmapFont_VBO_CharacterPosition;
 		GLuint m_ShaderTextBitmapFont_VBO_GlyphIndex;
-		GLuint m_ShaderTextBitmapFont_VBO_GlyphColor;
+
+		/////////////////////////////// Advanced Bitmap Font Text Shader
+		GLuint m_ShaderTextBitmapFontAdvanced;
+		GLuint m_ShaderTextBitmapFontAdvanced_uGlyphSize;
+		GLuint m_ShaderTextBitmapFontAdvanced_uGlyphOrigin;
+		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetSize;
+		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetGridSize;
+		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetSeparation;
+		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSheetOrigin;
+		GLuint m_ShaderTextBitmapFontAdvanced_uMatModel;
+		GLuint m_ShaderTextBitmapFontAdvanced_uMatView;
+		GLuint m_ShaderTextBitmapFontAdvanced_uMatProjection;
+		GLuint m_ShaderTextBitmapFontAdvanced_uSpriteSampler;
+		GLuint m_ShaderTextBitmapFontAdvanced_VAO;
+		GLuint m_ShaderTextBitmapFontAdvanced_VBO;
+		GLuint m_ShaderTextBitmapFontAdvanced_VBO_CharacterPosition;
+		GLuint m_ShaderTextBitmapFontAdvanced_VBO_GlyphIndex;
+		GLuint m_ShaderTextBitmapFontAdvanced_VBO_GlyphColor;
 
 		////////////////////////////////////////////////////////////////
 		// Camera													  //
@@ -317,7 +335,10 @@ namespace Engine{
 		////////////////////////////////////////////////////////////////
 
 		// Draws a text message using the specified bitmap font
-		void DrawText(std::string text, BitmapFont font, transform2D transform, float z = 0.0f);
+		void DrawText(std::string text, BitmapFont font, transform2D transform, float z = 0.0f, colorRGBA color = colorRGBA());
+
+		// Draws a text message using the specified bitmap font (supports color tags)
+		void DrawTextAdvanced(std::string text, BitmapFont font, transform2D transform, float z = 0.0f, colorRGBA defaultColor = colorRGBA());
 
 		friend class InputManager;
 

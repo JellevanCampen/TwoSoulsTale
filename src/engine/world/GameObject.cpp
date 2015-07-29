@@ -12,7 +12,7 @@ Engine::GameObject::GameObject(transform3D transform)
 	: m_GUID(s_GUIDCounter++)
 	, m_Transform(transform)
 {
-
+	
 }
 
 // Constructor (with transform and aabb)

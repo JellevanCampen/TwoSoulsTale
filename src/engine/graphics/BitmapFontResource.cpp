@@ -3,6 +3,7 @@
 #include "..\resources\ResourceManager.hpp" // For reserving the sprite sheet associated to this bitmap font
 #include "..\common\utility\XMLFileIO.hpp" // For reading and writing character mappings from and to bitmapfont files
 #include "..\common\utility\PathConfig.hpp" // For retrieving the bitmapfonts path
+#include <sstream> // For parsing commands in text strings
 
 ////////////////////////////////////////////////////////////////
 // Construction, loading and unloading                        //
@@ -97,11 +98,10 @@ void Engine::BitmapFontResource::LoadFile(const std::string& filename)
 ////////////////////////////////////////////////////////////////
 
 // Gets the character data for a text message
-void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors)
+void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices)
 {
 	int x = 0;
 	int y = 0;
-	colorRGBA color = colorRGBA(0.25f, 0.25f, 1.0f, 1.0f);
 
 	for (auto c : text)
 	{
@@ -110,6 +110,72 @@ void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<
 
 		out_CharacterPositions.push_back(f2(x, y));
 		out_GlyphIndices.push_back(GetFrame(c));
+		x++;
+	}
+}
+
+// Gets the character data for a text message
+// Gets the character data for a text message (also parses color tags)
+void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, const colorRGBA& defaultColor)
+{
+	int x = 0;
+	int y = 0;
+	colorRGBA color(defaultColor);
+
+	for (auto it = text.begin(); it != text.end(); it++)
+	{
+		// Start a new line on a newline character
+		if (*it == '\n') { y++; x = 0; continue; }
+
+		// Parse tags (preceded by "##")
+		if (*it == '#')
+		{
+			it++;
+
+			// Not a tag, just display the # symbol
+			if (*it != '#') { it--; goto normalChar; }
+
+			it++; 
+
+			// Color tag
+			if (*it == 'c')
+			{
+				it += 2; // Skip the opening bracket "("
+				int r, g, b, a;
+				std::stringstream ss;
+				while (true) 
+				{ 
+					if (*it == ',') { ss >> r; ss.clear(); ss.str(""); it++; break; }
+					if (*it == ')') { ss >> r; ss.clear(); ss.str(""); goto parseGray; }
+					ss << *it; it++; 
+				}
+				while (true) 
+				{ 
+					if (*it == ',') { ss >> g; ss.clear(); ss.str(""); it++; break; }
+					ss << *it; it++; 
+				}
+				while (true) 
+				{ 
+					if (*it == ',') { ss >> b; ss.clear(); ss.str(""); it++; break; }
+					if (*it == ')') { ss >> b; ss.clear(); ss.str(""); goto parseRGB; }
+					ss << *it; it++; 
+				}
+				while (true) 
+				{ 
+					if (*it == ')') { ss >> a; ss.clear(); ss.str(""); goto parseRGBA; }
+					ss << *it; it++; 
+				}
+
+			parseGray: color = colorRGBA(r); continue;
+			parseRGB: color = colorRGBA(r, g, b); continue;
+			parseRGBA: color = colorRGBA(r, g, b, a); continue;
+			}
+		}
+
+	normalChar:
+
+		out_CharacterPositions.push_back(f2(x, y));
+		out_GlyphIndices.push_back(GetFrame(*it));
 		out_GlyphColors.push_back(color);
 		x++;
 	}

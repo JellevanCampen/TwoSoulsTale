@@ -5,6 +5,7 @@ layout(location = 1) in vec2 vUV;
 
 layout(location = 2) in vec2 vCharacterPosition; // Integer position (column, row) of the character (e.g. (2.0, 3.0))
 layout(location = 3) in float vGlyphIndex; // Index of the glyph on the spritesheet (e.g. (10))
+layout(location = 4) in vec4 vGlyphColor; // Color to render the glyph in (e.g. (1.0, 1.0, 0.0, 1.0))
 
 out vec2 fUV;
 out vec4 fColor;
@@ -34,4 +35,7 @@ void main()
 	float UVx = float(uSpriteSheetOrigin.x + (col) * (uGlyphSize.x + uSpriteSheetSeparation.x) + vUV.x * uGlyphSize.x);
 	float UVy = float(uSpriteSheetOrigin.y + (row) * (uGlyphSize.y + uSpriteSheetSeparation.y) + vUV.y * uGlyphSize.y);
 	fUV = vec2(UVx / uSpriteSheetSize.x, 1.0f - UVy / uSpriteSheetSize.y);
+	
+	// Pass the color
+	fColor = vGlyphColor;
 }
