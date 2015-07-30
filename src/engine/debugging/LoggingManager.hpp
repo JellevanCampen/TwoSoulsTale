@@ -25,7 +25,7 @@ namespace Engine{
 		void Terminate();
 
 		// Logs a message
-		void Log(LogType logType, std::string message);
+		void Log(LogType logType, const std::string& message);
 
 	private:
 

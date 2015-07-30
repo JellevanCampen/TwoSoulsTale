@@ -18,14 +18,8 @@ namespace Engine{
 
 	public:
 
-		// Constructor (default)
-		GameObject();
-
-		// Constructor (with transform)
-		GameObject(transform3D transform);
-
-		// Constructor (with transform and aabb)
-		GameObject(transform3D transform, aabb3Df aabb);
+		// Constructor 
+		GameObject(const transform3D& transform = transform3D(), const aabb3Df& aabb = aabb3Df());
 
 		////////////////////////////////////////////////////////////////
 		// Game loop functionality                                    //
@@ -123,7 +117,7 @@ namespace Engine{
 		// 2D transform setters
 		inline void tf(const transform2D& transform) { m_TransformIsDirty = true; m_Transform = transform; }
 		inline void t(const f2& t) { m_TransformIsDirty = true; m_Transform.t().x(t.x()); m_Transform.t().y(t.y()); }
-		inline void r(const float& r) { m_TransformIsDirty = true; m_Transform.r().x(r); }
+		inline void r(float r) { m_TransformIsDirty = true; m_Transform.r().x(r); }
 		inline void s(const f2& s) { m_TransformIsDirty = true; m_Transform.s().x(s.x()); m_Transform.s().y(s.y()); }
 
 		// AABB getters

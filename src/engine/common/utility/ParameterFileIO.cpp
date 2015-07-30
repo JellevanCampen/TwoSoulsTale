@@ -3,7 +3,7 @@
 #include <fstream> // For reading parameters from file
 
 // Checks whether a file exists
-bool Engine::ParameterFileIO::FileExists(std::string filename)
+bool Engine::ParameterFileIO::FileExists(const std::string& filename)
 {
 	if (FILE* file = fopen(filename.c_str(), "r"))
 	{
@@ -19,7 +19,7 @@ bool Engine::ParameterFileIO::FileExists(std::string filename)
 /**************************************************************/
 
 // Parses a text file into a list parameters names and values
-bool Engine::ParameterFileIO::ReadFile(std::string filename,
+bool Engine::ParameterFileIO::ReadFile(const std::string& filename,
 	ParameterMap& out_Parameters)
 {
 	std::ifstream file(filename);
@@ -51,7 +51,7 @@ bool Engine::ParameterFileIO::ReadFile(std::string filename,
 }
 
 // Writss a ParameterMap to a file
-bool Engine::ParameterFileIO::WriteFile(std::string filename, const ParameterMap& parameters)
+bool Engine::ParameterFileIO::WriteFile(const std::string& filename, const ParameterMap& parameters)
 {
 	std::ofstream file(filename);
 	if (!file.is_open())

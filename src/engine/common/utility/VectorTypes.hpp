@@ -26,7 +26,7 @@ namespace Engine
 		vector2D(const glm::vec2& v) : m_X(v.x), m_Y(v.y) { }
 
 		// Casts
-		inline operator glm::vec2() { return glm::vec2(m_X, m_Y); }
+		inline operator glm::vec2() const { return glm::vec2(m_X, m_Y); }
 
 		// Getters
 		inline valuetype& x() { return m_X; }
@@ -47,19 +47,19 @@ namespace Engine
 		inline bool operator< (const vector2D& other) const { return m_X < other.m_X && m_Y < other.m_Y; }
 		inline vector2D operator+ () const { return vector2D(*this); }
 		inline vector2D operator- () const { return vector2D(-m_X, -m_Y); }
-		inline vector2D operator+ (const valuetype& scalar) const { return vector2D(m_X + scalar, m_Y); }
-		inline vector2D operator- (const valuetype& scalar) const { return vector2D(m_X - scalar, m_Y); }
+		inline vector2D operator+ (valuetype scalar) const { return vector2D(m_X + scalar, m_Y); }
+		inline vector2D operator- (valuetype scalar) const { return vector2D(m_X - scalar, m_Y); }
 		inline vector2D operator+ (const vector2D& other) const { return vector2D(m_X + other.m_X, m_Y + other.m_Y); }
 		inline vector2D operator- (const vector2D& other) const { return vector2D(m_X - other.m_X, m_Y - other.m_Y); }
 		inline vector2D operator* (valuetype scalar) const { return vector2D(m_X * scalar, m_Y * scalar); }
-		inline valuetype operator* (vector2D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y); }
+		inline valuetype operator* (const vector2D& other) const { return (m_X * other.m_X) + (m_Y * other.m_Y); }
 		inline vector2D operator/ (valuetype scalar) const { return vector2D(m_X / scalar, m_Y / scalar); }
-		inline vector2D& operator+= (const valuetype& scalar) { m_X += scalar; return *this; }
-		inline vector2D& operator-= (const valuetype& scalar) { m_X -= scalar; return *this; }
+		inline vector2D& operator+= (valuetype scalar) { m_X += scalar; return *this; }
+		inline vector2D& operator-= (valuetype scalar) { m_X -= scalar; return *this; }
 		inline vector2D& operator+= (const vector2D& other) { m_X += other.m_X; m_Y += other.m_Y; return *this; }
 		inline vector2D& operator-= (const vector2D& other) { m_X -= other.m_X; m_Y -= other.m_Y; return *this; }
-		inline vector2D& operator*= (const valuetype& scalar) { m_X *= scalar; m_Y *= scalar; return *this; }
-		inline vector2D& operator/= (const valuetype& scalar) { m_X /= scalar; m_Y /= scalar; return *this; }
+		inline vector2D& operator*= (valuetype scalar) { m_X *= scalar; m_Y *= scalar; return *this; }
+		inline vector2D& operator/= (valuetype scalar) { m_X /= scalar; m_Y /= scalar; return *this; }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -126,13 +126,13 @@ namespace Engine
 		// Constructors
 		vector3D() : m_X(0), m_Y(0), m_Z(0) { }
 		vector3D(valuetype v) : m_X(v), m_Y(v), m_Z(v) { }
-		vector3D(vector2D<valuetype> v, valuetype z) : m_X(v.x()), m_Y(v.y()), m_Z(z) { }
-		vector3D(vector2D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(0) { }
+		vector3D(const vector2D<valuetype>& v, valuetype z) : m_X(v.x()), m_Y(v.y()), m_Z(z) { }
+		vector3D(const vector2D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(0) { }
 		vector3D(valuetype x, valuetype y, valuetype z) : m_X(x), m_Y(y), m_Z(z) { }
 		vector3D(const glm::vec3& v) : m_X(v.x), m_Y(v.y), m_Z(v.z) { }
 		
 		// Casts
-		inline operator glm::vec3() { return glm::vec3(m_X, m_Y, m_Z); }
+		inline operator glm::vec3() const { return glm::vec3(m_X, m_Y, m_Z); }
 
 		// Getters
 		inline valuetype& x() { return m_X; }
@@ -156,23 +156,23 @@ namespace Engine
 		inline bool operator< (const vector3D& other) const { return m_X < other.m_X && m_Y < other.m_Y && m_Z < other.m_Z; }
 		inline vector3D operator+ () const { return vector3D(*this); }
 		inline vector3D operator- () const { return vector3D(-m_X, -m_Y, -m_Z); }
-		inline vector3D operator+ (const valuetype& scalar) const { return vector3D(m_X + scalar, m_Y, m_Z); }
-		inline vector3D operator- (const valuetype& scalar) const { return vector3D(m_X - scalar, m_Y, m_Z); }
+		inline vector3D operator+ (valuetype scalar) const { return vector3D(m_X + scalar, m_Y, m_Z); }
+		inline vector3D operator- (valuetype scalar) const { return vector3D(m_X - scalar, m_Y, m_Z); }
 		inline vector3D operator+ (const vector2D<valuetype>& other) const { return vector3D(m_X + other.m_X, m_X + other.m_Y, m_Z); }
 		inline vector3D operator- (const vector2D<valuetype>& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z); }
 		inline vector3D operator+ (const vector3D& other) const { return vector3D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z); }
 		inline vector3D operator- (const vector3D& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z); }
 		inline vector3D operator* (valuetype scalar) const { return vector3D(m_X * scalar, m_Y * scalar, m_Z * scalar); }
-		inline valuetype operator* (vector3D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z); }
+		inline valuetype operator* (const vector3D& other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z); }
 		inline vector3D operator/ (valuetype scalar) const { return vector3D(m_X / scalar, m_Y / scalar, m_Z / scalar); }
-		inline vector3D& operator+= (const valuetype& scalar) { m_X += scalar; return *this; }
-		inline vector3D& operator-= (const valuetype& scalar) { m_X -= scalar; return *this; }
+		inline vector3D& operator+= (valuetype scalar) { m_X += scalar; return *this; }
+		inline vector3D& operator-= (valuetype scalar) { m_X -= scalar; return *this; }
 		inline vector3D& operator+= (const vector2D<valuetype>& other) { m_X += other.x(); m_Y += other.y(); return *this; }
 		inline vector3D& operator-= (const vector2D<valuetype>& other) { m_X -= other.x(); m_Y -= other.y(); return *this; }
 		inline vector3D& operator+= (const vector3D& other) { m_X += other.m_X; m_Y += other.m_Y; m_Z += other.m_Z; return *this; }
 		inline vector3D& operator-= (const vector3D& other) { m_X -= other.m_X; m_Y -= other.m_Y; m_Z -= other.m_Z; return *this; }
-		inline vector3D& operator*= (const valuetype& scalar) { m_X *= scalar; m_Y *= scalar; m_Z *= scalar; return *this; }
-		inline vector3D& operator/= (const valuetype& scalar) { m_X /= scalar; m_Y /= scalar; m_Z /= scalar; return *this; }
+		inline vector3D& operator*= (valuetype scalar) { m_X *= scalar; m_Y *= scalar; m_Z *= scalar; return *this; }
+		inline vector3D& operator/= (valuetype scalar) { m_X /= scalar; m_Y /= scalar; m_Z /= scalar; return *this; }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -255,14 +255,14 @@ namespace Engine
 		// Constructors
 		vector4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
 		vector4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
-		vector4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
-		vector4D(vector3D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(0) { }
-		vector4D(vector2D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(0), m_W(0) { }
+		vector4D(const vector3D<valuetype>& v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
+		vector4D(const vector3D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(0) { }
+		vector4D(const vector2D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(0), m_W(0) { }
 		vector4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
 		vector4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		
 		// Casts
-		inline operator glm::vec4() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
+		inline operator glm::vec4() const { return glm::vec4(m_X, m_Y, m_Z, m_W); }
 
 		// Getters
 		inline valuetype& x() { return m_X; }
@@ -289,8 +289,8 @@ namespace Engine
 		inline bool operator< (const vector4D& other) const { return m_X < other.m_X && m_Y < other.m_Y && m_Z < other.m_Z && m_W < other.m_W; }
 		inline vector4D operator+ () const { return vector4D(*this); }
 		inline vector4D operator- () const { return vector4D(-m_X, -m_Y, -m_Z, -m_W); }
-		inline vector4D operator+ (const valuetype& scalar) const { return vector4D(m_X + scalar, m_Y, m_Z, m_W); }
-		inline vector4D operator- (const valuetype& scalar) const { return vector4D(m_X - scalar, m_Y, m_Z, m_W); }
+		inline vector4D operator+ (valuetype scalar) const { return vector4D(m_X + scalar, m_Y, m_Z, m_W); }
+		inline vector4D operator- (valuetype scalar) const { return vector4D(m_X - scalar, m_Y, m_Z, m_W); }
 		inline vector4D operator+ (const vector2D<valuetype>& other) const { return vector3D(m_X + other.m_X, m_X + other.m_Y, m_Z, m_W); }
 		inline vector4D operator- (const vector2D<valuetype>& other) const { return vector3D(m_X - other.m_X, m_Y - other.m_Y, m_Z, m_W); }
 		inline vector4D operator+ (const vector3D<valuetype>& other) const { return vector3D(m_X + other.m_X, m_X + other.m_Y, m_Z + other.m_W, m_W); }
@@ -298,18 +298,18 @@ namespace Engine
 		inline vector4D operator+ (const vector4D& other) const { return vector4D(m_X + other.m_X, m_Y + other.m_Y, m_Z + other.m_Z, m_W + other.m_W); }
 		inline vector4D operator- (const vector4D& other) const { return vector4D(m_X - other.m_X, m_Y - other.m_Y, m_Z - other.m_Z, m_W - other.m_W); }
 		inline vector4D operator* (valuetype scalar) const { return vector4D(m_X * scalar, m_Y * scalar, m_Z * scalar, m_W * scalar); }
-		inline valuetype operator* (vector4D other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z) + (m_W * other.m_W); }
+		inline valuetype operator* (const vector4D& other) const { return (m_X * other.m_X) + (m_Y * other.m_Y) + (m_Z * other.m_Z) + (m_W * other.m_W); }
 		inline vector4D operator/ (valuetype scalar) const { return vector4D(m_X / scalar, m_Y / scalar, m_Z / scalar, m_W / scalar); }
-		inline vector4D& operator+= (const valuetype& scalar) { m_X += scalar; return *this; }
-		inline vector4D& operator-= (const valuetype& scalar) { m_X -= scalar; return *this; }
+		inline vector4D& operator+= (valuetype scalar) { m_X += scalar; return *this; }
+		inline vector4D& operator-= (valuetype scalar) { m_X -= scalar; return *this; }
 		inline vector4D& operator+= (const vector2D<valuetype>& other) { m_X += other.x(); m_Y += other.y(); return *this; }
 		inline vector4D& operator-= (const vector2D<valuetype>& other) { m_X -= other.x(); m_Y -= other.y(); return *this; }
 		inline vector4D& operator+= (const vector3D<valuetype>& other) { m_X += other.x(); m_Y += other.y(); m_Z += other.z(); return *this; }
 		inline vector4D& operator-= (const vector3D<valuetype>& other) { m_X -= other.x(); m_Y -= other.y(); m_Z -= other.z(); return *this; }
 		inline vector4D& operator+= (const vector4D& other) { m_X += other.m_X; m_Y += other.m_Y; m_Z += other.m_Z; m_W += other.m_W; return *this; }
 		inline vector4D& operator-= (const vector4D& other) { m_X -= other.m_X; m_Y -= other.m_Y; m_Z -= other.m_Z; m_W -= other.m_W; return *this; }
-		inline vector4D& operator*= (const valuetype& scalar) { m_X *= scalar; m_Y *= scalar; m_Z *= scalar; m_W *= scalar; return *this; }
-		inline vector4D& operator/= (const valuetype& scalar) { m_X /= scalar; m_Y /= scalar; m_Z /= scalar; m_W /= scalar; return *this; }
+		inline vector4D& operator*= (valuetype scalar) { m_X *= scalar; m_Y *= scalar; m_Z *= scalar; m_W *= scalar; return *this; }
+		inline vector4D& operator/= (valuetype scalar) { m_X /= scalar; m_Y /= scalar; m_Z /= scalar; m_W /= scalar; return *this; }
 		inline valuetype& operator[] (size_t index)
 		{
 			switch (index)
@@ -410,7 +410,7 @@ namespace Engine
 		inline vector4D reflect(const vector4D<valuetype>& other) const { return operator-(project(other) * 2); }
 
 		// Rotates the vector to have its direction align with another vector
-		inline vector4D align(const vector2D<valuetype>& other) const { return (other * sqrt(((*this) * (*this)) / (other * other))); }
+		inline vector4D align(const vector4D<valuetype>& other) const { return (other * sqrt(((*this) * (*this)) / (other * other))); }
 
 		// Gets the length of the vector (as the Euclidean distance to the origin)
 		inline valuetype length() const { return sqrtf((m_X * m_X) + (m_Y * m_Y) + (m_Z * m_Z) + (m_W * m_W)); }
@@ -442,15 +442,15 @@ namespace Engine
 		// Constructors
 		vectorH4D() : m_X(0), m_Y(0), m_Z(0), m_W(0) { }
 		vectorH4D(valuetype v) : m_X(v), m_Y(v), m_Z(v), m_W(v) { }
-		vectorH4D(vector3D<valuetype> v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
-		vectorH4D(vector3D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(1) { }
-		vectorH4D(vector2D<valuetype> v) : m_X(v.x()), m_Y(v.y()), m_Z(0), m_W(1) { }
+		vectorH4D(const vector3D<valuetype>& v, valuetype w) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(w) { }
+		vectorH4D(const vector3D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(1) { }
+		vectorH4D(const vector2D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(0), m_W(1) { }
 		vectorH4D(valuetype x, valuetype y, valuetype z, valuetype w) : m_X(x), m_Y(y), m_Z(z), m_W(w) { }
 		vectorH4D(const glm::vec4& v) : m_X(v.x), m_Y(v.y), m_Z(v.z), m_W(v.w) { }
 		vectorH4D(const vector4D<valuetype>& v) : m_X(v.x()), m_Y(v.y()), m_Z(v.z()), m_W(v.w()) { }
 
 		// Casts
-		inline operator glm::vec4() { return glm::vec4(m_X, m_Y, m_Z, m_W); }
+		inline operator glm::vec4() const { return glm::vec4(m_X, m_Y, m_Z, m_W); }
 		inline operator vector3D<valuetype> const&() { return vector3D<valuetype>(m_X / m_W, m_Y / m_W, m_Z / m_W); }
 		inline operator vector4D<valuetype> const&() { return vector4D<valuetype>(m_X, m_Y, m_Z, m_W); }
 

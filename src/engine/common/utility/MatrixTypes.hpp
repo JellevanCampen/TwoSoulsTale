@@ -38,7 +38,7 @@ namespace Engine
 			}
 		}
 		matrix2x2(valuetype v) { for (size_t i = 0; i < 4; i++) { m_V[i] = (i % 2 == i / 2)?v:0; } }
-		matrix2x2(vector2D<valuetype> v) { for (size_t i = 0; i < 4; i++) { m_V[i] = (i % 2 == i / 2) ? v : 0; } }
+		matrix2x2(const vector2D<valuetype>& v) { for (size_t i = 0; i < 4; i++) { m_V[i] = (i % 2 == i / 2) ? v : 0; } }
 		matrix2x2(valuetype v[4]) { for (size_t i = 0; i < 4; i++) { m_V[i] = v[i]; } }
 		matrix2x2(const glm::tmat2x2<glm::lowp_float>& m) { for (size_t i = 0; i < 4; i++) { m_V[i] = m[i / 2][i % 2]; } }	
 		matrix2x2(const glm::tmat2x2<glm::highp_float>& m) { for (size_t i = 0; i < 4; i++) { m_V[i] = m[i / 2][i % 2]; } }
@@ -74,7 +74,7 @@ namespace Engine
 		inline matrix2x2& SetDiagonal(const vector2D<valuetype>& diagonal) { for (size_t i = 0; i < 2; i++) { m_V[i * 2 + i] = diagonal[i]; } return *this; }
 
 		// Sets the diagonal elements of the matrix to the given value
-		inline matrix2x2& SetDiagonal(const float diagonal) { for (size_t i = 0; i < 2; i++) { m_V[i * 2 + i] = diagonal; } return *this; }
+		inline matrix2x2& SetDiagonal(float diagonal) { for (size_t i = 0; i < 2; i++) { m_V[i * 2 + i] = diagonal; } return *this; }
 
 		// Set the matrix to have all zero components
 		inline matrix2x2& SetZeros() { for (size_t i = 0; i < 4; i++) { m_V[i] = 0; } return *this; }
@@ -164,7 +164,7 @@ namespace Engine
 			}
 		}
 		matrix3x3(valuetype v) { for (size_t i = 0; i < 9; i++) { m_V[i] = (i % 3 == i / 3) ? v : 0; } }
-		matrix3x3(vector2D<valuetype> v) { for (size_t i = 0; i < 9; i++) { m_V[i] = (i % 3 == i / 3) ? v : 0; } }
+		matrix3x3(const vector2D<valuetype>& v) { for (size_t i = 0; i < 9; i++) { m_V[i] = (i % 3 == i / 3) ? v : 0; } }
 		matrix3x3(valuetype v[9]) { for (size_t i = 0; i < 9; i++) { m_V[i] = v[i]; } }
 		matrix3x3(const glm::tmat3x3<glm::lowp_float>& m) { for (size_t i = 0; i < 9; i++) { m_V[i] = m[i / 3][i % 3]; } } // TODO: correct order?
 		matrix3x3(const glm::tmat3x3<glm::highp_float>& m) { for (size_t i = 0; i < 9; i++) { m_V[i] = m[i / 3][i % 3]; } } // TODO: correct order?
@@ -200,7 +200,7 @@ namespace Engine
 		inline matrix3x3& SetDiagonal(const vector3D<valuetype>& diagonal) { for (size_t i = 0; i < 3; i++) { m_V[i * 3 + i] = diagonal[i]; } return *this; }
 
 		// Sets the diagonal elements of the matrix to the given value
-		inline matrix3x3& SetDiagonal(const float diagonal) { for (size_t i = 0; i < 3; i++) { m_V[i * 3 + i] = diagonal; } return *this; }
+		inline matrix3x3& SetDiagonal(float diagonal) { for (size_t i = 0; i < 3; i++) { m_V[i * 3 + i] = diagonal; } return *this; }
 
 		// Set the matrix to have all zero components
 		inline matrix3x3& SetZeros() { for (size_t i = 0; i < 9; i++) { m_V[i] = 0; } return *this; }
@@ -290,7 +290,7 @@ namespace Engine
 			}
 		}
 		matrix4x4(valuetype v) { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? v : 0; } }
-		matrix4x4(vector4D<valuetype> v) { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? v : 0; } }
+		matrix4x4(const vector4D<valuetype>& v) { for (size_t i = 0; i < 16; i++) { m_V[i] = (i % 4 == i / 4) ? v : 0; } }
 		matrix4x4(valuetype v[16]) { for (size_t i = 0; i < 16; i++) { m_V[i] = v[i]; } }
 		matrix4x4(const glm::tmat4x4<glm::lowp_float>& m) { for (size_t i = 0; i < 16; i++) { m_V[i] = m[i / 4][i % 4]; } } // TODO: correct order?
 		matrix4x4(const glm::tmat4x4<glm::highp_float>& m) { for (size_t i = 0; i < 16; i++) { m_V[i] = m[i / 4][i % 4]; } } // TODO: correct order?
@@ -326,7 +326,7 @@ namespace Engine
 		inline matrix4x4& SetDiagonal(const vector4D<valuetype>& diagonal) { for (size_t i = 0; i < 4; i++) { m_V[i * 4 + i] = diagonal[i]; } return *this; }
 
 		// Sets the diagonal elements of the matrix to the given value
-		inline matrix4x4& SetDiagonal(const float diagonal) { for (size_t i = 0; i < 4; i++) { m_V[i * 4 + i] = diagonal; } return *this; }
+		inline matrix4x4& SetDiagonal(float diagonal) { for (size_t i = 0; i < 4; i++) { m_V[i * 4 + i] = diagonal; } return *this; }
 
 		// Set the matrix to have all zero components
 		inline matrix4x4& SetZeros() { for (size_t i = 0; i < 16; i++) { m_V[i] = 0; } return *this; }

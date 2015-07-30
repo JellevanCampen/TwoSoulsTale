@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////
 
 // Constructor (based on filename)
-Engine::ImageResource::ImageResource(std::string filename) 
+Engine::ImageResource::ImageResource(const std::string& filename) 
 	: m_Filename(filename)
 	, m_Image(NULL)
 	, m_TextureID(-1)
@@ -185,7 +185,7 @@ Engine::ImageResource& Engine::ImageResource::Rotate(double angle)
 }
 
 // Rotates the image (and resizes the image)
-Engine::ImageResource& Engine::ImageResource::Rotate(double angle, f2 origin)
+Engine::ImageResource& Engine::ImageResource::Rotate(double angle, const f2& origin)
 {
 	FIBITMAP* newImage = FreeImage_RotateEx(m_Image, angle, 0, 0, origin.x(), origin.y(), true);
 	FreeImage_Unload(m_Image);
@@ -214,7 +214,7 @@ Engine::ImageResource& Engine::ImageResource::FlipVertical()
 //////////////////////////////////////////////////////// Scaling
 
 // Rescales the image to fit the specified dimensions
-Engine::ImageResource& Engine::ImageResource::Rescale(i2 dstDimensions, RescalePolicy policy, ResampleFilter filter)
+Engine::ImageResource& Engine::ImageResource::Rescale(const i2& dstDimensions, RescalePolicy policy, ResampleFilter filter)
 {
 	FIBITMAP* newImage;
 	i2 currDimensions = GetDimensions();

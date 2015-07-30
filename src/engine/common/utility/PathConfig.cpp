@@ -25,7 +25,7 @@ bool Engine::PathConfig::GetPath(const std::string& pathName, std::string& out_P
 }
 
 // Sets the specified path
-void Engine::PathConfig::SetPath(const std::string& pathName, std::string path)
+void Engine::PathConfig::SetPath(const std::string& pathName, const std::string& path)
 {
 	// Load if not loaded yet
 	if (!m_Loaded)
@@ -88,7 +88,7 @@ bool Engine::PathConfig::SetDefaultPaths()
 }
 
 // Sets a path value if it does not exist yet
-bool Engine::PathConfig::SetPathIfNotExistsLocally(const std::string& pathName, std::string path)
+bool Engine::PathConfig::SetPathIfNotExistsLocally(const std::string& pathName, const std::string& path)
 {
 	if (m_PathMap.count(pathName) == 0)
 	{

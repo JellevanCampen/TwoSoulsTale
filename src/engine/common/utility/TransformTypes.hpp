@@ -75,7 +75,7 @@ namespace Engine
 	public:
 
 		// Constructors
-		transform2D(f2 t = f2(0.0f, 0.0f), float r = 0.0f, f2 s = f2(1.0f, 1.0f)) : m_T(t), m_R(r), m_S(s), m_Dirty(true) { }
+		transform2D(const f2& t = f2(0.0f, 0.0f), float r = 0.0f, const f2& s = f2(1.0f, 1.0f)) : m_T(t), m_R(r), m_S(s), m_Dirty(true) { }
 		transform2D(float tX, float tY, float r = 0.0f, float sX = 1.0f, float sY = 1.0f) : m_T(tX, tY), m_R(r), m_S(sX, sY), m_Dirty(true) { }
 		transform2D(const transform1D& t1D) : m_T(f2(t1D.t(), 0.0f)), m_R(0.0f), m_S(f2(t1D.s(), 1.0f)), m_Dirty(true) { }
 		transform2D(const b2Transform& tf) : m_T(f2(tf.p.x, tf.p.y)), m_R(tf.q.GetAngle()), m_S(f2(1.0f, 1.0f)) { }
@@ -92,10 +92,10 @@ namespace Engine
 		inline const f2& s() const { return m_S; }
 
 		// Setters
-		inline transform2D& t(f2 t) { m_T = t; m_Dirty = true; return *this; }
+		inline transform2D& t(const f2& t) { m_T = t; m_Dirty = true; return *this; }
 		inline transform2D& t(float tX, float tY) { m_T.x(tX); m_T.y(tY); m_Dirty = true; return *this; }
 		inline transform2D& r(float r) { m_R = r; m_Dirty = true; return *this; }
-		inline transform2D& s(f2 s) { m_S = s; m_Dirty = true; return *this; }
+		inline transform2D& s(const f2& s) { m_S = s; m_Dirty = true; return *this; }
 		inline transform2D& s(float sX, float sY) { m_S.x(sX); m_S.y(sY); m_Dirty = true; return *this; }
 		
 		// Gets the transformation matrix for this transform
@@ -137,7 +137,7 @@ namespace Engine
 	public:
 
 		// Constructors
-		transform3D(f3 t = f3(0.0f, 0.0f, 0.0f), f3 r = f3(0.0f, 0.0f, 0.0f), f3 s = f3(1.0f, 1.0f, 1.0f), RotationOrder rotationOrder = RotationOrder::ZXY) : m_T(t), m_R(r), m_S(s), m_RotationOrder(rotationOrder), m_Dirty(true) { }
+		transform3D(const f3& t = f3(0.0f, 0.0f, 0.0f), const f3& r = f3(0.0f, 0.0f, 0.0f), const f3& s = f3(1.0f, 1.0f, 1.0f), RotationOrder rotationOrder = RotationOrder::ZXY) : m_T(t), m_R(r), m_S(s), m_RotationOrder(rotationOrder), m_Dirty(true) { }
 		transform3D(
 			float tX, float tY, float tZ, 
 			float rX = 0.0f, float rY = 0.0f, float rZ = 0.0f, 
@@ -160,11 +160,11 @@ namespace Engine
 		inline const f3& s() const { return m_S; }
 
 		// Setters
-		inline transform3D& t(f3 t) { m_T = t; m_Dirty = true; return *this; }
+		inline transform3D& t(const f3& t) { m_T = t; m_Dirty = true; return *this; }
 		inline transform3D& t(float tX, float tY, float tZ) { m_T.x(tX); m_T.y(tY); m_T.z(tZ); m_Dirty = true; return *this; }
-		inline transform3D& r(f3 r) { m_R = r; m_Dirty = true; return *this; }
+		inline transform3D& r(const f3& r) { m_R = r; m_Dirty = true; return *this; }
 		inline transform3D& r(float rX, float rY, float rZ) { m_R.x(rX); m_R.y(rY); m_R.z(rZ); m_Dirty = true; return *this; }
-		inline transform3D& s(f3 s) { m_S = s; m_Dirty = true; return *this; }
+		inline transform3D& s(const f3& s) { m_S = s; m_Dirty = true; return *this; }
 		inline transform3D& s(float sX, float sY, float sZ) { m_S.x(sX); m_S.y(sY); m_S.z(sZ); m_Dirty = true; return *this; }
 
 		// Gets the transformation matrix for this transform

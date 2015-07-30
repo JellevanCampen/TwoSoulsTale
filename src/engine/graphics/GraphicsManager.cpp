@@ -468,7 +468,7 @@ void Engine::GraphicsManager::TerminateBuffers()
 }
 
 // Loads and compiles a shader program
-GLuint Engine::GraphicsManager::LoadShaderProgram(std::string vertexShader, std::string fragmentShader)
+GLuint Engine::GraphicsManager::LoadShaderProgram(const std::string& vertexShader, const std::string& fragmentShader)
 {
 	// Compile the individual shader stages
 	GLuint vertexShaderStage = LoadShaderStage(m_ShaderPath + vertexShader + ".vert", GL_VERTEX_SHADER);
@@ -503,7 +503,7 @@ GLuint Engine::GraphicsManager::LoadShaderProgram(std::string vertexShader, std:
 }
 
 // Loads and compiles a single shader stage
-GLuint Engine::GraphicsManager::LoadShaderStage(std::string filename, GLenum shaderStage)
+GLuint Engine::GraphicsManager::LoadShaderStage(const std::string& filename, GLenum shaderStage)
 {
 	// Create the shader stage
 	GLuint shader = glCreateShader(shaderStage);
@@ -553,7 +553,7 @@ GLuint Engine::GraphicsManager::LoadShaderStage(std::string filename, GLenum sha
 ////////////////////////////////////////////////////////////////
 
 // Sets the camera position
-void Engine::GraphicsManager::SetCameraPosition(f2 position)
+void Engine::GraphicsManager::SetCameraPosition(const f2& position)
 {
 	m_CameraPosition = position;
 	m_CameraViewMatrixDirty = true;
@@ -619,7 +619,7 @@ const Engine::mat4f& Engine::GraphicsManager::GetCameraProjectionMatrix()
 ////////////////////////////////////////////////////////////////
 
 // Draws a frame of the specified sprite sheet
-void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, f3 translation, float rotation, f2 scale)
+void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, const f3& translation, float rotation, const f2& scale)
 {
 	// Retrieve the sprite sheet resource from the ResourceManager
 	SpriteSheetResource& spriteSheetResource = ResourceManager::GetInstance().GetSpriteSheetResource(spriteSheet);
@@ -671,7 +671,7 @@ void Engine::GraphicsManager::DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsi
 ////////////////////////////////////////////////////////////////
 
 // Draws a text message using the specified bitmap font
-void Engine::GraphicsManager::DrawText(std::string text, BitmapFont font, transform2D transform, float z, colorRGBA color)
+void Engine::GraphicsManager::DrawText(const std::string& text, BitmapFont font, transform2D transform, float z, const colorRGBA& color)
 {
 	// Retrieve the bitmap font resource from the ResourceManager
 	BitmapFontResource& bitmapFontResource = ResourceManager::GetInstance().GetBitmapFontResource(font);
@@ -721,7 +721,7 @@ void Engine::GraphicsManager::DrawText(std::string text, BitmapFont font, transf
 }
 
 // Draws a text message using the specified bitmap font
-void Engine::GraphicsManager::DrawTextAdvanced(std::string text, BitmapFont font, transform2D transform, float z, colorRGBA defaultColor)
+void Engine::GraphicsManager::DrawTextAdvanced(const std::string& text, BitmapFont font, transform2D transform, float z, const colorRGBA& defaultColor)
 {
 	// Retrieve the bitmap font resource from the ResourceManager
 	BitmapFontResource& bitmapFontResource = ResourceManager::GetInstance().GetBitmapFontResource(font);

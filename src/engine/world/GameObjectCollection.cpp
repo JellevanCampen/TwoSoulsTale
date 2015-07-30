@@ -42,7 +42,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByType(GameObj
 }
 
 // Filters out game objects outside of the specified interval
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(interval2Df interval)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(const interval2Df& interval)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -54,7 +54,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(int
 }
 
 // Filters out game objects outside of the specified interval
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(interval3Df interval)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(const interval3Df& interval)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -66,7 +66,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(int
 }
 
 // Filters out game objects outside of the specified circle
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(circlef circle)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(const circlef& circle)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -78,7 +78,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(cir
 }
 
 // Filters out game objects outside of the specified sphere
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(spheref sphere)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(const spheref& sphere)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -90,7 +90,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByLocation(sph
 }
 
 // Filters out game objects that do not overlap with the specified interval
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(interval2Df interval)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(const interval2Df& interval)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -102,7 +102,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(inte
 }
 
 // Filters out game objects that do not overlap with the specified interval
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(interval3Df interval)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(const interval3Df& interval)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -114,7 +114,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(inte
 }
 
 // Filters out game objects that do not overlap with the specified circle
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(circlef circle)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(const circlef& circle)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)
@@ -126,7 +126,7 @@ Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(circ
 }
 
 // Filters out game objects that do not overlap with the specified sphere
-Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(spheref sphere)
+Engine::GameObjectCollection& Engine::GameObjectCollection::FilterByOverlap(const spheref& sphere)
 {
 	CollisionManager& c = CollisionManager::GetInstance();
 	for (auto i = m_GameObjects.begin(); i != m_GameObjects.end();)

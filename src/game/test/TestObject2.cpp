@@ -3,13 +3,6 @@
 #include <sstream> // For printing the FPS onscreen
 #include <iomanip> // For specifying precision of floats during string conversions
 
-// Constructor (given transform)
-GameContent::TestObject2::TestObject2(Engine::transform3D transform, Engine::aabb3Df aabb)
-	: GameObject(transform, aabb)
-{
-	velocity(Engine::f2(4.0f, -8.0f));
-}
-
 // Creates the game object
 void GameContent::TestObject2::Create()
 {

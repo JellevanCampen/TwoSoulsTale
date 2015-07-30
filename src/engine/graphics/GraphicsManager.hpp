@@ -71,10 +71,10 @@ namespace Engine{
 		static void GLFWErrorCallback(int error, const char* description);
 
 		// Loads and compiles a shader program
-		GLuint LoadShaderProgram(std::string vertexShader, std::string fragmentShader);
+		GLuint LoadShaderProgram(const std::string& vertexShader, const std::string& fragmentShader);
 
 		// Loads and compiles a single shader stage
-		GLuint LoadShaderStage(std::string filename, GLenum shaderStage);
+		GLuint LoadShaderStage(const std::string& filename, GLenum shaderStage);
 
 		// Path to the shaders
 		std::string m_ShaderPath;
@@ -206,7 +206,7 @@ namespace Engine{
 	public:
 
 		// Sets the camera position
-		void SetCameraPosition(f2 position);
+		void SetCameraPosition(const f2& position);
 
 		// Gets the camera position
 		f2 GetCameraPosition();
@@ -233,7 +233,7 @@ namespace Engine{
 
 		// Draws a line
 		template<typename valuetype>
-		void DrawLine(ray2D<valuetype> line, colorRGBA color = colorRGBA())
+		void DrawLine(const ray2D<valuetype>& line, const colorRGBA& color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderLine);
@@ -257,17 +257,17 @@ namespace Engine{
 
 		// Draws a line
 		template<typename valuetype>
-		inline void DrawLine(vector2D<valuetype> p1, vector2D<valuetype> p2, colorRGBA color = colorRGBA()) { DrawLine(ray2D<valuetype>(p1, p2), color); }
+		inline void DrawLine(const vector2D<valuetype>& p1, const vector2D<valuetype>& p2, const colorRGBA& color = colorRGBA()) { DrawLine(ray2D<valuetype>(p1, p2), color); }
 
 		// Draws a line
 		template<typename valuetype>
-		inline void DrawLine(valuetype x1, valuetype x2, valuetype y1, valuetype y2, colorRGBA color = colorRGBA()) { DrawLine(ray2D<valuetype>(x1, x2, y1, y2), color); }
+		inline void DrawLine(valuetype x1, valuetype x2, valuetype y1, valuetype y2, const colorRGBA& color = colorRGBA()) { DrawLine(ray2D<valuetype>(x1, x2, y1, y2), color); }
 
 		///////////////////////////////////////////////////// Rectangles
 
 		// Draws a rectangle
 		template<typename valuetype>
-		void DrawRectangle(interval2D<valuetype> rectangle, colorRGBA color = colorRGBA())
+		void DrawRectangle(const interval2D<valuetype>& rectangle, const colorRGBA& color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderRectangle);
@@ -291,16 +291,16 @@ namespace Engine{
 
 		// Draws a rectangle
 		template<typename valuetype>
-		inline void DrawRectangle(vector2D<valuetype> p1, vector2D<valuetype> p2, colorRGBA color = colorRGBA()) { DrawRectangle(interval2D<valuetype>(p1, p2), color); }
+		inline void DrawRectangle(const vector2D<valuetype>& p1, const vector2D<valuetype>& p2, const colorRGBA& color = colorRGBA()) { DrawRectangle(interval2D<valuetype>(p1, p2), color); }
 
 		// Draws a rectangle
 		template<typename valuetype>
-		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, colorRGBA color = colorRGBA()) { DrawRectangle(interval2D<valuetype>(x1, x2, y1, y2), color); }
+		inline void DrawRectangle(valuetype x1, valuetype x2, valuetype y1, valuetype y2, const colorRGBA& color = colorRGBA()) { DrawRectangle(interval2D<valuetype>(x1, x2, y1, y2), color); }
 
 		//////////////////////////////////////////////////////// Circles
 
 		template<typename valuetype>
-		void DrawCircle(circle<valuetype> circle, colorRGBA color = colorRGBA())
+		void DrawCircle(const circle<valuetype>& circle, const colorRGBA& color = colorRGBA())
 		{
 			// Use the sprite sheet shader program
 			glUseProgram(m_ShaderCircle);
@@ -324,21 +324,21 @@ namespace Engine{
 
 		// Draws a circle
 		template<typename valuetype>
-		inline void DrawCircle(vector2D<valuetype> p, valuetype r, colorRGBA color = colorRGBA()) { DrawCircle(circle<valuetype>(p, r), color); }
+		inline void DrawCircle(const vector2D<valuetype>& p, valuetype r, const colorRGBA& color = colorRGBA()) { DrawCircle(circle<valuetype>(p, r), color); }
 
 		// Draws a circle
 		template<typename valuetype>
-		inline void DrawCircle(valuetype x, valuetype y, valuetype r, colorRGBA color = colorRGBA()) { DrawCircle(circle<valuetype>(x, y, r), color); }
+		inline void DrawCircle(valuetype x, valuetype y, valuetype r, const colorRGBA& color = colorRGBA()) { DrawCircle(circle<valuetype>(x, y, r), color); }
 
 		////////////////////////////////////////////////////////////////
 		// Sprite sheet drawing                                       //
 		////////////////////////////////////////////////////////////////
 
 		// Draws a frame of the specified sprite sheet
-		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, f3 translation, float rotation = 0.0f, f2 scale = f2(1.0f, 1.0f));
+		void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, const f3& translation, float rotation = 0.0f, const f2& scale = f2(1.0f, 1.0f));
 
 		// Draws a frame of the specified sprite sheet
-		inline void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, transform2D transform, float z = 0.0f)
+		inline void DrawSpriteSheetFrame(SpriteSheet spriteSheet, unsigned int frame, const transform2D& transform, float z = 0.0f)
 		{
 			DrawSpriteSheetFrame(spriteSheet, frame, f3(transform.t().xy(), z), transform.r(), transform.s());
 		}
@@ -348,10 +348,10 @@ namespace Engine{
 		////////////////////////////////////////////////////////////////
 
 		// Draws a text message using the specified bitmap font
-		void DrawText(std::string text, BitmapFont font, transform2D transform, float z = 0.0f, colorRGBA color = colorRGBA());
+		void DrawText(const std::string& text, BitmapFont font, transform2D transform, float z = 0.0f, const colorRGBA& color = colorRGBA());
 
 		// Draws a text message using the specified bitmap font (supports color tags)
-		void DrawTextAdvanced(std::string text, BitmapFont font, transform2D transform, float z = 0.0f, colorRGBA defaultColor = colorRGBA());
+		void DrawTextAdvanced(const std::string& text, BitmapFont font, transform2D transform, float z = 0.0f, const colorRGBA& defaultColor = colorRGBA());
 
 		friend class InputManager;
 

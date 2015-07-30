@@ -23,8 +23,8 @@ namespace Engine
 		colorRGBA() : m_R(0.0f), m_G(0.0f), m_B(0.0f), m_A(1.0f) { }
 		colorRGBA(float v) : m_R(fmin(fmax(v, 0.0f), 1.0f)), m_G(fmin(fmax(v, 0.0f), 1.0f)), m_B(fmin(fmax(v, 0.0f), 1.0f)), m_A(1.0f) { }
 		colorRGBA(int v) : colorRGBA(fmin(fmax(v / 255.0f, 0.0f), 1.0f)) { }
-		colorRGBA(vector3D<float> rgb, float a) : m_R(fmin(fmax(rgb.x(), 0.0f), 1.0f)), m_G(fmin(fmax(rgb.y(), 0.0f), 1.0f)), m_B(fmin(fmax(rgb.z(), 0.0f), 1.0f)), m_A(fmin(fmax(a, 0.0f), 1.0f)) { }
-		colorRGBA(vector3D<int> rgb, int a) : m_R(fmin(fmax(rgb.x() / 255.0f, 0.0f), 1.0f)), m_G(fmin(fmax(rgb.y() / 255.0f, 0.0f), 1.0f)), m_B(fmin(fmax(rgb.z() / 255.0f, 0.0f), 1.0f)), m_A(fmin(fmax(a / 255.0f, 0.0f), 1.0f)) { }
+		colorRGBA(const vector3D<float>& rgb, float a) : m_R(fmin(fmax(rgb.x(), 0.0f), 1.0f)), m_G(fmin(fmax(rgb.y(), 0.0f), 1.0f)), m_B(fmin(fmax(rgb.z(), 0.0f), 1.0f)), m_A(fmin(fmax(a, 0.0f), 1.0f)) { }
+		colorRGBA(const vector3D<int>& rgb, int a) : m_R(fmin(fmax(rgb.x() / 255.0f, 0.0f), 1.0f)), m_G(fmin(fmax(rgb.y() / 255.0f, 0.0f), 1.0f)), m_B(fmin(fmax(rgb.z() / 255.0f, 0.0f), 1.0f)), m_A(fmin(fmax(a / 255.0f, 0.0f), 1.0f)) { }
 		colorRGBA(float r, float g, float b, float a = 1.0f) : m_R(fmin(fmax(r, 0.0f), 1.0f)), m_G(fmin(fmax(g, 0.0f), 1.0f)), m_B(fmin(fmax(b, 0.0f), 1.0f)), m_A(fmin(fmax(a, 0.0f), 1.0f)) { }
 		colorRGBA(int r, int g, int b, int a = 255) : m_R(fmin(fmax(r / 255.0f, 0.0f), 1.0f)), m_G(fmin(fmax(g / 255.0f, 0.0f), 1.0f)), m_B(fmin(fmax(b / 255.0f, 0.0f), 1.0f)), m_A(fmin(fmax(a / 255.0f, 0.0f), 1.0f)) { }
 

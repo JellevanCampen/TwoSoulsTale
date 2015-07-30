@@ -21,7 +21,7 @@ void Engine::ResourceManager::Terminate()
 //////////////////////////////////////////////// Image resources
 
 // Reserves an image, returning a handle to the resource
-Engine::Image Engine::ResourceManager::ReserveImage(std::string filename)
+Engine::Image Engine::ResourceManager::ReserveImage(const std::string& filename)
 {
 	if (m_ImageResources.count(filename) == 0)
 	{
@@ -75,7 +75,7 @@ Engine::ImageResource& Engine::ResourceManager::GetImageResource(Image image)
 ///////////////////////////////////////// Sprite sheet resources
 
 // Reserves a sprite sheet, returning a handle to the resource
-Engine::SpriteSheet Engine::ResourceManager::ReserveSpriteSheet(std::string filename)
+Engine::SpriteSheet Engine::ResourceManager::ReserveSpriteSheet(const std::string& filename)
 {
 	if (m_SpriteSheetResources.count(filename) == 0)
 	{
@@ -129,7 +129,7 @@ Engine::SpriteSheetResource& Engine::ResourceManager::GetSpriteSheetResource(Spr
 ////////////////////////////////////////// Bitmap font resources
 
 // Reserves a bitmap font, returning a handle to the resource
-Engine::BitmapFont Engine::ResourceManager::ReserveBitmapFont(std::string filename)
+Engine::BitmapFont Engine::ResourceManager::ReserveBitmapFont(const std::string& filename)
 {
 	if (m_BitmapFontResources.count(filename) == 0)
 	{

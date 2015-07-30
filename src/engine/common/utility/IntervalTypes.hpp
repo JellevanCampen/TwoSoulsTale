@@ -52,8 +52,8 @@ namespace Engine
 		// Operators
 		inline bool operator== (const interval1D& other) const { return (m_P1 == other.m_P1 && m_P2 == other.m_P2); }
 		inline bool operator!= (const interval1D& other) const { return !(*this == other); }
-		inline interval1D operator+ (const valuetype& other) const { return interval1D(m_P1 + other.m_P1, m_P2 + other.m_P2); }
-		inline interval1D operator- (const valuetype& other) const { return interval1D(m_P1 - other.m_P1, m_P2 - other.m_P2); }
+		inline interval1D operator+ (valuetype other) const { return interval1D(m_P1 + other.m_P1, m_P2 + other.m_P2); }
+		inline interval1D operator- (valuetype other) const { return interval1D(m_P1 - other.m_P1, m_P2 - other.m_P2); }
 		inline interval1D operator* (valuetype scalar) const { return interval1D(m_P1 * scalar, m_P2 * scalar); }
 		inline interval1D operator/ (valuetype scalar) const { return interval1D(m_P1 / scalar, m_P2 / scalar); }
 
@@ -70,7 +70,7 @@ namespace Engine
 		inline interval1D& extent(valuetype extent) { valuetype c = center(); m_P1 = c - extent; m_P2 = c + extent; return *this; }
 
 		// Calculates the outcode of a point for the interval
-		inline pointOutcode outcode(const valuetype& p) const
+		inline pointOutcode outcode(valuetype p) const
 		{ 
 			pointOutcode c = 0;
 			if (p <= m_P1) { c |= 0x01; }
@@ -88,7 +88,7 @@ namespace Engine
 		}
 
 		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
-		inline interval1D GetTransformed(transform1D t1D) const { return interval1D(m_P1 * t1D.s() + t1D.t(), m_P2 * t1D.s() + t1D.t()); }
+		inline interval1D GetTransformed(const transform1D& t1D) const { return interval1D(m_P1 * t1D.s() + t1D.t(), m_P2 * t1D.s() + t1D.t()); }
 	};
 
 	typedef interval1D<int> interval1Di;
@@ -111,8 +111,8 @@ namespace Engine
 		// Constructors
 		interval2D() { }
 		interval2D(valuetype x1, valuetype x2, valuetype y1, valuetype y2) : m_P1(x1, y1), m_P2(x2, y2) { }
-		interval2D(vector2D<valuetype> p1, vector2D<valuetype> p2) : m_P1(p1), m_P2(p2) { }
-		interval2D(interval1D<valuetype> i) : m_P1(i.p1()), m_P2(i.p2()) { }
+		interval2D(const vector2D<valuetype>& p1, const vector2D<valuetype>& p2) : m_P1(p1), m_P2(p2) { }
+		interval2D(const interval1D<valuetype>& i) : m_P1(i.p1()), m_P2(i.p2()) { }
 
 		// Casts
 		inline operator interval1D<valuetype>() const { return interval1D<valuetype>(m_P1.x(), m_P2.x()); }
@@ -141,8 +141,8 @@ namespace Engine
 		inline const valuetype h() const { return m_P2.y() - m_P1.y(); }
 
 		// Setters
-		inline interval2D& p1(vector2D<valuetype> p1) { m_P1 = p1; return *this; }
-		inline interval2D& p2(vector2D<valuetype> p2) { m_P2 = p2; return *this; }
+		inline interval2D& p1(const vector2D<valuetype>& p1) { m_P1 = p1; return *this; }
+		inline interval2D& p2(const vector2D<valuetype>& p2) { m_P2 = p2; return *this; }
 		inline interval2D& x1(valuetype x1) { m_P1.x(x1); return *this; }
 		inline interval2D& x2(valuetype x2) { m_P2.x(x2); return *this; }
 		inline interval2D& y1(valuetype y1) { m_P1.y(y1); return *this; }
@@ -159,8 +159,8 @@ namespace Engine
 		inline interval2D operator- (const interval2D& other) const { return interval2D(m_P1 - other.m_P1, m_P2 - other.m_P2); }
 		inline interval2D operator+ (const vector2D<valuetype>& other) const { return interval2D(m_P1 + other, m_P2 + other); }
 		inline interval2D operator- (const vector2D<valuetype>& other) const { return interval2D(m_P1 - other, m_P2 - other); }
-		inline interval2D operator* (const valuetype& scalar) const { return interval2D(m_P1 * scalar, m_P2 * scalar); }
-		inline interval2D operator/ (const valuetype& scalar) const { return interval2D(m_P1 / scalar, m_P2 / scalar); }
+		inline interval2D operator* (valuetype scalar) const { return interval2D(m_P1 * scalar, m_P2 * scalar); }
+		inline interval2D operator/ (valuetype scalar) const { return interval2D(m_P1 / scalar, m_P2 / scalar); }
 		inline interval2D operator* (const vector2D<valuetype>& scale) const { return interval2D(m_P1.x() * scale.x(), m_P2.x() * scale.x(), m_P1.y() * scale.y(), m_P2.y() * scale.y()); }
 		inline interval2D operator/ (const vector2D<valuetype>& scale) const { return interval2D(m_P1.x() / scale.x(), m_P2.x() / scale.x(), m_P1.y() / scale.y(), m_P2.y() / scale.y()); }
 
@@ -171,10 +171,10 @@ namespace Engine
 		inline vector2D<valuetype> extent() const { return (m_P2 - m_P1) / 2; }
 
 		// Moves the interval to be centered around a point
-		inline interval2D& center(vector2D<valuetype> center) { vector2D<valuetype> e = extent(); m_P1 = center - e; m_P2 = center + e; return *this; }
+		inline interval2D& center(const vector2D<valuetype>& center) { vector2D<valuetype> e = extent(); m_P1 = center - e; m_P2 = center + e; return *this; }
 
 		// Resizes the interval to have a specified extent
-		inline interval2D& extent(vector2D<valuetype> extent) { vector2D<valuetype> c = center(); m_P1 = c - extent; m_P2 = c + extent; return *this; }
+		inline interval2D& extent(const vector2D<valuetype>& extent) { vector2D<valuetype> c = center(); m_P1 = c - extent; m_P2 = c + extent; return *this; }
 
 		// Calculates the outcode of a point for the interval
 		inline pointOutcode outcode(const vector2D<valuetype>& p) const
@@ -188,7 +188,7 @@ namespace Engine
 		}
 
 		// Calculates the interval that contains the sweeped version of the interval
-		inline interval2D sweep(vector2D<valuetype> motion) const
+		inline interval2D sweep(const vector2D<valuetype>& motion) const
 		{
 			return interval2D(
 				(motion.x() < 0) ? m_P1.x() + motion.x() : m_P1.x(),
@@ -199,7 +199,7 @@ namespace Engine
 		}
 
 		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
-		inline interval2D GetTransformed(transform2D t2D) const { return ((*this) * t2D.s()) + t2D.t(); }
+		inline interval2D GetTransformed(const transform2D& t2D) const { return ((*this) * t2D.s()) + t2D.t(); }
 	};
 
 	typedef interval2D<int> interval2Di;
@@ -222,9 +222,9 @@ namespace Engine
 		// Constructors
 		interval3D() { }
 		interval3D(valuetype x1, valuetype x2, valuetype y1, valuetype y2, valuetype z1, valuetype z2) : m_P1(x1, y1, z1), m_P2(x2, y2, z2) { }
-		interval3D(vector3D<valuetype> p1, vector3D<valuetype> p2) : m_P1(p1), m_P2(p2) { }
-		interval3D(interval1D<valuetype> i) : m_P1(i.p1()), m_P2(i.p2()) { }
-		interval3D(interval2D<valuetype> i) : m_P1(i.p1()), m_P2(i.p2()) { }
+		interval3D(const vector3D<valuetype>& p1, const vector3D<valuetype>& p2) : m_P1(p1), m_P2(p2) { }
+		interval3D(const interval1D<valuetype>& i) : m_P1(i.p1()), m_P2(i.p2()) { }
+		interval3D(const interval2D<valuetype>& i) : m_P1(i.p1()), m_P2(i.p2()) { }
 
 		// Casts
 		inline operator interval2D<valuetype>() const { return interval2D<valuetype>(m_P1.xy(), m_P2.xy()); }
@@ -261,8 +261,8 @@ namespace Engine
 		inline const valuetype d() const { return m_P2.z() - m_P1.z(); }
 
 		// Setters
-		inline interval3D& p1(vector3D<valuetype> p1) { m_P1 = p1; return *this; }
-		inline interval3D& p2(vector3D<valuetype> p2) { m_P2 = p2; return *this; }
+		inline interval3D& p1(const vector3D<valuetype>& p1) { m_P1 = p1; return *this; }
+		inline interval3D& p2(const vector3D<valuetype>& p2) { m_P2 = p2; return *this; }
 		inline interval3D& x1(valuetype x1) { m_P1.x(x1); return *this; }
 		inline interval3D& x2(valuetype x2) { m_P2.x(x2); return *this; }
 		inline interval3D& y1(valuetype y1) { m_P1.y(y1); return *this; }
@@ -283,10 +283,10 @@ namespace Engine
 		inline interval3D operator- (const interval3D& other) const { return interval3D(m_P1 - other.m_P1, m_P2 - other.m_P2); }
 		inline interval3D operator+ (const vector3D<valuetype>& other) const { return interval3D(m_P1 + other, m_P2 + other); }
 		inline interval3D operator- (const vector3D<valuetype>& other) const { return interval3D(m_P1 - other, m_P2 - other); }
-		inline interval3D operator* (valuetype& scalar) const { return interval3D(m_P1 * scalar, m_P2 * scalar); }
-		inline interval3D operator/ (valuetype& scalar) const { return interval3D(m_P1 / scalar, m_P2 / scalar); }
-		inline interval3D operator* (vector3D<valuetype>& scale) const { return interval3D(m_P1.x() * scale.x(), m_P2.x() * scale.x(), m_P1.y() * scale.y(), m_P2.y() * scale.y(), m_P1.z() * scale.z(), m_P2.z() * scale.z()); }
-		inline interval3D operator/ (vector3D<valuetype>& scale) const { return interval3D(m_P1.x() / scale.x(), m_P2.x() / scale.x(), m_P1.y() / scale.y(), m_P2.y() / scale.y(), m_P1.z() / scale.z(), m_P2.z() / scale.z()); }
+		inline interval3D operator* (valuetype scalar) const { return interval3D(m_P1 * scalar, m_P2 * scalar); }
+		inline interval3D operator/ (valuetype scalar) const { return interval3D(m_P1 / scalar, m_P2 / scalar); }
+		inline interval3D operator* (const vector3D<valuetype>& scale) const { return interval3D(m_P1.x() * scale.x(), m_P2.x() * scale.x(), m_P1.y() * scale.y(), m_P2.y() * scale.y(), m_P1.z() * scale.z(), m_P2.z() * scale.z()); }
+		inline interval3D operator/ (const vector3D<valuetype>& scale) const { return interval3D(m_P1.x() / scale.x(), m_P2.x() / scale.x(), m_P1.y() / scale.y(), m_P2.y() / scale.y(), m_P1.z() / scale.z(), m_P2.z() / scale.z()); }
 
 		// Calculates the center of the interval
 		inline vector3D<valuetype> center() const { return (m_P1 + m_P2) / 2; }
@@ -295,10 +295,10 @@ namespace Engine
 		inline vector3D<valuetype> extent() const { return (m_P2 - m_P1) / 2; }
 
 		// Moves the interval to be centered around a point
-		inline interval3D& center(vector3D<valuetype> center) { vector3D<valuetype> e = extent(); m_P1 = center - e; m_P2 = center + e; return *this; }
+		inline interval3D& center(const vector3D<valuetype>& center) { vector3D<valuetype> e = extent(); m_P1 = center - e; m_P2 = center + e; return *this; }
 
 		// Resizes the interval to have a specified extent
-		inline interval3D& extent(vector3D<valuetype> extent) { vector3D<valuetype> c = center(); m_P1 = c - extent; m_P2 = c + extent; return *this; }
+		inline interval3D& extent(const vector3D<valuetype>& extent) { vector3D<valuetype> c = center(); m_P1 = c - extent; m_P2 = c + extent; return *this; }
 
 		// Calculates the outcode of a point for the interval
 		inline pointOutcode outcode(const vector2D<valuetype>& p) const
@@ -314,7 +314,7 @@ namespace Engine
 		}
 
 		// Calculates the interval that contains the sweeped version of the interval
-		inline interval3D sweep(vector3D<valuetype> motion) const
+		inline interval3D sweep(const vector3D<valuetype>& motion) const
 		{
 			return interval3D(
 				(motion.x() < 0) ? m_P1.x() + motion.x() : m_P1.x(),
@@ -327,7 +327,7 @@ namespace Engine
 		}
 
 		// Calculates a transformed version of the interval (translation and scaling only, no rotation)
-		inline interval3D GetTransformed(transform3D t3D) const { return ((*this) * t3D.s()) + t3D.t(); }
+		inline interval3D GetTransformed(const transform3D& t3D) const { return ((*this) * t3D.s()) + t3D.t(); }
 	};
 
 	typedef interval3D<int> interval3Di;

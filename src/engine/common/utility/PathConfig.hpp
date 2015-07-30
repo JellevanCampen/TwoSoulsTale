@@ -23,7 +23,7 @@ namespace Engine
 		static bool GetPath(const std::string& pathName, std::string& out_Path);
 
 		// Sets the specified path
-		static void SetPath(const std::string& pathName, std::string path);
+		static void SetPath(const std::string& pathName, const std::string& path);
 
 	private:
 
@@ -37,7 +37,7 @@ namespace Engine
 		static bool SetDefaultPaths();
 
 		// Sets a path value if it does not exist yet (locally, without persisting to file)
-		static bool SetPathIfNotExistsLocally(const std::string& pathName, std::string path);
+		static bool SetPathIfNotExistsLocally(const std::string& pathName, const std::string& path);
 
 		// Holds all paths
 		static ParameterMap m_PathMap;

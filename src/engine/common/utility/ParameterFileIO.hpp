@@ -25,19 +25,17 @@ namespace Engine
 	public:
 
 		// Checks whether a file exists
-		static bool FileExists(std::string filename);
+		static bool FileExists(const std::string& filename);
 
 		////////////////////////////////////////////////////////////////
 		// Parameter file parsing                                     //
 		////////////////////////////////////////////////////////////////
 
 		// Parses a text file into a list parameters names and values
-		static bool ReadFile(std::string filename, 
-			ParameterMap& out_Parameters);
+		static bool ReadFile(const std::string& filename, ParameterMap& out_Parameters);
 
-		// Writss a ParameterMap to a file
-		static bool WriteFile(std::string filename, const ParameterMap& parameters);
-
+		// Writes a ParameterMap to a file
+		static bool WriteFile(const std::string& filename, const ParameterMap& parameters);
 	};
 }
 

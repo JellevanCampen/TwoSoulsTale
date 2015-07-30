@@ -27,7 +27,7 @@ namespace Engine
 		////////////////////////////////////////////////////////////////
 
 		// Constructor (based on filename)
-		ImageResource(std::string filename);
+		ImageResource(const std::string& filename);
 
 		// Loads the image from file
 		virtual bool Load();
@@ -123,7 +123,7 @@ namespace Engine
 		ImageResource& Rotate(double angle);
 
 		// Rotates the image (and resizes the image)
-		ImageResource& Rotate(double angle, f2 origin);
+		ImageResource& Rotate(double angle, const f2& origin);
 
 		// Flips the image horizontally
 		ImageResource& FlipHorizontal();
@@ -153,7 +153,7 @@ namespace Engine
 		};
 
 		// Rescales the image to fit the specified dimensions
-		ImageResource& Rescale(i2 dstDimensions, RescalePolicy policy = RescalePolicy::MATCH_DIMENSIONS, ResampleFilter filter = ResampleFilter::NEAREST_NEIGHBOR);
+		ImageResource& Rescale(const i2& dstDimensions, RescalePolicy policy = RescalePolicy::MATCH_DIMENSIONS, ResampleFilter filter = ResampleFilter::NEAREST_NEIGHBOR);
 
 	private:
 

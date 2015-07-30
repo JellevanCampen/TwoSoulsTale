@@ -25,7 +25,7 @@ namespace Engine
 		////////////////////////////////////////////////////////////////
 
 		// Constructor, stores the filename of the sprite sheet
-		SpriteSheetResource(std::string filename);
+		SpriteSheetResource(const std::string& filename);
 
 		// Loads the resource
 		virtual bool Load();
@@ -97,10 +97,10 @@ namespace Engine
 		void CalculateUVs(unsigned int frame, f2& out_UV1, f2& out_UV2) const;
 
 		// Writes the sprite sheet metadata to a file
-		void SaveFile(std::string filename);
+		void SaveFile(const std::string& filename);
 
 		// Reads the sprite sheet metadata from a file
-		void LoadFile(std::string filename);
+		void LoadFile(const std::string& filename);
 
 		friend class ResourceManager;
 		friend class GraphicsManager;

@@ -118,7 +118,7 @@ size_t Engine::WorldManager::RetrieveByType(GameObjectType type, GameObjectColle
 ////////////////////////////////////////////////////////////////
 
 // Retrieves the nearest game object to the specified position considering x and y coordinates (returns whether a game object was found)
-bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& out_GameObject, GameObjectType typeFilter)
+bool Engine::WorldManager::RetrieveNearestGameObject(const f2& position, GameObject*& out_GameObject, GameObjectType typeFilter)
 {
 	// Linear search nearest neighbor
 	// TODO: this is slow, accelerate this using a dedicated data structure
@@ -161,7 +161,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f2 position, GameObject*& o
 }
 
 // Retrieves the nearest game object to the specified position considering x, y and z coordinates (returns whether a game object was found)
-bool Engine::WorldManager::RetrieveNearestGameObject(f3 position, GameObject*& out_GameObject, GameObjectType typeFilter)
+bool Engine::WorldManager::RetrieveNearestGameObject(const f3& position, GameObject*& out_GameObject, GameObjectType typeFilter)
 {
 	// Linear search nearest neighbor
 	// TODO: this is slow, accelerate this using a dedicated data structure
@@ -205,7 +205,7 @@ bool Engine::WorldManager::RetrieveNearestGameObject(f3 position, GameObject*& o
 }
 
 // Retrieves the k-nearest game object to the specified position considering x and y coordinates (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveKNearestGameObjects(f2 position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
+size_t Engine::WorldManager::RetrieveKNearestGameObjects(const f2& position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
 {
 	// Linear search nearest neighbor
 	// TODO: this is slow, accelerate this using a dedicated data structure
@@ -282,7 +282,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f2 position, size_t k, 
 }
 
 // Retrieves the k-nearest game object to the specified position considering x, y and z coordinates (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveKNearestGameObjects(f3 position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
+size_t Engine::WorldManager::RetrieveKNearestGameObjects(const f3& position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
 {
 	// Linear search nearest neighbor
 	// TODO: this is slow, accelerate this using a dedicated data structure
@@ -359,7 +359,7 @@ size_t Engine::WorldManager::RetrieveKNearestGameObjects(f3 position, size_t k, 
 }
 
 // Retrieves all game objects closer than the specified distance to a point considering x and y coordinates (returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f2 position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
+size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(const f2& position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
 {
 	// TODO: this is slow, accelerate this using a dedicated data structure
 
@@ -394,7 +394,7 @@ size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f2 position, float 
 }
 
 // Retrieves all game objects closer than the specified distance to a point considering x, y and z coordinates(returns the number of game objects found)
-size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(f3 position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
+size_t Engine::WorldManager::RetrieveGameObjectsNearPosition(const f3& position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter)
 {
 	// TODO: this is slow, accelerate this using a dedicated data structure
 	if (typeFilter != OBJ_ANY && m_GameObjectsByType.count(typeFilter) == 0) { return size_t(0); }

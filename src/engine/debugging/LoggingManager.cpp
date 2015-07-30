@@ -16,7 +16,7 @@ void Engine::LoggingManager::Terminate()
 }
 
 // Logs a message
-void Engine::LoggingManager::Log(LogType logType, std::string message)
+void Engine::LoggingManager::Log(LogType logType, const std::string& message)
 {
 	// Set the color of the logged message
 	switch (logType)

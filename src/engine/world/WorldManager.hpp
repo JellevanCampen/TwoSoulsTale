@@ -74,22 +74,22 @@ namespace Engine{
 		///////////////////////////////////////////////////////// Legacy
 
 		// Retrieves the nearest game object to the specified position considering x and y coordinates (returns whether a game object was found)
-		bool RetrieveNearestGameObject(f2 position, GameObject*& out_GameObject, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		bool RetrieveNearestGameObject(const f2& position, GameObject*& out_GameObject, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
 
 		// Retrieves the nearest game object to the specified position considering x, y and z coordinates (returns whether a game object was found)
-		bool RetrieveNearestGameObject(f3 position, GameObject*& out_GameObject, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		bool RetrieveNearestGameObject(const f3& position, GameObject*& out_GameObject, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
 
 		// Retrieves the k-nearest game object to the specified position considering x and y coordinates (returns the number of game objects found)
-		size_t RetrieveKNearestGameObjects(f2 position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		size_t RetrieveKNearestGameObjects(const f2& position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
 
 		// Retrieves the k-nearest game object to the specified position considering x, y and z coordinates (returns the number of game objects found)
-		size_t RetrieveKNearestGameObjects(f3 position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		size_t RetrieveKNearestGameObjects(const f3& position, size_t k, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
 
 		// Retrieves all game objects closer than the specified distance to a point considering x and y coordinates (returns the number of game objects found)
-		size_t RetrieveGameObjectsNearPosition(f2 position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		size_t RetrieveGameObjectsNearPosition(const f2& position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
 
 		// Retrieves all game objects closer than the specified distance to a point considering x, y and z coordinates(returns the number of game objects found)
-		size_t RetrieveGameObjectsNearPosition(f3 position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
+		size_t RetrieveGameObjectsNearPosition(const f3& position, float maxDistance, std::vector<GameObject*>& out_GameObjects, GameObjectType typeFilter = GameObjectType(Engine::OBJ_ANY));
 
 		////////////////////////////////////////////////////////////////
 		// Collision-aware movement		                              //
@@ -122,14 +122,14 @@ namespace Engine{
 
 		// Pushes an object out of a colliding object along the motion vector
 		template<typename valuetype>
-		inline void PushOut2D(GameObject& gameObject, vector2D<valuetype> motion)
+		inline void PushOut2D(GameObject& gameObject, const vector2D<valuetype>& motion)
 		{
 			gameObject.t() -= (motion * s_ObjectSeparationDistance) / motion.length();
 		}
 
 		// Finds the nearest collision along a specified motion vector
 		template<typename valuetype>
-		inline bool FindFirstCollision2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, vector2D<valuetype>& out_Position, vector2D<valuetype>& out_Normal, valuetype& out_Progression)
+		inline bool FindFirstCollision2D(GameObject& gameObject, const vector2D<valuetype>& motion, const GameObjectCollection& other, vector2D<valuetype>& out_Position, vector2D<valuetype>& out_Normal, valuetype& out_Progression)
 		{
 			// Initialize to full motion (1.0 progression)
 			out_Position = gameObject.t2D() + motion;
@@ -164,14 +164,14 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, ignoring collisions
 		template<typename valuetype>
-		inline void MoveIgnore2D(GameObject& gameObject, vector2D<valuetype> motion)
+		inline void MoveIgnore2D(GameObject& gameObject, const vector2D<valuetype>& motion)
 		{
 			gameObject.t() += motion;
 		}
 
 		// Move a game object along the specified motion vector, stopping at the first collision
 		template<typename valuetype>
-		inline bool MoveStop2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
+		inline bool MoveStop2D(GameObject& gameObject, const vector2D<valuetype>& motion, const GameObjectCollection& other, bool updateVelocity)
 		{
 			// Broadphase filtering based on AABB sweep
 			CollisionManager& c(CollisionManager::GetInstance());
@@ -195,7 +195,7 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, sliding along colliding objects
 		template<typename valuetype>
-		inline bool MoveSlide2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other)
+		inline bool MoveSlide2D(GameObject& gameObject, const vector2D<valuetype>& motion, const GameObjectCollection& other)
 		{
 			// Broadphase filtering based on AABB sweep
 			CollisionManager& c(CollisionManager::GetInstance());
@@ -208,22 +208,25 @@ namespace Engine{
 			vector2D<valuetype> normal;
 			valuetype progression;
 
+			// Make a copy of the motion vector that is modified throughout iterations
+			vector2D<valuetype> motion_i(motion);
+
 			unsigned char iteration = 0;
 			bool collision = false;
 
 			do
 			{
 				// Move the object and push it out of colliding objects
-				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
+				bool collisionCurrent = FindFirstCollision2D(gameObject, motion_i, otherBP, position, normal, progression);
 				if (progression == 0.0f) { return true; }
-				gameObject.t() += motion * progression;
+				gameObject.t() += motion_i * progression;
 				collision |= collisionCurrent;
 				if (!collisionCurrent) {  return collision; }
-				PushOut2D(gameObject, motion);
+				PushOut2D(gameObject, motion_i);
 
 				// Calculate the new motion vector to have sliding behavior
-				motion = motion * (1.0f - progression);
-				motion = motion - motion.project(normal);
+				motion_i = motion_i * (1.0f - progression);
+				motion_i = motion_i - motion_i.project(normal);
 				iteration++;
 
 			} while (iteration < s_MaxMovementIterations);
@@ -233,12 +236,15 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, redirecting motion along colliding objects
 		template<typename valuetype>
-		inline bool MoveRedirect2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
+		inline bool MoveRedirect2D(GameObject& gameObject, const vector2D<valuetype>& motion, const GameObjectCollection& other, bool updateVelocity)
 		{
 			// Output variables for collision finder
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
+
+			// Make a copy of the motion vector that is modified throughout iterations
+			vector2D<valuetype> motion_i(motion);
 
 			unsigned char iteration = 0;
 			bool collision = false;
@@ -247,23 +253,23 @@ namespace Engine{
 			{
 				// Broadphase filtering based on AABB sweep
 				CollisionManager& c(CollisionManager::GetInstance());
-				aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+				aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion_i));
 				GameObjectCollection otherBP(other);
 				otherBP.FilterByOverlap(sweep);
 
 				// Move the object and push it out of colliding objects
-				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
+				bool collisionCurrent = FindFirstCollision2D(gameObject, motion_i, otherBP, position, normal, progression);
 				if (progression == 0.0f) { return true; }
-				gameObject.t() += motion * progression;
+				gameObject.t() += motion_i * progression;
 				collision |= collisionCurrent;
 				if (!collisionCurrent) { return collision; }
 				PushOut2D(gameObject, motion);
 
 				// Calculate the new motion vector to have redirecting behavior
-				motion = motion * (1.0f - progression);
-				vector2D<valuetype> direction = motion - motion.project(normal);
-				motion = motion.align(direction);
-				if (updateVelocity) { gameObject.velocity(gameObject.velocity2D().align(motion)); }
+				motion_i = motion_i * (1.0f - progression);
+				vector2D<valuetype> direction = motion_i - motion_i.project(normal);
+				motion_i = motion_i.align(direction);
+				if (updateVelocity) { gameObject.velocity(gameObject.velocity2D().align(motion_i)); }
 				iteration++;
 
 			} while (iteration < s_MaxMovementIterations);
@@ -273,12 +279,15 @@ namespace Engine{
 
 		// Move a game object along the specified motion vector, reflecting of colliding objects
 		template<typename valuetype>
-		inline bool MoveReflect2D(GameObject& gameObject, vector2D<valuetype> motion, const GameObjectCollection& other, bool updateVelocity)
+		inline bool MoveReflect2D(GameObject& gameObject, const vector2D<valuetype>& motion, const GameObjectCollection& other, bool updateVelocity)
 		{
 			// Output variables for collision finder
 			vector2D<valuetype> position;
 			vector2D<valuetype> normal;
 			valuetype progression;
+
+			// Make a copy of the motion vector that is modified throughout iterations
+			vector2D<valuetype> motion_i(motion);
 
 			unsigned char iteration = 0;
 			bool collision = false;
@@ -287,21 +296,21 @@ namespace Engine{
 			{
 				// Broadphase filtering based on AABB sweep
 				CollisionManager& c(CollisionManager::GetInstance());
-				aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion));
+				aabb2D<valuetype> sweep(gameObject.aabb2D_world().sweep(motion_i));
 				GameObjectCollection otherBP(other);
 				otherBP.FilterByOverlap(sweep);
 
 				// Move the object and push it out of colliding objects
-				bool collisionCurrent = FindFirstCollision2D(gameObject, motion, otherBP, position, normal, progression);
+				bool collisionCurrent = FindFirstCollision2D(gameObject, motion_i, otherBP, position, normal, progression);
 				if (progression == 0.0f) { return true; }
-				gameObject.t() += motion * progression;
+				gameObject.t() += motion_i * progression;
 				collision |= collisionCurrent;
 				if (!collisionCurrent) { return collision; }
-				PushOut2D(gameObject, motion);
+				PushOut2D(gameObject, motion_i);
 
 				// Calculate the new motion vector to have redirecting behavior
-				motion = (motion.reflect(normal)) * (1.0f - progression);
-				if (updateVelocity) { gameObject.velocity(gameObject.velocity2D().align(motion)); }
+				motion_i = (motion_i.reflect(normal)) * (1.0f - progression);
+				if (updateVelocity) { gameObject.velocity(gameObject.velocity2D().align(motion_i)); }
 				iteration++;
 
 			} while (iteration < s_MaxMovementIterations);
@@ -313,7 +322,7 @@ namespace Engine{
 
 		// Moves a game object along the specified motion vector, resolving collisions on the way
 		template<typename valuetype>
-		inline bool Move2D(GameObject& gameObject, vector2D<valuetype> motion, CollisionResponse response, const GameObjectCollection& other, bool updateVelocity = false)
+		inline bool Move2D(GameObject& gameObject, const vector2D<valuetype>& motion, CollisionResponse response, const GameObjectCollection& other, bool updateVelocity = false)
 		{
 			// If collisions should be ignored, skip broadphase filtering
 			if (response == CollisionResponse::IGNORE) { MoveIgnore2D(gameObject, motion); return false; }

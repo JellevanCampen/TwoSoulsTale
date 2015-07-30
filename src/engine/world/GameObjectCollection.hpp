@@ -21,8 +21,8 @@ namespace Engine{
 
 		// Constructors
 		GameObjectCollection() { }
-		GameObjectCollection(std::unordered_set<GameObject*>& objects) { m_GameObjects = std::unordered_set<GameObject*>(objects.begin(), objects.end()); }
-		GameObjectCollection(std::set<GameObject*>& objects) { m_GameObjects = std::unordered_set<GameObject*>(objects.begin(), objects.end()); }
+		GameObjectCollection(const std::unordered_set<GameObject*>& objects) { m_GameObjects = std::unordered_set<GameObject*>(objects.begin(), objects.end()); }
+		GameObjectCollection(const std::set<GameObject*>& objects) { m_GameObjects = std::unordered_set<GameObject*>(objects.begin(), objects.end()); }
 
 		////////////////////////////////////////////////////////////////
 		// Collection access										  //
@@ -63,28 +63,28 @@ namespace Engine{
 		GameObjectCollection& FilterByType(GameObjectType type);
 
 		// Filters out game objects outside of the specified interval
-		GameObjectCollection& FilterByLocation(interval2Df interval);
+		GameObjectCollection& FilterByLocation(const interval2Df& interval);
 
 		// Filters out game objects outside of the specified interval
-		GameObjectCollection& FilterByLocation(interval3Df interval);
+		GameObjectCollection& FilterByLocation(const interval3Df& interval);
 
 		// Filters out game objects outside of the specified circle
-		GameObjectCollection& FilterByLocation(circlef circle);
+		GameObjectCollection& FilterByLocation(const circlef& circle);
 
 		// Filters out game objects outside of the specified sphere
-		GameObjectCollection& FilterByLocation(spheref sphere);
+		GameObjectCollection& FilterByLocation(const spheref& sphere);
 
 		// Filters out game objects that do not overlap with the specified interval
-		GameObjectCollection& FilterByOverlap(interval2Df interval);
+		GameObjectCollection& FilterByOverlap(const interval2Df& interval);
 
 		// Filters out game objects that do not overlap with the specified interval
-		GameObjectCollection& FilterByOverlap(interval3Df interval);
+		GameObjectCollection& FilterByOverlap(const interval3Df& interval);
 
 		// Filters out game objects that do not overlap with the specified circle
-		GameObjectCollection& FilterByOverlap(circlef circle);
+		GameObjectCollection& FilterByOverlap(const circlef& circle);
 
 		// Filters out game objects that do not overlap with the specified sphere
-		GameObjectCollection& FilterByOverlap(spheref sphere);
+		GameObjectCollection& FilterByOverlap(const spheref& sphere);
 
 	};
 }

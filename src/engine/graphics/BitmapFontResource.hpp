@@ -74,10 +74,10 @@ namespace Engine
 		};
 
 		// Gets the character data for a text message
-		void GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices);
+		void GetCharacterData(const std::string& text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices);
 
 		// Gets the character data for a text message (also parses color tags)
-		void GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, std::vector<AnimationParameters>& out_AnimParameters, const colorRGBA& defaultColor = colorRGBA());
+		void GetCharacterDataAdvanced(const std::string& text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, std::vector<AnimationParameters>& out_AnimParameters, const colorRGBA& defaultColor = colorRGBA());
 
 		////////////////////////////////////////////////////////////////
 		// Resource saving and loading								  //

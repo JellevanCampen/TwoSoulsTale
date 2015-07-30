@@ -98,7 +98,7 @@ void Engine::BitmapFontResource::LoadFile(const std::string& filename)
 ////////////////////////////////////////////////////////////////
 
 // Gets the character data for a text message
-void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices)
+void Engine::BitmapFontResource::GetCharacterData(const std::string& text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices)
 {
 	int x = 0;
 	int y = 0;
@@ -115,7 +115,7 @@ void Engine::BitmapFontResource::GetCharacterData(std::string text, std::vector<
 }
 
 // Gets the character data for a text message (also parses color tags)
-void Engine::BitmapFontResource::GetCharacterDataAdvanced(std::string text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, std::vector<AnimationParameters>& out_AnimParameters, const colorRGBA& defaultColor)
+void Engine::BitmapFontResource::GetCharacterDataAdvanced(const std::string& text, std::vector<f2>& out_CharacterPositions, std::vector<unsigned int>& out_GlyphIndices, std::vector<colorRGBA>& out_GlyphColors, std::vector<AnimationParameters>& out_AnimParameters, const colorRGBA& defaultColor)
 {
 	int x = 0;
 	int y = 0;

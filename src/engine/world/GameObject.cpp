@@ -1,22 +1,7 @@
 #include "GameObject.hpp"
 
-// Constructor (default)
-Engine::GameObject::GameObject()
-	: m_GUID(s_GUIDCounter++) 
-{ 
-	
-}
-
-// Constructor (with transform)
-Engine::GameObject::GameObject(transform3D transform)
-	: m_GUID(s_GUIDCounter++)
-	, m_Transform(transform)
-{
-	
-}
-
 // Constructor (with transform and aabb)
-Engine::GameObject::GameObject(transform3D transform, aabb3Df aabb)
+Engine::GameObject::GameObject(const transform3D& transform, const aabb3Df& aabb)
 	: m_GUID(s_GUIDCounter++)
 	, m_Transform(transform)
 	, m_AABB(aabb)

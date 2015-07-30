@@ -33,7 +33,7 @@ namespace Engine{
 	public:
 
 		// Reserves an image, returning a handle to the resource
-		Image ReserveImage(std::string filename);
+		Image ReserveImage(const std::string& filename);
 
 		// Frees an image, freeing up memory if no more reservations exist
 		void FreeImage(Image image);
@@ -51,7 +51,7 @@ namespace Engine{
 	public:
 
 		// Reserves a sprite sheet, returning a handle to the resource
-		SpriteSheet ReserveSpriteSheet(std::string filename);
+		SpriteSheet ReserveSpriteSheet(const std::string& filename);
 
 		// Frees a sprite sheet, freeing up memory if no more reservations exist
 		void FreeSpriteSheet(SpriteSheet spriteSheet);
@@ -69,7 +69,7 @@ namespace Engine{
 	public:
 
 		// Reserves a bitmap font, returning a handle to the resource
-		BitmapFont ReserveBitmapFont(std::string filename);
+		BitmapFont ReserveBitmapFont(const std::string& filename);
 
 		// Frees a bitmap font, freeing up memory if no more reservations exist
 		void FreeBitmapFont(BitmapFont bitmapFont);

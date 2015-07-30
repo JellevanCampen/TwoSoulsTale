@@ -5,7 +5,7 @@
 #include "..\common\utility\PathConfig.hpp" // For retrieving the spritesheets path
 
 // Constructor, stores the filename of the sprite sheet
-Engine::SpriteSheetResource::SpriteSheetResource(std::string filename)
+Engine::SpriteSheetResource::SpriteSheetResource(const std::string& filename)
 	: m_Filename(filename)
 {
 	
@@ -55,7 +55,7 @@ void Engine::SpriteSheetResource::CalculateUVs(unsigned int frame, f2& out_UV1, 
 }
 
 // Writes the sprite sheet metadata to a file
-void Engine::SpriteSheetResource::SaveFile(std::string filename)
+void Engine::SpriteSheetResource::SaveFile(const std::string& filename)
 {
 	// Create the file and open it
 	XMLFile file;
@@ -88,7 +88,7 @@ void Engine::SpriteSheetResource::SaveFile(std::string filename)
 }
 
 // Reads the sprite sheet metadata from a file
-void Engine::SpriteSheetResource::LoadFile(std::string filename)
+void Engine::SpriteSheetResource::LoadFile(const std::string& filename)
 {
 	// Open the file
 	XMLFile file;
